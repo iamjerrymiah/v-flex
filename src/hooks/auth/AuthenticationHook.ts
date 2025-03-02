@@ -3,7 +3,6 @@ import { AuthStateEnum } from "../../utils/types";
 import { customMutationRequest, deleteRequest, fetcher, SECHTTP } from "../../utils/api";
 import { storeToken } from "../../constants/constants";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
 
 const key = 'auth';
 
@@ -183,9 +182,9 @@ export const useLogout = () => {
 
                 localStorage.removeItem('userId')
                 localStorage.removeItem(storeToken)
-                [SECHTTP].forEach(instance => {
-                    instance.defaults.headers.common['Authorization'] = ``;
-                });
+                // [SECHTTP].forEach(instance => {
+                //     instance.defaults.headers.common['Authorization'] = ``;
+                // });
                 return res;
             })
         },
@@ -194,9 +193,9 @@ export const useLogout = () => {
             localStorage.removeItem('userId')
             localStorage.removeItem(storeToken)
 
-            [SECHTTP].forEach(instance => {
-                instance.defaults.headers.common['Authorization'] = '';
-            });
+            // [SECHTTP].forEach(instance => {
+            //     instance.defaults.headers.common['Authorization'] = '';
+            // });
 
             const auth: Partial<AuthState> = {
                 isAuthenticated: false,
@@ -212,9 +211,9 @@ export const useLogout = () => {
             localStorage.removeItem('userId')
             localStorage.removeItem(storeToken)
 
-            [SECHTTP].forEach(instance => {
-                instance.defaults.headers.common['Authorization'] = '';
-            });
+            // [SECHTTP].forEach(instance => {
+            //     instance.defaults.headers.common['Authorization'] = '';
+            // });
 
             const auth: Partial<AuthState> = {
                 isAuthenticated: false,

@@ -82,16 +82,34 @@ export const customFormdataMutationRequest = async (
     headers?: {},
 ) => {
 
+    // let formData = new FormData();
+    // for (const [key, value] of Object.entries(arg)) {
+    //     if (
+    //         (value !== '' &&
+    //             value !== 'null' &&
+    //             value !== 'undefined' &&
+    //             value !== null &&
+    //         value !== undefined)
+    //     ) {
+    //         formData.append(`${key}`, value);
+    //     }
+    // }
+
     let formData = new FormData();
+
     for (const [key, value] of Object.entries(arg)) {
         if (
-            (value !== '' &&
-                value !== 'null' &&
-                value !== 'undefined' &&
-                value !== null &&
-            value !== undefined)
+            value !== '' &&
+            value !== 'null' &&
+            value !== 'undefined' &&
+            value !== null &&
+            value !== undefined
         ) {
-            formData.append(`${key}`, value);
+            if (value instanceof File || value instanceof Blob) {
+                formData.append(key, value); // Keep files as they are
+            } else {
+                formData.append(key, String(value)); // Convert other values to string
+            }
         }
     }
 

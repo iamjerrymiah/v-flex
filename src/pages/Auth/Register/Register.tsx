@@ -90,7 +90,7 @@ function RegisterMain () {
                     <Form onSubmit={handleSubmit}>
                         <Grid templateColumns={["1fr", "1fr", "1fr", "1fr 1fr"]} gap={6}>
                             <HStack>
-                                <FormControl w={'150px'} isInvalid={errors?.salutation && touched?.salutation}>
+                                <FormControl w={'150px'}>
                                     <FormLabel fontWeight={700}>* Salutation</FormLabel>
                                     <ChakraSelect 
                                         name="salutation"
@@ -105,7 +105,7 @@ function RegisterMain () {
                                     {errors.salutation && <Text fontSize={'10px'} color={'red.400'}>{errors.salutation}</Text>}
                                 </FormControl>
                     
-                                <FormControl isInvalid={errors.firstName && touched.firstName}>
+                                <FormControl>
                                     <FormLabel fontWeight={700}>* First Name</FormLabel>
                                     <Input
                                         name="firstName" 
@@ -118,7 +118,7 @@ function RegisterMain () {
                                 </FormControl>
                             </HStack>
                 
-                            <FormControl isInvalid={errors.lastName && touched.lastName}>
+                            <FormControl>
                                 <FormLabel fontWeight={700}>* Last Name</FormLabel>
                                 <Input 
                                     name="lastName" 
@@ -130,7 +130,7 @@ function RegisterMain () {
                                 {errors.lastName && <Text fontSize={'10px'} color={'red.400'}>{errors.lastName}</Text>}
                             </FormControl>
 
-                            <FormControl isInvalid={errors.country && touched.country}>
+                            <FormControl>
                                 <FormLabel fontWeight={700}>* Country</FormLabel>
                                 <SelectComponent
                                     options={countryOptions}
@@ -142,7 +142,7 @@ function RegisterMain () {
                             </FormControl>
 
                 
-                            <FormControl isInvalid={errors.phoneNumber && touched.phoneNumber}>
+                            <FormControl>
                                 <FormLabel fontWeight={700}>* Phone Number</FormLabel>
                                 <PhoneInput
                                     country={"nl"}
@@ -153,7 +153,7 @@ function RegisterMain () {
                                 <Text fontSize="11px">Format: 333-333-3333</Text>
                             </FormControl>
                 
-                            <FormControl isInvalid={errors.email && touched.email}>
+                            <FormControl>
                                 <FormLabel fontWeight={700}>* Email</FormLabel>
                                 <Input 
                                     name="email" 
@@ -165,7 +165,7 @@ function RegisterMain () {
                                 {errors.email && <Text fontSize={'10px'} color={'red.400'}>{errors.email}</Text>}
                             </FormControl>
                 
-                            <FormControl isInvalid={errors.confirmEmail && touched.confirmEmail}>
+                            <FormControl>
                                 <FormLabel fontWeight={700}>* Confirm Email</FormLabel>
                                 <Input 
                                     name="confirmEmail" 
@@ -177,7 +177,7 @@ function RegisterMain () {
                                 {errors.confirmEmail && <Text fontSize={'10px'} color={'red.400'}>{errors.confirmEmail}</Text>}
                             </FormControl>
                 
-                            <FormControl isInvalid={errors.password && touched.password}>
+                            <FormControl>
                                 <FormLabel fontWeight={700}>* Password</FormLabel>
                                 <InputGroup>
                                     <Input 
@@ -202,7 +202,7 @@ function RegisterMain () {
                                 <Text fontSize="xs">8 - 255 characters</Text>
                             </FormControl>
                 
-                            <FormControl isInvalid={errors.confirmPassword && touched.confirmPassword}>
+                            <FormControl>
                                 <FormLabel fontWeight={700}>* Confirm Password</FormLabel>
                                 <InputGroup>
                                     <Input 

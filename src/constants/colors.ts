@@ -1,4 +1,4 @@
-import { allLower } from "@/utils/utils"
+import { allLower } from "../utils/utils"
 import { statuses } from "./constants"
 
 export const statusColor = (code: string) => {

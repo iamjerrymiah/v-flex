@@ -156,7 +156,7 @@ function LoginMain() {
 
                                 
                                 <Stack spacing={4} w="full">
-                                    <FormControl isInvalid={errors.email && touched.email}>
+                                    <FormControl>
                                         <Input 
                                             name="email" 
                                             value={values?.email}
@@ -167,7 +167,7 @@ function LoginMain() {
                                         {errors.email && <Text fontSize={'10px'} color={'red.400'}>{errors.email}</Text>}
                                     </FormControl>
 
-                                    <FormControl isInvalid={errors.password && touched.password}>
+                                    <FormControl>
                                         <InputGroup>
                                             <Input
                                                 name="password" 

@@ -8,17 +8,17 @@ import { Link } from "react-router";
 
 export default function Sidebar({}: { isOpen: boolean; onClose: ()=>void }) {
 
-    const [history, setHistory] = useState([{ categories, currentCategory: null }]); // Track navigation history
+    const [history, setHistory] = useState<any>([{ categories, currentCategory: null }]); // Track navigation history
 
     const openCategory = (category:any) => {
       if (category.subcategories.length > 0) {
-        setHistory((prev) => [...prev, { categories: category.subcategories, currentCategory: category }]);
+        setHistory((prev:any) => [...prev, { categories: category.subcategories, currentCategory: category }]);
       }
     };
   
     const goBack = () => {
       if (history.length > 1) {
-        setHistory((prev) => prev.slice(0, -1));
+        setHistory((prev:any) => prev.slice(0, -1));
       }
     };
 
@@ -56,7 +56,7 @@ export default function Sidebar({}: { isOpen: boolean; onClose: ()=>void }) {
                         )}
 
                         {/* Render category items */}
-                        {history[history?.length - 1].categories.map((category) => (
+                        {history[history?.length - 1].categories.map((category:any) => (
                             <HStack
                                 key={category.name}
                                 justifyContent="space-between"
