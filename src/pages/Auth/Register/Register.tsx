@@ -83,7 +83,7 @@ function RegisterMain () {
                         handleChange,
                         values,
                         isSubmitting,
-                        touched,
+                        // touched,
                         errors,
                         setFieldValue,
                         handleSubmit, }) => (
