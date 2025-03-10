@@ -26,7 +26,7 @@ const PageMainContainer = React.memo(({ title, description, children, fullPage, 
     return (
         <React.Fragment>
             <Helmet>
-                {title && <title> {`${title} ${title ? '| V-Flex' : 'V-Flex'}`} </title>}
+                {title && <title> {`${title} ${title ? '| V-Edition' : 'V-Edition'}`} </title>}
                 {description && <meta name="description" content={description} />}
             </Helmet>
             <Main fullPage={fullPage}>

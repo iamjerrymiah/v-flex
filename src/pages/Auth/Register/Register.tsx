@@ -2,7 +2,7 @@ import PageMainContainer from '../../../common/PageMain'
 import MainAppLayout from '../../../layouts/MainAppLayout'
 import { Container } from '../../../styling/layout'
 import AnimateRoute from '../../../common/AnimateRoute'
-import { Select as ChakraSelect, Box, Button, Checkbox, Flex, FormControl, FormLabel, Grid, Heading, HStack, Input, InputGroup, InputRightElement, Stack, Text } from "@chakra-ui/react";
+import { Select as ChakraSelect, Box, Button, Checkbox, Flex, FormControl, FormLabel, Grid, Heading, Input, InputGroup, InputRightElement, Stack, Text } from "@chakra-ui/react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useState } from "react";
 import PhoneInput from "react-phone-input-2";
@@ -10,7 +10,7 @@ import "react-phone-input-2/lib/style.css";
 import SelectComponent from "react-select";
 import countryList from "react-select-country-list";
 import { Link, useNavigate } from 'react-router';
-import ReCAPTCHA from "react-google-recaptcha";
+// import ReCAPTCHA from "react-google-recaptcha";
 import { Formik, Field, Form } from "formik";
 import { registerSchema } from '../../../schema/auth';
 import Notify from '../../../utils/notify';
@@ -25,7 +25,7 @@ function RegisterMain () {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const { mutateAsync } = useCreateUser()
+    const { mutateAsync, isPending } = useCreateUser()
 
     const handleRegister = async (data: any) => {
         try {
@@ -51,10 +51,11 @@ function RegisterMain () {
 
     return (
         <Flex 
+            w={'100%'} 
             align="center" 
             justify="center" 
             bg="white" 
-            px={['0px', '0px', '0px', '280px']}
+            px={['0px', '0px', '0px', '50px', '280px']}
             pb={'50px'}
         >
             <Box w="full">
@@ -89,8 +90,8 @@ function RegisterMain () {
                         handleSubmit, }) => (
                     <Form onSubmit={handleSubmit}>
                         <Grid templateColumns={["1fr", "1fr", "1fr", "1fr 1fr"]} gap={6}>
-                            <HStack>
-                                <FormControl w={'150px'}>
+                            <Stack direction={['column', 'row', 'row', 'row']}>
+                                <FormControl w={['100%', '150px']}>
                                     <FormLabel fontWeight={700}>* Salutation</FormLabel>
                                     <ChakraSelect 
                                         name="salutation"
@@ -102,7 +103,7 @@ function RegisterMain () {
                                             <option key={i}>{opt}</option>
                                         ))}
                                     </ChakraSelect>
-                                    {errors.salutation && <Text fontSize={'10px'} color={'red.400'}>{errors.salutation}</Text>}
+                                    {errors.salutation && <Text fontSize={'12px'} color={'red.400'}>{errors.salutation}</Text>}
                                 </FormControl>
                     
                                 <FormControl>
@@ -114,9 +115,9 @@ function RegisterMain () {
                                         placeholder="Enter your first name" 
                                         required
                                     />
-                                    {errors.firstName && <Text fontSize={'10px'} color={'red.400'}>{errors.firstName}</Text>}
+                                    {errors.firstName && <Text fontSize={'12px'} color={'red.400'}>{errors.firstName}</Text>}
                                 </FormControl>
-                            </HStack>
+                            </Stack>
                 
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Last Name</FormLabel>
@@ -127,7 +128,7 @@ function RegisterMain () {
                                     placeholder="Enter your last name" 
                                     required
                                 />
-                                {errors.lastName && <Text fontSize={'10px'} color={'red.400'}>{errors.lastName}</Text>}
+                                {errors.lastName && <Text fontSize={'12px'} color={'red.400'}>{errors.lastName}</Text>}
                             </FormControl>
 
                             <FormControl>
@@ -138,7 +139,7 @@ function RegisterMain () {
                                     onChange={(option:any) => setFieldValue("country", option.value)}
                                     required
                                 />
-                                {errors.country && <Text fontSize={'10px'} color={'red.400'}>{errors.country}</Text>}
+                                {errors.country && <Text fontSize={'12px'} color={'red.400'}>{errors.country}</Text>}
                             </FormControl>
 
                 
@@ -149,7 +150,7 @@ function RegisterMain () {
                                     inputStyle={{ width: "100%" }}
                                     onChange={(value) => setFieldValue("phoneNumber", value)}
                                 />
-                                {errors.phoneNumber && <Text fontSize={'10px'} color={'red.400'}>{errors.phoneNumber}</Text>}
+                                {errors.phoneNumber && <Text fontSize={'12px'} color={'red.400'}>{errors.phoneNumber}</Text>}
                                 <Text fontSize="11px">Format: 333-333-3333</Text>
                             </FormControl>
                 
@@ -162,7 +163,7 @@ function RegisterMain () {
                                     placeholder="Enter your email" 
                                     required
                                 />
-                                {errors.email && <Text fontSize={'10px'} color={'red.400'}>{errors.email}</Text>}
+                                {errors.email && <Text fontSize={'12px'} color={'red.400'}>{errors.email}</Text>}
                             </FormControl>
                 
                             <FormControl>
@@ -174,7 +175,7 @@ function RegisterMain () {
                                     placeholder="Enter your email again" 
                                     required
                                 />
-                                {errors.confirmEmail && <Text fontSize={'10px'} color={'red.400'}>{errors.confirmEmail}</Text>}
+                                {errors.confirmEmail && <Text fontSize={'12px'} color={'red.400'}>{errors.confirmEmail}</Text>}
                             </FormControl>
                 
                             <FormControl>
@@ -198,7 +199,7 @@ function RegisterMain () {
                                         </Button>
                                         </InputRightElement>
                                 </InputGroup>
-                                {errors.password && <Text fontSize={'10px'} color={'red.400'}>{errors.password}</Text>}
+                                {errors.password && <Text fontSize={'12px'} color={'red.400'}>{errors.password}</Text>}
                                 <Text fontSize="xs">8 - 255 characters</Text>
                             </FormControl>
                 
@@ -217,13 +218,13 @@ function RegisterMain () {
                                         <Button
                                             size="sm"
                                             variant="ghost"
-                                            onClick={() => setShowConfirmPassword(!showPassword)}
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                         >
-                                            {showPassword ? <FaEye /> : <FaEyeSlash />}
+                                            {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
                                         </Button>
                                     </InputRightElement>
                                 </InputGroup>
-                                {errors.confirmPassword && <Text fontSize={'10px'} color={'red.400'}>{errors.confirmPassword}</Text>}
+                                {errors.confirmPassword && <Text fontSize={'12px'} color={'red.400'}>{errors.confirmPassword}</Text>}
                             </FormControl>
                         </Grid>
             
@@ -235,14 +236,14 @@ function RegisterMain () {
                             </Field>
                             
                             <Text fontSize="15px" color={'gray'}>
-                                By clicking "Create Account", I consent to commercial promotion activities related to V-flex Group Brands <br />
+                                By clicking "Create Account", I consent to commercial promotion activities related to V-Edition Group Brands <br />
                                 by e-mail and/or text messages according to the <Link to={'#'}><Box as='span' textDecor={'underline'}>Privacy Policy. </Box></Link>   
                             </Text>
                         </Stack>
 
                         <Stack justify={'center'} align={'center'} mt={6} spacing={6}>
                             {/* reCAPTCHA */}
-                            <ReCAPTCHA sitekey="YOUR_SITE_KEY_HERE" />
+                            {/* <ReCAPTCHA sitekey="YOUR_SITE_KEY_HERE" /> */}
 
                             <Button 
                                 bg="black" 
@@ -250,8 +251,8 @@ function RegisterMain () {
                                 color="white" 
                                 _hover={{ bg: "gray" }}
                                 w={['100%', '40%']}
-                                isDisabled={!values.terms}
-                                isLoading={isSubmitting}
+                                isDisabled={ isSubmitting  || isPending}
+                                isLoading={isSubmitting || isPending}
                             >
                                 CREATE ACCOUNT
                             </Button>

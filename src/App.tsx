@@ -8,6 +8,8 @@ import Register from './pages/Auth/Register/Register'
 import VerifyEmail from './pages/Auth/VerifyEmail/VerifyEmail'
 
 import HomePage from './pages/Home/Home'
+import ForgotPasswordLink from './pages/Auth/ForgotPasswordLink/ForgotPasswordLink'
+import ResetPassword from './pages/Auth/ForgotPasswordLink/ResetPassword'
 
 const router = createBrowserRouter([
 	{
@@ -31,6 +33,14 @@ const router = createBrowserRouter([
 			{
                 path: '/auth/verify',
                 element: <VerifyEmail />,
+            },
+			{
+                path: '/auth/password-reset-dialog',
+                element: <ForgotPasswordLink />,
+            },
+			{
+                path: '/auth/reset-password/:id/:token',
+                element: <ResetPassword />,
             },
 		]
 	}

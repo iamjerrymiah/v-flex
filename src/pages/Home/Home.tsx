@@ -3,18 +3,22 @@ import PageMainContainer from "../../common/PageMain";
 import MainAppLayout from "../../layouts/MainAppLayout";
 import AnimateRoute from "../../common/AnimateRoute";
 import HeroSection from "./components/HeroSection";
-import ProductsSection from "./components/ProductsSection";
+// import ProductsSection from "./components/ProductsSection";
 import PromotionalSection from "./components/PromotionalSection";
 import TestimonialSection from "./components/TestimonialSection";
 import FashionSection from "./components/FashionSection";
 import WomenFashionSection from "./components/WomenFashionSection";
 import SneakerCollection from "./components/SneakerCollection";
 import { Container } from "../../styling/layout";
+import VisionSection from "./components/VisionSection";
 
 function HomeMain() {
   return (
     <Box bg="white" color="black" >
         <HeroSection />
+        <Container>
+            <VisionSection />
+        </Container>
         <Container>
             <FashionSection />
         </Container>
@@ -22,9 +26,9 @@ function HomeMain() {
         <Container>
             <WomenFashionSection />
         </Container>
-        <Container>
+        {/* <Container>
             <ProductsSection />
-        </Container>
+        </Container> */}
         <SneakerCollection />
         <Container>
             <TestimonialSection />

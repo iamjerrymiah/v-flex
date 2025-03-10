@@ -10,29 +10,29 @@ export default function HeroSection() {
 
     return (
         <Flex
-            h="100vh"
+            h="90vh"
             w="full"
             justify="center"
             align="center"
             direction="column"
             textAlign="center"
             bgImage={heroImg}
-            bgSize="cover"
-            objectFit={'cover'}
+            bgSize={['auto', 'cover']}
+            objectFit={'contain'}
             bgRepeat="no-repeat"
-            bgPosition="center"
+            bgPosition="top"
             backgroundAttachment="fixed"
         >
             <MotionAnimator direction='left' delay={0.4}>
                 <Heading 
                     color={'white'} 
-                    fontSize={["5xl", "5xl", '6xl']} 
+                    fontSize={["4xl", "5xl", '6xl']} 
                     fontWeight="bold"
                 >
                     Exclusive Fashion for Everyone
                 </Heading>
             </MotionAnimator>
-            <Text fontSize={["14px", '16px', '16px', '20px']} fontWeight={600} mt={4}>Discover the latest trends in male and female fashion</Text>
+            <Text color={'white'} fontSize={["14px", '16px', '16px', '20px']} fontWeight={600} mt={4}>Discover the latest trends in male and female fashion</Text>
             <Button 
                 mt={6} 
                 size="lg" 

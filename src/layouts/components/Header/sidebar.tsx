@@ -180,8 +180,8 @@ const categories = [
       ],
     },
     {
-      name: "Sneakers",
-      link: "/sneakers",
+      name: "Accessories",
+      link: "/accessories",
       subcategories: [
         { name: "Dresses", link: "/women/dresses", subcategories: [] },
         {
@@ -194,94 +194,79 @@ const categories = [
         },
       ],
     },
-    {
-      name: "Watches",
-      link: "/watches",
-      subcategories: [
-        { name: "Dresses", link: "/women/dresses", subcategories: [] },
-        {
-          name: "Handbags",
-          link: "/women/handbags",
-          subcategories: [
-            { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
-            { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
-          ],
-        },
-      ],
-    },
-    {
-      name: "Jewelry",
-      link: "/jewelry",
-      subcategories: [
-        { name: "Dresses", link: "/women/dresses", subcategories: [] },
-        {
-          name: "Handbags",
-          link: "/women/handbags",
-          subcategories: [
-            { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
-            { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
-          ],
-        },
-      ],
-    },
-    {
-      name: "Fragrances",
-      link: "/fragrances",
-      subcategories: [
-        { name: "Dresses", link: "/women/dresses", subcategories: [] },
-        {
-          name: "Handbags",
-          link: "/women/handbags",
-          subcategories: [
-            { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
-            { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
-          ],
-        },
-      ],
-    },
-	{
-		name: "Eyewear",
-		link: "/eyewear",
-		subcategories: [
-		  { name: "Dresses", link: "/women/dresses", subcategories: [] },
-		  {
-			name: "Handbags",
-			link: "/women/handbags",
-			subcategories: [
-			  { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
-			  { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
-			],
-		  },
-		],
-	},
-	{
-		name: "Gifts",
-		link: "/gifts",
-		subcategories: [
-		  { name: "Dresses", link: "/women/dresses", subcategories: [] },
-		  {
-			name: "Handbags",
-			link: "/women/handbags",
-			subcategories: [
-			  { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
-			  { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
-			],
-		  },
-		],
-	},
-	{
-		name: "Hospitality",
-		link: "/hospitality",
-		subcategories: [
-		  { name: "Dresses", link: "/women/dresses", subcategories: [] },
-		  {
-			name: "Handbags",
-			link: "/women/handbags",
-			subcategories: [
-			  { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
-			  { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
-			],
-		  },
-		],
-	  },
+  //   {
+  //     name: "Jewelry",
+  //     link: "/jewelry",
+  //     subcategories: [
+  //       { name: "Dresses", link: "/women/dresses", subcategories: [] },
+  //       {
+  //         name: "Handbags",
+  //         link: "/women/handbags",
+  //         subcategories: [
+  //           { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
+  //           { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
+  //         ],
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     name: "Fragrances",
+  //     link: "/fragrances",
+  //     subcategories: [
+  //       { name: "Dresses", link: "/women/dresses", subcategories: [] },
+  //       {
+  //         name: "Handbags",
+  //         link: "/women/handbags",
+  //         subcategories: [
+  //           { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
+  //           { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
+  //         ],
+  //       },
+  //     ],
+  //   },
+	// {
+	// 	name: "Eyewear",
+	// 	link: "/eyewear",
+	// 	subcategories: [
+	// 	  { name: "Dresses", link: "/women/dresses", subcategories: [] },
+	// 	  {
+	// 		name: "Handbags",
+	// 		link: "/women/handbags",
+	// 		subcategories: [
+	// 		  { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
+	// 		  { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
+	// 		],
+	// 	  },
+	// 	],
+	// },
+	// {
+	// 	name: "Gifts",
+	// 	link: "/gifts",
+	// 	subcategories: [
+	// 	  { name: "Dresses", link: "/women/dresses", subcategories: [] },
+	// 	  {
+	// 		name: "Handbags",
+	// 		link: "/women/handbags",
+	// 		subcategories: [
+	// 		  { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
+	// 		  { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
+	// 		],
+	// 	  },
+	// 	],
+	// },
+	// {
+	// 	name: "Hospitality",
+	// 	link: "/hospitality",
+	// 	subcategories: [
+	// 	  { name: "Dresses", link: "/women/dresses", subcategories: [] },
+	// 	  {
+	// 		name: "Handbags",
+	// 		link: "/women/handbags",
+	// 		subcategories: [
+	// 		  { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
+	// 		  { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
+	// 		],
+	// 	  },
+	// 	],
+	//   },
   ];

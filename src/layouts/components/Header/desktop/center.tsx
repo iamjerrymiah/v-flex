@@ -5,7 +5,7 @@ import { Link as RouterLink } from "react-router";
 
 const Container = styled.div`
     ${spaceBetweenAndCenter};
-    width: 25%;
+    width: 20%;
     font-size: 14px;
     font-weight: 400;
     padding-top: 6px;

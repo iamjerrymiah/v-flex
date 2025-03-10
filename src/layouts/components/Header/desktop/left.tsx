@@ -18,7 +18,7 @@ export default function HeaderLeft() {
     return (
         <LeftStyle>
             <Link to={'/'}>
-                <Text fontSize={'30px'} fontWeight={400}>V-FLEX</Text>
+                <Text fontSize={'30px'} fontWeight={400}>V-EDITION</Text>
             </Link>
         </LeftStyle>
     )

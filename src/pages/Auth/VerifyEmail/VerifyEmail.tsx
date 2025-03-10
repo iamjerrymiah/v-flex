@@ -17,7 +17,7 @@ function VerifyEmailMain() {
 
     const { user } =  useGetAuthState();
 
-    const { mutateAsync } = useVerifyEmail();
+    const { mutateAsync, isPending } = useVerifyEmail();
 
     const handleSubmit = async (data: any) => {
         const transform = Number(data)
@@ -28,7 +28,7 @@ function VerifyEmailMain() {
                 email: user?.email, 
                 code: transform 
             });
-            Notify.success("Acccount Verified Successfully!")
+            Notify.success("Acccount Verified Successfully! Please log In")
 
             navigate('/login')
             return payload;
@@ -46,9 +46,11 @@ function VerifyEmailMain() {
         }
     }, [countdown]);
 
-    useEffect(() => {
-        if(user?.emailVerified) {navigate('/')}
-    }, [user?.emailVerified])
+    useEffect(() => { 
+        if(!user || user?.emailVerified) {
+            navigate('/')
+        } 
+    }, [user])
 
     return (
         <Flex 
@@ -57,11 +59,11 @@ function VerifyEmailMain() {
             justify="center" 
             bg="white" 
             mt={'110px'}
-            px={['0px', '0px', '0px', '30px']}
+            px={['0px', '0px', '0px', '50px', '280px']}
             pb={'50px'}
         >
             <Flex direction="column" mx="auto">
-                <Flex direction="column" justify="flex-start" mt={['80px', '0px']}>
+                <Flex direction="column" textAlign={'center'} mt={['80px', '0px']}>
                     <Heading textAlign="center" fontSize={["30px", '40px']} fontWeight={400} mb={4}> VERIFY YOUR ACCOUNT </Heading>
                     <Text fontSize={["12px", '14px']} color="gray.500">
                             We have sent a verification code to <br />
@@ -76,9 +78,9 @@ function VerifyEmailMain() {
                     {[...Array(6)].map((_, index) => (
                         <PinInputField
                             key={index}
-                            w={["50px", "85px"]}
-                            h={["50px", "70px"]}
-                            fontSize="2xl"
+                            w={["40px", "85px"]}
+                            h={["40px", "70px"]}
+                            fontSize={["xl", "2xl"]}
                             textAlign="center"
                             borderRadius="17px"
                             boxShadow="md"
@@ -89,14 +91,14 @@ function VerifyEmailMain() {
                 </HStack>
 
 
-                <Flex justify="flex-end" mt={2} mb={4}>
+                {/* <Flex justify="flex-end" mt={2} mb={4}>
                     <Text fontSize={["12px"]} color="gray.500" cursor={'pointer'}>
                         Resend code in{" "}
                         <Text as="span" fontWeight="bold" color="blue.300">
                             {countdown}
                         </Text>s
                     </Text>
-                </Flex>
+                </Flex> */}
 
                 <Button 
                     mt={6}
@@ -106,6 +108,7 @@ function VerifyEmailMain() {
                     w={'100%'}
                     onClick={() => handleSubmit(code)}
                     isDisabled={!code}
+                    isLoading={isPending}
                 >
                     CONTINUE
                 </Button>

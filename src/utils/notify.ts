@@ -8,7 +8,7 @@ const Notify = {
             title: title,
             description: msg,
             status: 'success',
-            duration: 3000,
+            duration: 4000,
             isClosable: true,
             position: position,
         })
@@ -19,7 +19,7 @@ const Notify = {
             title: title,
             description: msg,
             status: 'error',
-            duration: 3000,
+            duration: 4000,
             isClosable: true,
             position: position,
         })
@@ -30,7 +30,7 @@ const Notify = {
             title: title,
             description: msg,
             status: 'warning',
-            duration: 3000,
+            duration: 4000,
             isClosable: true,
             position: position,
         })
@@ -41,7 +41,7 @@ const Notify = {
             title: title,
             description: msg,
             status: 'info',
-            duration: 3000,
+            duration: 4000,
             isClosable: true,
             position: position,
         })

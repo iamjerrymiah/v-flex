@@ -30,7 +30,7 @@ function LoginMain() {
         }
     };
 
-    const { mutateAsync } = useLogin();
+    const { mutateAsync, isPending } = useLogin();
 
 
     const handleLogin = async (data: any) => {
@@ -50,7 +50,7 @@ function LoginMain() {
             if(e.statusCode == 422)
             {
                 Notify.error(e?.message ?? "Failed")
-            } else if([400, 403, 404, 500].includes(e.statusCode)) 
+            } else if([400, 401, 403, 404, 500].includes(e.statusCode)) 
             {
                 Notify.error("Incorrect Credentials")
             }
@@ -65,7 +65,7 @@ function LoginMain() {
             h={['100vh', 'full']}
             justify="center" 
             bg="white" 
-            mt={'110px'}
+            mt={'112px'}
             px={['0px', '0px', '0px', '30px']}
             pb={'50px'}
         >
@@ -164,7 +164,7 @@ function LoginMain() {
                                             placeholder="Your Email" 
                                             required
                                         />
-                                        {errors.email && <Text fontSize={'10px'} color={'red.400'}>{errors.email}</Text>}
+                                        {errors.email && <Text fontSize={'12px'} color={'red.400'}>{errors.email}</Text>}
                                     </FormControl>
 
                                     <FormControl>
@@ -187,7 +187,7 @@ function LoginMain() {
                                                 </Button>
                                             </InputRightElement>
                                         </InputGroup>
-                                        {errors.password && <Text fontSize={'10px'} color={'red.400'}>{errors.password}</Text>}
+                                        {errors.password && <Text fontSize={'12px'} color={'red.400'}>{errors.password}</Text>}
                                     </FormControl>
 
                                     <Button 
@@ -195,11 +195,12 @@ function LoginMain() {
                                         type="submit"
                                         color="white" 
                                         _hover={{ bg: "gray" }}
-                                        isLoading={isSubmitting}
+                                        disabled={isSubmitting || isPending}
+                                        isLoading={isSubmitting || isPending}
                                     >
                                         LOGIN
                                     </Button>
-                                    <Link to={"/auth/forgot-password"}>
+                                    <Link to={"/auth/password-reset-dialog"}>
                                         <Box
                                             color="black" 
                                             fontSize="14px" 

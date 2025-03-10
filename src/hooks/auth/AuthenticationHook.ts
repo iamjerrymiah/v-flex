@@ -9,7 +9,7 @@ const key = 'auth';
 export interface AuthState {
     isAuthenticated: boolean;
     authToken: string | null | undefined;
-    userId: string | null | undefined;
+    v_userId: string | null | undefined;
     authState: AuthStateEnum;
     user: any | null | undefined | object;
     isLoading: boolean;
@@ -24,7 +24,7 @@ export const useLogin = () => {
             queryClient.setQueryData<any>([key], (prevAuth: any) => prevAuth ? {...prevAuth, isLoading: true} : { isLoading: true});
 
             return customMutationRequest("SECURITY", `/user/login`, 'POST', credentials).then((res:any) => {
-                localStorage.setItem('userId', res?.data?.user?._id);
+                localStorage.setItem('v_userId', res?.data?.user?._id);
                 localStorage.setItem(storeToken, res?.data?.token);
                 [SECHTTP].forEach(instance => {
                     instance.defaults.headers.common['Authorization'] = `Bearer ${res?.data?.token}`;
@@ -36,7 +36,7 @@ export const useLogin = () => {
             const auth: AuthState = {
                 isAuthenticated: true,
                 authToken: data?.data?.token,
-                userId: data?.data?.user?._id,
+                v_userId: data?.data?.user?._id,
                 authState: AuthStateEnum.Authenticated,
                 user: {...data?.data?.user, fullName: `${data?.data?.user?.firstName} ${data?.data?.user?.lastName}`},
                 isLoading: false,
@@ -45,7 +45,7 @@ export const useLogin = () => {
             queryClient.setQueryData<AuthState>([key], (prevAuth) => prevAuth ? {...prevAuth, ...auth} : auth);
 
         },onError: () => {
-            localStorage.removeItem('userId');
+            localStorage.removeItem('v_userId');
             localStorage.removeItem(storeToken);
             [SECHTTP].forEach(instance => {
                 instance.defaults.headers.common['Authorization'] = '';
@@ -53,7 +53,7 @@ export const useLogin = () => {
             const auth: Partial<AuthState> = {
                 isAuthenticated: false,
                 authToken: null,
-                userId: null,
+                v_userId: null,
                 authState: AuthStateEnum.Unauthenticated,
                 user: null,
             };
@@ -70,7 +70,7 @@ export const useCreateUser = () => {
             queryClient.setQueryData<any>([key], (prevAuth: any) => prevAuth ? {...prevAuth, isLoading: true} : { isLoading: true});
 
             return customMutationRequest("SECURITY", `/user`, 'POST', credentials).then((res:any) => {
-                localStorage.setItem('userId', res?.data?.user?._id);
+                localStorage.setItem('v_userId', res?.data?._id);
                 localStorage.setItem(storeToken, res?.data?.token);
                 [SECHTTP].forEach(instance => {
                     instance.defaults.headers.common['Authorization'] = `Bearer ${res?.data?.token}`;
@@ -80,18 +80,18 @@ export const useCreateUser = () => {
         },
         onSuccess: (data) => {
             const auth: AuthState = {
-                isAuthenticated: true,
+                isAuthenticated: false,
                 authToken: data?.data?.token,
-                userId: data?.data?.user?._id,
+                v_userId: data?.data?._id,
                 authState: AuthStateEnum.Authenticated,
-                user: {...data?.data?.user, fullName: `${data?.data?.user?.firstName} ${data?.data?.user?.lastName}`},
+                user: {...data?.data, fullName: `${data?.data?.firstName} ${data?.data?.lastName}`},
                 isLoading: false,
                 networkFailure: false,
             };
             queryClient.setQueryData<AuthState>([key], (prevAuth) => prevAuth ? {...prevAuth, ...auth} : auth);
 
         },onError: () => {
-            localStorage.removeItem('userId');
+            localStorage.removeItem('v_userId');
             localStorage.removeItem(storeToken);
             [SECHTTP].forEach(instance => {
                 instance.defaults.headers.common['Authorization'] = '';
@@ -99,7 +99,7 @@ export const useCreateUser = () => {
             const auth: Partial<AuthState> = {
                 isAuthenticated: false,
                 authToken: null,
-                userId: null,
+                v_userId: null,
                 authState: AuthStateEnum.Unauthenticated,
                 user: null,
             };
@@ -115,7 +115,7 @@ export const useGetAuthState = () => {
         return queryClient.getQueryData<AuthState>([key]) ?? {
             isAuthenticated: false,
             authToken: null,
-            userId: null,
+            v_userId: null,
             authState: AuthStateEnum.Unauthenticated,
             user: null,
             isLoading: false,
@@ -126,7 +126,7 @@ export const useGetAuthState = () => {
     useEffect(() => {
         const observer = new QueryObserver<AuthState>(queryClient, { queryKey: [key] });
 
-        const unsubscribe = observer.subscribe(result => {
+        const unsubscribe = observer.subscribe((result:any) => {
             if (result.data) setAuth(result.data);
         });
 
@@ -162,7 +162,7 @@ export const useGetAuthUser = (execute: boolean = false) => {
                 authToken: localStorage.getItem(storeToken),
                 isAuthenticated: true,
                 authState: AuthStateEnum.Authenticated,
-                userId: user?.data?._id,
+                v_userId: user?.data?._id,
                 isLoading: false,
             }));
 
@@ -180,7 +180,7 @@ export const useLogout = () => {
         mutationFn: () => {
             return deleteRequest("SECURITY", `/logout`).then((res:any) => {
 
-                localStorage.removeItem('userId')
+                localStorage.removeItem('v_userId')
                 localStorage.removeItem(storeToken)
                 // [SECHTTP].forEach(instance => {
                 //     instance.defaults.headers.common['Authorization'] = ``;
@@ -190,7 +190,7 @@ export const useLogout = () => {
         },
         onSuccess: () => {
 
-            localStorage.removeItem('userId')
+            localStorage.removeItem('v_userId')
             localStorage.removeItem(storeToken)
 
             // [SECHTTP].forEach(instance => {
@@ -200,7 +200,7 @@ export const useLogout = () => {
             const auth: Partial<AuthState> = {
                 isAuthenticated: false,
                 authToken: null,
-                userId: null,
+                v_userId: null,
                 authState: AuthStateEnum.Unauthenticated,
                 user: null,
             };
@@ -208,7 +208,7 @@ export const useLogout = () => {
 
         },onError: () => {
 
-            localStorage.removeItem('userId')
+            localStorage.removeItem('v_userId')
             localStorage.removeItem(storeToken)
 
             // [SECHTTP].forEach(instance => {
@@ -218,7 +218,7 @@ export const useLogout = () => {
             const auth: Partial<AuthState> = {
                 isAuthenticated: false,
                 authToken: null,
-                userId: null,
+                v_userId: null,
                 authState: AuthStateEnum.Unauthenticated,
                 user: null,
             };
@@ -241,6 +241,44 @@ export const useVerifyEmail = () => {
     });
 };
 
+
+export const useResetPasswordLink = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return customMutationRequest("SECURITY", `/user/reset/link`, 'POST', data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [key, 'reset-pass-link'] });
+        },
+    });
+};
+
+
+export const useResetPassword = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return customMutationRequest("SECURITY", `/user/reset/password`, 'PUT', data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [key, 'reset-password'] });
+        },
+    });
+};
+
+
+export const useChangePassword = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return customMutationRequest("SECURITY", `/user/change/password`, 'PUT', data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [key, 'change-password'] });
+        },
+    });
+};
 
 
 

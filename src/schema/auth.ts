@@ -19,5 +19,16 @@ export const registerSchema = Yup.object().shape({
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password")], "Passwords must match")
       .required("Required"),
-    terms: Yup.boolean().oneOf([true], "You must accept the terms"),
+    // terms: Yup.boolean().oneOf([true], "You must accept the terms"),
 });
+
+export const forgotPasswordSchema = Yup.object().shape({
+  email: Yup.string().email("Invalid email").required("Email is Required"),
+})
+
+export const resetPasswordSchema = Yup.object().shape({
+  password: Yup.string().min(8, "At least 8 characters").required("Password is Required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password")], "Passwords must match")
+    .required("Required"),
+})

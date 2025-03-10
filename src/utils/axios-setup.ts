@@ -30,13 +30,13 @@ function openAxios(baseURL: string) {
             if (error.response?.status === 401) {
 
                 localStorage.removeItem(storeToken);
-                localStorage.removeItem("userId");
+                localStorage.removeItem("v_userId");
                 // Notify.error(error.response?.data?.error);
 
                 const auth = {
                     isAuthenticated: false,
                     authToken: null,
-                    userId: null,
+                    v_userId: null,
                     authState: AuthStateEnum.Unauthenticated,
                     user: null,
                     isLoading: false,

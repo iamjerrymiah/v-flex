@@ -17,9 +17,9 @@ export default function Footer ({}) {
                     <SimpleGrid maxW={'100%'} columns={[1,1,1,4]} spacing={8} >
                         <div>
                             <Link to={'/'}>
-                                <Text fontSize={['24px', '24px', '24px', '36px']} fontWeight={700}>V-FLEX</Text>
+                                <Text fontSize={['24px', '24px', '24px', '36px']} fontWeight={700}>V-EDITION</Text>
                             </Link>
-                            <Text fontSize={'12px'}>Copyright © 2025 V-FLEX. All Rights Reserved.</Text>
+                            <Text fontSize={'12px'}>Copyright © 2025 V-EDITION. All Rights Reserved.</Text>
                         </div>
 
                         <div>
