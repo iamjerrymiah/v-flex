@@ -16,7 +16,7 @@ export default function VisionSection() {
                 Our Vision
               </Heading>
               <Text 
-                fontSize={'18px'} 
+                fontSize={['14px', '18px']} 
                 color="gray.600" 
                 fontWeight="medium"
                 maxW="2xl"
