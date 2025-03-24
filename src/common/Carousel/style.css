@@ -1,0 +1,13 @@
+.react-multi-carousel-dot > button {
+    border-color: rgba(0, 0, 0, 0.1) !important;
+}
+.react-multi-carousel-dot--active > button {
+    background-color: white;
+}
+
+.arrow-on-hover .react-multiple-carousel__arrow {
+    opacity: 0.1;
+}
+.arrow-on-hover:hover .react-multiple-carousel__arrow {
+    opacity: 0.8;
+}

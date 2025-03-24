@@ -3,6 +3,7 @@ import Header from "./components/Header"
 import Footer from "./components/Footer"
 import React from "react"
 import { useGetAuthState, useGetAuthUser } from "../hooks/auth/AuthenticationHook"
+import { useGetProductCollections } from "../hooks/products/collections"
 
 
 const ChildrenWrapper = ({ children, px }: { children: React.ReactNode, px?:any }) => (
@@ -19,6 +20,8 @@ export default function MainAppLayout(props:any) {
     const { isAuthenticated, user } =  useGetAuthState();
 
     const { } = useGetAuthUser(!isAuthenticated && !user);
+
+    const { } = useGetProductCollections({})
 
     return (
         <React.Fragment>

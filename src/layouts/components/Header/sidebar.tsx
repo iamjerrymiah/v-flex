@@ -3,27 +3,34 @@ import { useState } from "react";
 import { Box, Text, VStack, Button, HStack } from "@chakra-ui/react";
 import { MdOutlineChevronRight, MdOutlineArrowBackIos } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router";
+import { useNavigate } from "react-router";
+import { useGetProductCollections } from "../../../hooks/products/collections";
+import { capCase } from "../../../utils/utils";
 
 
-export default function Sidebar({}: { isOpen: boolean; onClose: ()=>void }) {
+export default function Sidebar({ onClose }: { isOpen: boolean; onClose: ()=>void }) {
 
-    const [history, setHistory] = useState<any>([{ categories, currentCategory: null }]); // Track navigation history
+  const navigate = useNavigate()
 
-    const openCategory = (category:any) => {
-      if (category.subcategories.length > 0) {
-        setHistory((prev:any) => [...prev, { categories: category.subcategories, currentCategory: category }]);
-      }
-    };
-  
-    const goBack = () => {
-      if (history.length > 1) {
-        setHistory((prev:any) => prev.slice(0, -1));
-      }
-    };
+  const { data: collectionData = {} } = useGetProductCollections({})
+  const { data: categories = [] } = collectionData
+
+  const [history, setHistory] = useState<any>([{ categories, currentCategory: null }]); // Track navigation history
+
+  const openCategory = (category:any) => {
+    if (category.subcategories.length > 0) {
+      setHistory((prev:any) => [...prev, { categories: category.subcategories, currentCategory: category }]);
+    }
+  };
+
+  const goBack = () => {
+    if (history.length > 1) {
+      setHistory((prev:any) => prev.slice(0, -1));
+    }
+  };
 
     return (
-        <Box px={[2, 4, 4, 10]} mt={6} overflowY={'scroll'}>
+        <Box px={[2, 4, 4, 10]} mt={6}>
             {history.length > 1 && (
                 <Button
                     leftIcon={<MdOutlineArrowBackIos />}
@@ -48,35 +55,50 @@ export default function Sidebar({}: { isOpen: boolean; onClose: ()=>void }) {
                     <VStack align="start" spacing={4} mt={4} px={6}>
 
                         {history[history?.length - 1]?.currentCategory && (
-                            <Link to={history[history.length - 1]?.currentCategory?.link}>
+                            <Box cursor={'pointer'} onClick={() => { navigate(`/products/vl/${history[history.length - 1]?.currentCategory?.slug ?? ""}?componentsVfcategory=${history[history.length - 1]?.currentCategory?._id}`); onClose() }}>
                                 <Box mb={4} fontSize={['28px', '30px']} textDecor={'underline'}>
-                                    {history[history?.length - 1]?.currentCategory?.name}
+                                    {capCase(history[history?.length - 1]?.currentCategory?.name ?? "")}
                                 </Box>
-                            </Link>
+                            </Box>
                         )}
 
-                        {/* Render category items */}
-                        {history[history?.length - 1].categories.map((category:any) => (
-                            <HStack
-                                key={category.name}
+                        {history[history.length - 1]?.categories.map((category: any) => {
+                          // Build full path from history
+                          const fullCategoryPath = history
+                            .slice(1) // Skip the root categories
+                            .map((entry: any) => entry.currentCategory?.slug)
+                            .filter(Boolean) // Remove nulls
+                            .concat(category.slug) // Append current category
+                            .join("/");
+
+                          return (
+                            <VStack key={category._id} w="full" alignItems="stretch">
+                              <HStack
                                 justifyContent="space-between"
-                                pr={[8,10,10, 20]}
+                                pr={[8, 10, 10, 20]}
                                 w="full"
                                 cursor="pointer"
                                 onClick={() => openCategory(category)}
-                            >
-                                {/* If no subcategories, it's a link */}
-                                {category?.subcategories?.length === 0 ? (
-                                    <Link to={category?.link} >
-                                        <Box textDecor={'underline'} fontWeight={400} fontSize={['14px', '18px']}>{category.name}</Box>
-                                    </Link>
-                                    ) : (
-                                        <Text fontWeight={600} fontSize={['16px', '20px']}>{category?.name}</Text>
-                                    )
-                                }
-                                {category?.subcategories?.length > 0 && <Box><MdOutlineChevronRight size={30}/></Box>}
-                            </HStack>
-                        ))}
+                              >
+                                {/* If category has no subcategories, it's a link */}
+                                {category?.subcategories?.length === 0 || !category?.subcategories ? (
+                                  <Box cursor={'pointer'} onClick={() => { navigate(`/products/vl/${fullCategoryPath}?componentsVfcategory=${category._id}`); onClose(); } } >
+                                    <Box textDecor="underline" fontWeight={400} fontSize={['14px', '18px']}>
+                                      {capCase(category.name ?? "")}
+                                    </Box>
+                                  </Box>
+                                ) : (
+                                  <Text fontWeight={600} fontSize={['16px', '20px']}>
+                                    {capCase(category?.name ?? "")}
+                                  </Text>
+                                )}
+
+                                {/* Show right arrow if subcategories exist */}
+                                {category?.subcategories?.length > 0 && <MdOutlineChevronRight size={30} />}
+                              </HStack>
+                            </VStack>
+                          );
+                        })}
                     </VStack>
 
                 </motion.div>
@@ -84,189 +106,3 @@ export default function Sidebar({}: { isOpen: boolean; onClose: ()=>void }) {
       </Box>
     )
 }
-
-
-const categories = [
-    {
-		name: "Men",
-		link: "/men",
-		subcategories: [
-			{
-				name: "Clothing",
-				link: "/men/clothing",
-				subcategories: [
-					{ name: "T-Shirts", link: "/men/clothing/t-shirts", subcategories: [] },
-					{ name: "Leather", link: "/men/clothing/leather", subcategories: [] },
-					{ name: "Outwears & Coats", link: "/men/clothing/outwears", subcategories: [] },
-					{ name: "Poloshirt", link: "/men/clothing/poloshirts", subcategories: [] },
-					{ name: "Denim", link: "/men/clothing/denim", subcategories: [] },
-					{ name: "Knitwear", link: "/men/clothing/knitwear", subcategories: [] },
-					{ name: "Jogging", link: "/men/clothing/jogging", subcategories: [] },
-					// { name: "Sweatshirts & Hoodies", link: "/men/clothing/sweatshirts", subcategories: [] },
-					// { name: "Shirts", link: "/men/clothing/shirts", subcategories: [] },
-					// { name: "Sartorial", link: "/men/clothing/sartorial", subcategories: [] },
-					// { name: "Trousers & Shorts", link: "/men/clothing/trousers", subcategories: [] },
-					// { name: "Beachwear", link: "/men/clothing/beachwear", subcategories: [] },
-					// { name: "Underwear", link: "/men/clothing/underwear", subcategories: [] },
-				],			
-			},
-			{
-				name: "Shoes",
-				link: "/men/shoes",
-				subcategories: [
-					{ name: "Sneakers", link: "/men/shoes/sneakers", subcategories: [] },
-					{ name: "Formal", link: "/men/shoes/formal", subcategories: [] },
-				],
-			},
-			{
-				name: "Bags",
-				link: "/men/bags",
-				subcategories: [
-					{ name: "Sneakers", link: "/men/shoes/sneakers", subcategories: [] },
-					{ name: "Formal", link: "/men/shoes/formal", subcategories: [] },
-				],
-			},
-			{
-				name: "Accessories",
-				link: "/men/accessories",
-				subcategories: [
-					{ name: "Sneakers", link: "/men/shoes/sneakers", subcategories: [] },
-					{ name: "Formal", link: "/men/shoes/formal", subcategories: [] },
-				],
-			},
-			{
-				name: "Fashion Jewelery",
-				link: "/men/jewelery",
-				subcategories: [
-					{ name: "Sneakers", link: "/men/shoes/sneakers", subcategories: [] },
-					{ name: "Formal", link: "/men/shoes/formal", subcategories: [] },
-				],
-			},
-			{
-				name: "Watches",
-				link: "/men/watches",
-				subcategories: []
-			},
-		],
-    },
-    {
-      name: "Women",
-      link: "/women",
-      subcategories: [
-        { name: "Dresses", link: "/women/dresses", subcategories: [] },
-        {
-          name: "Handbags",
-          link: "/women/handbags",
-          subcategories: [
-            { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
-            { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
-          ],
-        },
-      ],
-    },
-    {
-      name: "Kids",
-      link: "/kids",
-      subcategories: [
-        { name: "Dresses", link: "/women/dresses", subcategories: [] },
-        {
-          name: "Handbags",
-          link: "/women/handbags",
-          subcategories: [
-            { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
-            { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
-          ],
-        },
-      ],
-    },
-    {
-      name: "Accessories",
-      link: "/accessories",
-      subcategories: [
-        { name: "Dresses", link: "/women/dresses", subcategories: [] },
-        {
-          name: "Handbags",
-          link: "/women/handbags",
-          subcategories: [
-            { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
-            { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
-          ],
-        },
-      ],
-    },
-  //   {
-  //     name: "Jewelry",
-  //     link: "/jewelry",
-  //     subcategories: [
-  //       { name: "Dresses", link: "/women/dresses", subcategories: [] },
-  //       {
-  //         name: "Handbags",
-  //         link: "/women/handbags",
-  //         subcategories: [
-  //           { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
-  //           { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
-  //         ],
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     name: "Fragrances",
-  //     link: "/fragrances",
-  //     subcategories: [
-  //       { name: "Dresses", link: "/women/dresses", subcategories: [] },
-  //       {
-  //         name: "Handbags",
-  //         link: "/women/handbags",
-  //         subcategories: [
-  //           { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
-  //           { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
-  //         ],
-  //       },
-  //     ],
-  //   },
-	// {
-	// 	name: "Eyewear",
-	// 	link: "/eyewear",
-	// 	subcategories: [
-	// 	  { name: "Dresses", link: "/women/dresses", subcategories: [] },
-	// 	  {
-	// 		name: "Handbags",
-	// 		link: "/women/handbags",
-	// 		subcategories: [
-	// 		  { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
-	// 		  { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
-	// 		],
-	// 	  },
-	// 	],
-	// },
-	// {
-	// 	name: "Gifts",
-	// 	link: "/gifts",
-	// 	subcategories: [
-	// 	  { name: "Dresses", link: "/women/dresses", subcategories: [] },
-	// 	  {
-	// 		name: "Handbags",
-	// 		link: "/women/handbags",
-	// 		subcategories: [
-	// 		  { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
-	// 		  { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
-	// 		],
-	// 	  },
-	// 	],
-	// },
-	// {
-	// 	name: "Hospitality",
-	// 	link: "/hospitality",
-	// 	subcategories: [
-	// 	  { name: "Dresses", link: "/women/dresses", subcategories: [] },
-	// 	  {
-	// 		name: "Handbags",
-	// 		link: "/women/handbags",
-	// 		subcategories: [
-	// 		  { name: "Totes", link: "/women/handbags/totes", subcategories: [] },
-	// 		  { name: "Clutches", link: "/women/handbags/clutches", subcategories: [] },
-	// 		],
-	// 	  },
-	// 	],
-	//   },
-  ];

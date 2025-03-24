@@ -37,7 +37,7 @@ export default function HeroSection() {
                 mt={6} 
                 size="lg" 
                 colorScheme="blackAlpha"
-                onClick={() => navigate("/products")}
+                onClick={() => navigate("/products/vl")}
             >
                 Shop Now
             </Button>

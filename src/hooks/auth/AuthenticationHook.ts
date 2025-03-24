@@ -228,6 +228,18 @@ export const useLogout = () => {
     });
 };
 
+export const useUpdateUser = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return customMutationRequest("SECURITY", `/user`, 'PATCH', data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [key, 'user'] });
+        },
+    });
+};
+
 
 export const useVerifyEmail = () => {
     const queryClient = useQueryClient();
@@ -259,7 +271,7 @@ export const useResetPassword = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data :any) => {
-            return customMutationRequest("SECURITY", `/user/reset/password`, 'PUT', data).then((res:any) => res)
+            return customMutationRequest("SECURITY", `/user/reset/password`, 'PATCH', data).then((res:any) => res)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [key, 'reset-password'] });
@@ -272,7 +284,7 @@ export const useChangePassword = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data :any) => {
-            return customMutationRequest("SECURITY", `/user/change/password`, 'PUT', data).then((res:any) => res)
+            return customMutationRequest("SECURITY", `/user/change/password`, 'PATCH', data).then((res:any) => res)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [key, 'change-password'] });

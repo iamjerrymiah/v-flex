@@ -10,7 +10,7 @@ const getHttpResource = (resourceType: ResourceType ) => {
     let HTTP:
         | AxiosInstance
         | ((arg0: {
-        method: 'POST' | 'GET' | 'PUT' | 'DELETE';
+        method: 'POST' | 'GET' | 'PUT' | 'PATCH' | 'DELETE';
         url: string;
         data?: {} | undefined;
         headers?: { 'Content-Type': string } | undefined;
@@ -49,7 +49,7 @@ export const fetcher = async (resourceType: string, url: string) => {
 export const customMutationRequest = async (
     resourceType: ResourceType,
     url: string,
-    method: 'POST' | 'PUT' ,
+    method: 'POST' | 'PUT' | 'PATCH' ,
     arg?: {},
     headers?: {},
 ) => {
