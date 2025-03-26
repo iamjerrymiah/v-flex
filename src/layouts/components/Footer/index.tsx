@@ -1,8 +1,9 @@
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { MotionAnimator } from "../../../common/MotionAnimator";
 import { Link } from "react-router";
-import { Box, HStack, SimpleGrid, Stack, Text } from "@chakra-ui/react";
+import { Box, HStack, Image, SimpleGrid, Stack, Text } from "@chakra-ui/react";
 import { Container } from "../../../styling/layout";
+import vEditionLogo from "../../../assets/icons/v-edition-logo.png"
 
 export default function Footer ({}) {
     return (
@@ -17,7 +18,15 @@ export default function Footer ({}) {
                     <SimpleGrid maxW={'100%'} columns={[1,1,1,4]} spacing={8} >
                         <div>
                             <Link to={'/'}>
-                                <Text fontSize={['24px', '24px', '24px', '36px']} fontWeight={700}>V-EDITION</Text>
+                                {/* <Text fontSize={['24px', '24px', '24px', '36px']} fontWeight={700}>V-EDITION</Text> */}
+                                <Image
+                                    src={vEditionLogo}
+                                    width={'250px'}
+                                    height={'80px'}
+                                    alt='logo'
+                                    objectFit={'contain'}
+                                    my={4}
+                                />
                             </Link>
                             <Text fontSize={'12px'}>Copyright © 2025 V-EDITION. All Rights Reserved.</Text>
                         </div>

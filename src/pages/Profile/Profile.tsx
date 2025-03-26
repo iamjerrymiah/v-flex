@@ -11,6 +11,7 @@ import React, { useEffect } from "react";
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 import { useNavigate } from "react-router";
 import { allCaps } from "../../utils/utils";
+import { Container } from "../../styling/layout";
 
 // Dashboard Items
 const dashboardItems = [
@@ -138,7 +139,9 @@ export default function ProfilePage () {
         <PageMainContainer title='Profile' description='Profile'>
             <MainAppLayout>
                 <AnimateRoute>
-                    <ProfileMain />
+                    <Container>
+                        <ProfileMain />
+                    </Container>
                 </AnimateRoute>
             </MainAppLayout>
         </PageMainContainer>

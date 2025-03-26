@@ -1,6 +1,5 @@
 import axios from "axios";
 import { storeToken } from "../constants/constants";
-// import Notify from "./notify";
 import { AuthStateEnum } from "./types";
 import { queryClient } from "../providers/QueryClientProvider";
 
@@ -31,7 +30,6 @@ function openAxios(baseURL: string) {
 
                 localStorage.removeItem(storeToken);
                 localStorage.removeItem("v_userId");
-                // Notify.error(error.response?.data?.error);
 
                 const auth = {
                     isAuthenticated: false,

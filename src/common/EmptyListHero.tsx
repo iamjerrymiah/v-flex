@@ -18,7 +18,7 @@ function EmptyListHero({ text, w, h }: EmptyListHeroProps) {
                     alt='empty list'
                 />
             </Center>
-            <Text fontSize='lg' fontWeight={500} color='#56505B' textAlign='center'>{text}</Text>
+            <Text fontSize='lg' fontWeight={500} px={6} color='#56505B' textAlign='center'>{text}</Text>
         </Flex>
     )
 }

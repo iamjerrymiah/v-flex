@@ -41,7 +41,7 @@ export default function HeaderRight({mobile}: {mobile?:boolean}) {
                         cursor={'pointer'}
                     />
                 </Tooltip>
-                <Tooltip label={'My Waitlist'}>
+                <Tooltip label={'My Wishlist'}>
                     <IoIosStarOutline 
                         size={20} 
                         onClick={() => navigate('/my-waitlist')} 

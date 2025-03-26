@@ -19,6 +19,8 @@ import { useGetProduct } from "../../hooks/products/products";
 
 import noProductImg from '../../assets/icons/noproduct.png'
 import { capCase } from "../../utils/utils";
+import { Container } from "../../styling/layout";
+import PageSk from "../../common/PageSk";
 // import ProductsSection from "./components/ProductsSection";
   
 const emptyProduct = {
@@ -70,7 +72,12 @@ function SingleProductMain({ isAuthenticated, isLoading, product = {} }:{product
 
     return (
         <Box>
-            {isLoading ? (<Loader /> ) :
+            {isLoading ? (
+                <>  
+                    <Loader /> 
+                    <PageSk />
+                </>
+            ) :
             <Grid 
                 templateColumns={{ base: "1fr", md: "1.5fr 1fr" }} 
                 gap={10} 
@@ -94,7 +101,7 @@ function SingleProductMain({ isAuthenticated, isLoading, product = {} }:{product
                             {productImages?.map((img:any, idx:any) => (
                                 <Image 
                                     key={idx} 
-                                    src={img} 
+                                    src={img ?? noProductImg} 
                                     alt={`Thumbnail ${idx}`} 
                                     w="100px" 
                                     h="100px"
@@ -107,7 +114,7 @@ function SingleProductMain({ isAuthenticated, isLoading, product = {} }:{product
                         </HStack>
                         <Box position="relative">
                             <Image 
-                                src={productImages[selectedIndex]} 
+                                src={productImages[selectedIndex] ?? noProductImg} 
                                 alt={product.name} 
                                 borderRadius="md"
                                 objectFit={'contain'}
@@ -287,13 +294,15 @@ export default function SingleProduct () {
 
     return(
         <PageMainContainer title='' description=''>
-            <MainAppLayout>
+            <MainAppLayout mt={['85px', '90px', '90px', '90px']}>
                 <AnimateRoute>
-                    <SingleProductMain 
-                        isAuthenticated={isAuthenticated}
-                        product={product ?? emptyProduct} 
-                        isLoading={isLoading}
-                    />
+                    <Container>
+                        <SingleProductMain 
+                            isAuthenticated={isAuthenticated}
+                            product={product ?? emptyProduct} 
+                            isLoading={isLoading}
+                        />
+                    </Container>
                 </AnimateRoute>
             </MainAppLayout>
         </PageMainContainer>

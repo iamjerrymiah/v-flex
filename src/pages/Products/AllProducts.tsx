@@ -12,9 +12,12 @@ import Loader from "../../common/Loader"
 import { useGetProducts } from "../../hooks/products/products";
 
 import heroImg from '../../assets/images/hero.webp'
+import noProductImage from '../../assets/icons/noproduct.png'
 import { useNavigate } from "react-router";
 import { useParams, useSearchParams, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { Container } from "../../styling/layout"
+import PageSk from "../../common/PageSk"
 
 
 const ProductGrid = ({ products }: {products: any[]}) => {
@@ -25,7 +28,7 @@ const ProductGrid = ({ products }: {products: any[]}) => {
         >
             <Grid 
                 templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" }}
-                gap={6}
+                gap={[10, 6]}
             >
             {products?.map((product:any) => (
                 <ProductCard 
@@ -57,7 +60,7 @@ const ProductCard = ({ product }:{product:any}) => {
   
         <Box position="relative" _hover={{ "& .quick-view": { opacity: 1 } }}>
             <Image 
-                src={product?.mainImage} 
+                src={product?.mainImage ?? noProductImage} 
                 alt={product?.name} 
                 borderRadius="md"
                 transition="transform 0.3s"
@@ -82,11 +85,11 @@ const ProductCard = ({ product }:{product:any}) => {
         </Box>
     
         {/* Product Info */}
-        <Stack spacing={'-1'} mt={1}>
+        <Stack spacing={'-1'} mt={2}>
             {/* {product?.acceptCrypto && (
                 <Text fontSize="xs" color="gray.500">WE ACCEPT CRYPTO</Text>
             )} */}
-            <Text fontWeight={400}>{capCase(product?.name)}</Text>
+            <Text fontWeight={500}>{capCase(product?.name)}</Text>
             <Text fontSize="lg" fontWeight="bold">€{product?.price}</Text>
         </Stack>
         
@@ -140,29 +143,36 @@ const ProductCard = ({ product }:{product:any}) => {
                         color={'white'} 
                         fontSize={["3xl", "3xl", '5xl']} 
                         fontWeight="bold"
+                        px={4}
                     >
                         Exclusive Fashion for {capCase(category ?? "Everyone")}
                     </Heading>
                 </MotionAnimator>
             </Flex>
 
-            <Box>
-                {isLoading ? (
-                    <Loader />
-                ) : products?.products?.length <= 0 ? (
-                    <Center mt={10}>
-                        <EmptyListHero
-                            text="Sorry, can't find the product you're looking for" 
-                        />
-                    </Center>
-                ) : (
-                    <Box mt={[10, 14]}>
-                        <ProductGrid 
-                            products={products?.products}
-                        />
-                    </Box>
-                )}
-            </Box>
+            <Container>
+                <Box px={['20px', '20px', '30px', '50px']}>
+                    {isLoading ? (
+                        <>
+                            <Loader />
+                            <PageSk />
+                        </>
+                    ) : products?.products?.length <= 0 ? (
+                        <Center mt={10}>
+                            <EmptyListHero
+                                w="400px"
+                                text="Sorry, can't find the product you're looking for" 
+                            />
+                        </Center>
+                    ) : (
+                        <Box mt={[14]}>
+                            <ProductGrid 
+                                products={products?.products}
+                            />
+                        </Box>
+                    )}
+                </Box>
+            </Container>
         </>
     )
 }
@@ -171,9 +181,11 @@ const ProductCard = ({ product }:{product:any}) => {
 export default function AllProducts () {
     return(
         <PageMainContainer title='Products' description='Products'>
-            <MainAppLayout>
+            <MainAppLayout px='0px'>
                 <AnimateRoute>
-                    <ProductsMain />
+                    {/* <Container> */}
+                        <ProductsMain />
+                    {/* </Container> */}
                 </AnimateRoute>
             </MainAppLayout>
         </PageMainContainer>
