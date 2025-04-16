@@ -183,9 +183,7 @@ export default function AllProducts () {
         <PageMainContainer title='Products' description='Products'>
             <MainAppLayout px='0px'>
                 <AnimateRoute>
-                    {/* <Container> */}
-                        <ProductsMain />
-                    {/* </Container> */}
+                    <ProductsMain />
                 </AnimateRoute>
             </MainAppLayout>
         </PageMainContainer>

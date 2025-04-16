@@ -158,7 +158,7 @@ function SingleProductMain({ isAuthenticated, isLoading, product = {} }:{product
                         <Stack spacing={'-1'}>
                             <Text fontSize="2xl" fontWeight="bold">{capCase(product.name)}</Text>
                             <Text color="gray.500">{capCase(product.category)}</Text>
-                            <Text fontSize="xl" fontWeight="bold">€{product.price}</Text>
+                            <Text fontSize="xl" fontWeight="bold">€ {product.price}</Text>
                         </Stack>
             
                         {/* Description */}

@@ -1,7 +1,9 @@
 import { Link } from "react-router";
 import { LeftStyle } from "../desktop/left";
 import { Image } from "@chakra-ui/react";
-import vEditionLogo from '../../../../assets/icons/v-edition-logo.png'
+
+// import vEditionLogo from '../../../../assets/icons/v-edition-logo.png'
+import vEditionLogo from '../../../../assets/icons/vev-logo.png'
 
 export default function HeaderLeft() {
     return (

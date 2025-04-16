@@ -1,7 +1,9 @@
 import { Image } from "@chakra-ui/react";
 import { Link } from "react-router";
 import styled, { css } from "styled-components";
-import vEditionLogo from '../../../../assets/icons/v-edition-logo.png'
+
+// import vEditionLogo from '../../../../assets/icons/v-edition-logo.png'
+import vEditionLogo from '../../../../assets/icons/vev-logo.png'
 
 export const spaceBetweenAndCenter = css`
     display: flex;
@@ -22,8 +24,8 @@ export default function HeaderLeft() {
                 {/* <Text fontSize={'30px'} fontWeight={400}>V-EDITION</Text> */}
                 <Image
                     src={vEditionLogo}
-                    width={'150px'}
-                    height={'50px'}
+                    width={'120px'}
+                    height={'55px'}
                     alt='logo'
                     objectFit={'contain'}
                 />

@@ -1,5 +1,5 @@
 import React from "react";
-import { HStack, Tooltip, useDisclosure } from "@chakra-ui/react";
+import { Box, HStack, Tooltip, useDisclosure } from "@chakra-ui/react";
 import { FaRegUser } from "react-icons/fa";
 import { IoIosStarOutline, IoMdMenu } from 'react-icons/io'
 import { BsCart, BsSearch } from "react-icons/bs";
@@ -15,6 +15,7 @@ export default function HeaderRight({mobile}: {mobile?:boolean}) {
 
     const navigate = useNavigate();  
     const { isOpen, onToggle, onClose } = useDisclosure()
+    const { isOpen: isOpenSearch, onToggle: onToggleSearch, onClose: onCloseSearch } = useDisclosure()
 
     const { isAuthenticated, user } =  useGetAuthState();
 
@@ -39,12 +40,13 @@ export default function HeaderRight({mobile}: {mobile?:boolean}) {
                     <BsSearch 
                         size={20} 
                         cursor={'pointer'}
+                        onClick={onToggleSearch}
                     />
                 </Tooltip>
                 <Tooltip label={'My Wishlist'}>
                     <IoIosStarOutline 
                         size={20} 
-                        onClick={() => navigate('/my-waitlist')} 
+                        onClick={() => navigate('/my-wishlist')} 
                         cursor={'pointer'}
                     />
                 </Tooltip>
@@ -84,6 +86,19 @@ export default function HeaderRight({mobile}: {mobile?:boolean}) {
                     />
                 }
             />
+
+            <Drawer 
+                placement='top'
+                size={mobile ? '1500px': '1850px'}
+                isOpen={isOpenSearch}
+                onClose={onCloseSearch}
+                body={
+                    <Box my={'100px'}>
+
+                    </Box>
+                }
+            />
+
         </React.Fragment>
     )
 }

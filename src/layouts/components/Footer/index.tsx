@@ -50,7 +50,7 @@ export default function Footer ({}) {
                                 <li><Link to="#" className="hover:text-white">Pick up in Store</Link></li>
                                 <li><Link to="#" className="hover:text-white">Size Guide</Link></li>
                                 <li><Link to="#" className="hover:text-white">Faq</Link></li>
-                                <li><Link to="#" className="hover:text-white">Contact Us</Link></li>
+                                <li><Link to="/contact-us" className="hover:text-white">Contact Us</Link></li>
                             </Stack>
                         </div>
 

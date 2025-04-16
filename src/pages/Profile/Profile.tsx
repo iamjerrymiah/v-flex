@@ -16,7 +16,7 @@ import { Container } from "../../styling/layout";
 // Dashboard Items
 const dashboardItems = [
   { label: "MY ORDERS", link: '/profile/my-orders', description: "Check order status", icon: FaClipboardList },
-  { label: "MY WISHLIST", link: '/profile/my-wishlist', description: "View & modify wishlist", icon: FaBookmark },
+  { label: "MY WISHLIST", link: '/my-wishlist', description: "View & modify wishlist", icon: FaBookmark },
   { label: "ADDRESS BOOK", link: '/profile/address-book', description: "Manage addresses", icon: FaAddressBook },
   { label: "ACCOUNT DETAILS", link: '/profile/account-details', description: "Update personal info", icon: FaUser },
 //   { label: "MY RETURNS", link: '/profile/my-returns', description: "Return/exchange items", icon: FaUndo },

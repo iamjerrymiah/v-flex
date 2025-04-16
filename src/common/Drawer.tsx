@@ -8,6 +8,7 @@ interface DrawerProps {
     size?: string;
     header?: string;
     footer?: React.ReactNode;
+    placement?: any;
 }
 
 function Drawer({
@@ -18,12 +19,13 @@ function Drawer({
     footer,
     headerColor,
     size,
+    placement,
     ...props
 }: DrawerProps) {
     return (isOpen ?
         <ChakraDrawer
             isOpen={isOpen}
-            placement='right'
+            placement={placement ?? 'right'}
             onClose={onClose}
             size={size}
             {...props}

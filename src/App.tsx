@@ -6,13 +6,20 @@ import FullScreenLayout from './layouts/FullScreenLayout'
 import Login from './pages/Auth/Login/Login'
 import Register from './pages/Auth/Register/Register'
 import VerifyEmail from './pages/Auth/VerifyEmail/VerifyEmail'
-
-import HomePage from './pages/Home/Home'
 import ForgotPasswordLink from './pages/Auth/ForgotPasswordLink/ForgotPasswordLink'
 import ResetPassword from './pages/Auth/ForgotPasswordLink/ResetPassword'
-import ProfilePage from './pages/Profile/Profile'
+
+import HomePage from './pages/Home/Home'
 import AllProducts from './pages/Products/AllProducts'
 import SingleProduct from './pages/Products/SingleProduct'
+import CartPage from './pages/Cart/Cart'
+import WaitListPage from './pages/WaitList/WaitList'
+
+import ProfilePage from './pages/Profile/Profile'
+import MyOrderPage from './pages/Order/MyOrder'
+
+import OrderPage from './pages/Order/Order'
+import ContactPage from './pages/Contact/Contact'
 
 const router = createBrowserRouter([
 	{
@@ -49,6 +56,22 @@ const router = createBrowserRouter([
                 path: '/profile',
                 element: <ProfilePage />,
             },
+            {
+                path: '/contact-us',
+                element: <ContactPage />,
+            },
+            {
+                path: '/my-cart',
+                element: <CartPage />,
+            },
+            {
+                path: '/my-wishlist',
+                element: <WaitListPage />,
+            },
+            {
+                path: '/profile/my-orders',
+                element: <MyOrderPage />,
+            },
 			{
                 path: '/products/vl',
                 element: <AllProducts />,
@@ -72,6 +95,10 @@ const router = createBrowserRouter([
 			{
                 path: '/products/:category/:subCategory/:slug',
                 element: <SingleProduct />,
+            },
+            {
+                path: '/admin/orders',
+                element: <OrderPage />,
             },
 		]
 	}
