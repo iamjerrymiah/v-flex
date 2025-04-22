@@ -15,53 +15,57 @@ import {
   } from "@chakra-ui/react";
   import { FiMinus, FiPlus } from "react-icons/fi";
   import { useState } from "react";
-  import pic from '../../assets/images/sneaker3.webp'
+//   import pic from '../../assets/images/sneaker3.webp'
 import Loader from "../../common/Loader";
 import PageSk from "../../common/PageSk";
 import EmptyListHero from "../../common/EmptyListHero";
-import { capCase } from "../../utils/utils";
-import { MdCancel } from "react-icons/md";
+import { capCase, moneyFormat } from "../../utils/utils";
+import { MdCancel, MdOutlineArrowBackIos } from "react-icons/md";
+import { useGetUserWishlists } from "../../hooks/user/users";
+import { useNavigate } from "react-router";
+import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 // import { FaShoppingCart } from "react-icons/fa";
 
-interface CartItem {
-    id: string;
-    name: string;
-    image: string;
-    price: number;
-    quantity: number;
-  }
+// interface CartItem {
+//     id: string;
+//     name: string;
+//     image: string;
+//     price: number;
+//     quantity: number;
+//   }
   
-  const mockCart: CartItem[] = [
-    {
-      id: "1",
-      name: "Modern Leather Bag",
-      image: pic,
-      price: 89.99,
-      quantity: 1,
-    },
-    {
-      id: "2",
-      name: "Wireless Headphones",
-      image: pic,
-      price: 120,
-      quantity: 2,
-    },
-  ];
+//   const mockCart: CartItem[] = [
+//     {
+//       id: "1",
+//       name: "Modern Leather Bag",
+//       image: pic,
+//       price: 89.99,
+//       quantity: 1,
+//     },
+//     {
+//       id: "2",
+//       name: "Wireless Headphones",
+//       image: pic,
+//       price: 120,
+//       quantity: 2,
+//     },
+//   ];
 
-function WaitlistMain () {
+function WaitlistMain ({ wishLists = [], isLoading = false }: any) {
 
-    const isLoading = false
+    const navigate = useNavigate()
+    const { isAuthenticated } =  useGetAuthState();
 
-    const [wishListItems, setWishlistItems] = useState<CartItem[]>(mockCart);
+    const [wishListItems, setWishlistItems] = useState<any[]>(wishLists);
 
     const handleRemoveItem = (id: string) => {
-      setWishlistItems((prev) => prev.filter((item) => item.id !== id));
+      setWishlistItems((prev) => prev.filter((item) => item._id !== id));
     };
 
     const handleUpdateQty = (id: string, type: "increment" | "decrement") => {
         setWishlistItems((prev) =>
           prev.map((item) =>
-            item.id === id
+            item._id === id
               ? {
                   ...item,
                   quantity:
@@ -76,7 +80,18 @@ function WaitlistMain () {
 
     return (
         <Box pt={10}>
+
             <Heading textAlign="center" fontSize={["24px", '30px']} fontWeight={400} mb={10}> MY WISHLIST </Heading>
+
+                <Button
+                    leftIcon={<MdOutlineArrowBackIos />}
+                    variant="ghost"
+                    onClick={() => navigate(-1)}
+                    my={4}
+                    textDecor={'underline'}
+                >
+                    Back
+                </Button>
 
                 <Box flex={3} borderRadius="xl">
                         {isLoading ? (
@@ -84,11 +99,12 @@ function WaitlistMain () {
                                 <Loader />
                                 <PageSk />
                             </>
-                        ) : wishListItems.length <= 0 ? (
-                            <Center mt={10}>
+                        ) :
+                         wishListItems.length <= 0 ? (
+                            <Center mt={[4, 10]}>
                                 <EmptyListHero
                                     w="400px"
-                                    text="You have no items on your wish list." 
+                                    text={isAuthenticated ? "You have no items on your wish list." : "You need to log in to access your wish list!" }
                                 />
                             </Center>
                         ) :
@@ -107,15 +123,17 @@ function WaitlistMain () {
                                 >
                                     <HStack w={['100%', '60%']} spacing={2} mr={2}>
                                         <Image
-                                            src={item.image}
-                                            alt={item.name}
+                                            src={item?.mainImage}
+                                            alt={item?.name}
                                             boxSize="80px"
                                             objectFit="cover"
                                             borderRadius="md"
                                         />
                                         <Box flex={1}>
-                                            <Text fontSize={['md', "lg"]} fontWeight="semibold">{capCase(item.name)}</Text>
-                                            <Text color="gray.500">€ {item.price.toFixed(2)}</Text>
+                                            <Text fontSize={['md', "lg"]} fontWeight="semibold">{capCase(item?.name)}</Text>
+                                            <Text color="gray.800">€ {moneyFormat(item.price)}</Text>
+                                            <Text color="gray.500">Available: {item?.availability == true ? "YES" : "NO"}</Text>
+                                            <Text color="gray.500">Available Quantity: {item?.quantity}</Text>
                                         </Box>
                                     </HStack>
 
@@ -129,6 +147,7 @@ function WaitlistMain () {
                                         gap={3}
                                         w="full"
                                         justify="space-between"
+                                        pt={[0,4]}
                                     >
                                         {/* Quantity Controls */}
                                         <HStack>
@@ -136,7 +155,7 @@ function WaitlistMain () {
                                                 icon={<FiMinus />}
                                                 aria-label="Decrease quantity"
                                                 size="sm"
-                                                onClick={() => handleUpdateQty(item.id, "decrement")}
+                                                onClick={() => handleUpdateQty(item._id, "decrement")}
                                             />
                                             <Text minW="20px" textAlign="center">
                                                 {item.quantity}
@@ -145,7 +164,7 @@ function WaitlistMain () {
                                                 icon={<FiPlus />}
                                                 aria-label="Increase quantity"
                                                 size="sm"
-                                                onClick={() => handleUpdateQty(item.id, "increment")}
+                                                onClick={() => handleUpdateQty(item._id, "increment")}
                                             />
                                         </HStack>
 
@@ -164,7 +183,7 @@ function WaitlistMain () {
                                             aria-label="Remove item"
                                             variant="ghost"
                                             colorScheme="red"
-                                            onClick={() => handleRemoveItem(item.id)}
+                                            onClick={() => handleRemoveItem(item._id)}
                                         />
                                     </Flex>
                                 </Flex>
@@ -177,12 +196,19 @@ function WaitlistMain () {
 }
 
 export default function WaitListPage() {
+
+    const { data: wishListData = {}, isLoading } = useGetUserWishlists({})
+    const { data: wishLists = [] } = wishListData
+
     return (
         <PageMainContainer title='Wishlist' description='Wishlist'>
             <MainAppLayout>
                 <AnimateRoute>
                     <Container>
-                        <WaitlistMain />
+                        <WaitlistMain 
+                            isLoading={isLoading}
+                            wishLists={wishLists}
+                        />
                     </Container>
                 </AnimateRoute>
             </MainAppLayout>

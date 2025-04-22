@@ -5,7 +5,7 @@ import { Image, Stack, Text, Box, Grid, GridItem, Icon, Button, Flex, Heading, C
 // import { FaStar } from "react-icons/fa";
 import { FaCheckToSlot } from "react-icons/fa6"
 import { FcCancel } from 'react-icons/fc'
-import { capCase } from "../../utils/utils"
+import { capCase, moneyFormat } from "../../utils/utils"
 import { MotionAnimator } from "../../common/MotionAnimator"
 import EmptyListHero from "../../common/EmptyListHero"
 import Loader from "../../common/Loader"
@@ -18,31 +18,41 @@ import { useParams, useSearchParams, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Container } from "../../styling/layout"
 import PageSk from "../../common/PageSk"
+import Pagination from "../../common/Pagination/Pagination"
 
 
-const ProductGrid = ({ products }: {products: any[]}) => {
+const ProductGrid = ({ products, init, filters, setFilters }: {products: any[], init:any, filters:any, setFilters:any }) => {
+
+    const changePage = ({ selected = 0 }) => {
+        setFilters({ ...filters, page: selected + 1 });
+    }
 
     return (
-        <Box 
-            cursor={'pointer'}
-        >
-            <Grid 
-                templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" }}
-                gap={[10, 6]}
-            >
-            {products?.map((product:any) => (
-                <ProductCard 
-                    key={product._id} 
-                    product={product} 
-                />
-            ))}
+        <>
+            <Box cursor={'pointer'} mb={12}>
+                <Grid 
+                    templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" }}
+                    gap={[10, 6]}
+                >
+                {products?.map((product:any) => (
+                    <ProductCard 
+                        key={product._id} 
+                        product={product} 
+                    />
+                ))}
 
-            </Grid>
-        </Box>
+                </Grid>
+            </Box>
+
+            <Pagination
+                pageCount={init?.totalPages}
+                onPageChange={changePage}
+            />
+        </>
     );
   };
   
-const ProductCard = ({ product }:{product:any}) => {
+const ProductCard = ({ product }:any) => {
     
     const navigate = useNavigate()
 
@@ -90,7 +100,7 @@ const ProductCard = ({ product }:{product:any}) => {
                 <Text fontSize="xs" color="gray.500">WE ACCEPT CRYPTO</Text>
             )} */}
             <Text fontWeight={500}>{capCase(product?.name)}</Text>
-            <Text fontSize="lg" fontWeight="bold">€{product?.price}</Text>
+            <Text fontSize="lg" fontWeight="bold">€ {moneyFormat(product?.price)}</Text>
         </Stack>
         
       </GridItem>
@@ -168,6 +178,9 @@ const ProductCard = ({ product }:{product:any}) => {
                         <Box mt={[14]}>
                             <ProductGrid 
                                 products={products?.products}
+                                init={products}
+                                filters={filter}
+                                setFilters={setFilter}
                             />
                         </Box>
                     )}

@@ -3,17 +3,17 @@ import AnimateRoute from "../../common/AnimateRoute";
 import PageMainContainer from "../../common/PageMain";
 import MainAppLayout from "../../layouts/MainAppLayout";
 import { Container } from "../../styling/layout";
-import { MdOutlineArrowBackIos } from "react-icons/md";
 import { useNavigate } from "react-router";
-import { useGetUserOrders } from "../../hooks/orders/orders";
+import { MdOutlineArrowBackIos } from "react-icons/md";
 import { Table, TableRow } from "../../common/Table/Table";
-import { capCase } from "../../utils/utils";
-// import { useEffect } from "react";
+import { useGetAllUsers } from "../../hooks/user/users";
+import { allCaps, allLower, capCase } from "../../utils/utils";
 // import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
+// import { useEffect } from "react";
 
-const tableHeads = ["S/N", "Name"]
+const tableHeads = ["S/N", "Salutation", "First Name", "Last Name", "Email", "Phone Number", "Is Email Verified?", "Status"]
 
-function MyOrdersMain ({ myOrders = [], isLoading = false}:any) {
+function AdminUserMain ({ users = [], isLoading = false }: any) {
 
     const navigate = useNavigate()
     // const { isAuthenticated } =  useGetAuthState();
@@ -25,10 +25,9 @@ function MyOrdersMain ({ myOrders = [], isLoading = false}:any) {
     // }, [isAuthenticated])
 
     return (
-
         <Box pt={10}>
-        
-            <Heading textAlign="center" fontSize={["24px", '30px']} fontWeight={400} my={10}> MY ORDER </Heading>
+
+            <Heading textAlign="center" fontSize={["24px", '30px']} fontWeight={400} my={10}> USERS </Heading>
 
             <Button
                 leftIcon={<MdOutlineArrowBackIos />}
@@ -44,41 +43,47 @@ function MyOrdersMain ({ myOrders = [], isLoading = false}:any) {
             <Table
                 headings={tableHeads}
                 loading={isLoading}
-                isEmpty={myOrders?.length <= 0}
-                emptyText='No order found'
+                isEmpty={users?.length <= 0}
+                emptyText='No user found'
                 pt={3}
                 noIndexPad
             >
-                {myOrders?.map((item:any, index:any) =>
+                {users?.map((item:any, index:any) =>
                     <TableRow
                         key={index}
                         // onClickRow={}
                         data={[
                             (index + 1 ),
-                            capCase(item?.name ?? "-")
+                            allCaps(item?.salutation ?? "-"),
+                            capCase(item?.firstName ?? "-"),
+                            capCase(item?.lastName ?? "-"),
+                            allLower(item?.email ?? "-"),
+                            item?.phoneNumber ?? "-",
+                            capCase(item?.emailVerified === true ? "Yes" : "No"),
+                            allLower(item?.status)
                         ]}
+                        options={[]}
                         noIndexPad
                     />
                 )}
             </Table>
-
         </Box>
     )
 }
 
-export default function MyOrderPage() {
+export default function AdminUserPage() {
 
-    const { data: orderData = {}, isLoading } = useGetUserOrders({})
-    const { data: myOrders = [] } = orderData
+    const { data: userData = {}, isLoading } = useGetAllUsers({})
+    const { data: users = [] } = userData
 
     return (
-        <PageMainContainer title='My Orders' description='My Orders'>
+        <PageMainContainer title='Users' description='Users'>
             <MainAppLayout>
                 <Container>
                     <AnimateRoute>
-                        <MyOrdersMain 
+                        <AdminUserMain 
                             isLoading={isLoading}
-                            myOrders={myOrders}
+                            users={users}
                         />
                     </AnimateRoute>
                 </Container>

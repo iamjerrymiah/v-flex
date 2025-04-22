@@ -11,7 +11,7 @@ import sneaker7 from '../../../assets/images/sneaker7.webp'
 import sneaker8 from '../../../assets/images/sneaker8.webp'
 import sneaker9 from '../../../assets/images/sneaker9.webp'
 import sneaker10 from '../../../assets/images/sneaker10.webp'
-import { capCase } from '../../../utils/utils';
+import { capCase, moneyFormat } from '../../../utils/utils';
 
 const MotionBox = motion(Box);
 
@@ -40,7 +40,7 @@ export default function ProductsSection({product}: {product: any}) {
                             <Image src={img} boxSize="200px" borderRadius="lg" />
                             <Stack spacing={'-1'} mt={1}>
                                 <Text fontWeight={400}>{capCase(product?.name)}</Text>
-                                <Text fontSize="lg" fontWeight="bold">€{product?.price}</Text>
+                                <Text fontSize="lg" fontWeight="bold">€ {moneyFormat(product?.price)}</Text>
                             </Stack>
                         </MotionBox>
                     ))}

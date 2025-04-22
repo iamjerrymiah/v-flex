@@ -20,6 +20,8 @@ import MyOrderPage from './pages/Order/MyOrder'
 
 import OrderPage from './pages/Order/Order'
 import ContactPage from './pages/Contact/Contact'
+import AdminProductPage from './pages/Products/AdminProductPage'
+import AdminUserPage from './pages/Admin/AdminUserPage'
 
 const router = createBrowserRouter([
 	{
@@ -99,6 +101,14 @@ const router = createBrowserRouter([
             {
                 path: '/admin/orders',
                 element: <OrderPage />,
+            },
+            {
+                path: '/admin/products',
+                element: <AdminProductPage />,
+            },
+            {
+                path: '/admin/users',
+                element: <AdminUserPage />,
             },
 		]
 	}

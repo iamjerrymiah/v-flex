@@ -1,50 +1,85 @@
-import { Box, Center, Heading } from "@chakra-ui/react"
+import { Box, Button, Heading } from "@chakra-ui/react"
 import AnimateRoute from "../../common/AnimateRoute"
 import PageMainContainer from "../../common/PageMain"
 import MainAppLayout from "../../layouts/MainAppLayout"
 import { Container } from "../../styling/layout"
-import { useState } from "react"
-import Loader from "../../common/Loader"
-import PageSk from "../../common/PageSk"
-import EmptyListHero from "../../common/EmptyListHero"
+import { MdOutlineArrowBackIos } from "react-icons/md"
+import { useNavigate } from "react-router"
+import { useGetAllOrders } from "../../hooks/orders/orders"
+import { Table, TableRow } from "../../common/Table/Table"
+import { capCase } from "../../utils/utils"
+// import { useGetAuthState } from "../../hooks/auth/AuthenticationHook"
+// import { useEffect } from "react"
 
+const tableHeads = ["S/N", "Name"]
 
-function OrdersMain () {
+function OrdersMain ({ orders = [], isLoading = false }: any) {
+    
+    const navigate = useNavigate()
+    // const { isAuthenticated } =  useGetAuthState();
 
-    const isLoading = false
-    const [orders] = useState([])
+    // useEffect(() => { 
+    //     if(!isAuthenticated) {
+    //         navigate(-1)
+    //     } 
+    // }, [isAuthenticated])
 
     return (
         <Box pt={10}>
+
         
             <Heading textAlign="center" fontSize={["24px", '30px']} fontWeight={400} my={10}> ORDER LIST </Heading>
-                {isLoading ? (
-                    <>
-                        <Loader />
-                        <PageSk />
-                    </>
-                ) : orders?.length <= 0 ? (
-                    <Center mt={10}>
-                        <EmptyListHero
-                            w="400px"
-                            text="No Order Found" 
-                        />
-                    </Center>
-                ) : 
-                    <></>
-                }
+
+            <Button
+                leftIcon={<MdOutlineArrowBackIos />}
+                variant="ghost"
+                onClick={() => navigate(-1)}
+                mt={4}
+                mb={4}
+                textDecor={'underline'}
+            >
+                Back
+            </Button>
+
+            <Table
+                headings={tableHeads}
+                loading={isLoading}
+                isEmpty={orders?.length <= 0}
+                emptyText='No order found'
+                pt={3}
+                noIndexPad
+            >
+                {orders?.map((item:any, index:any) =>
+                    <TableRow
+                        key={index}
+                        // onClickRow={}
+                        data={[
+                            (index + 1 ),
+                            capCase(item?.name ?? "-")
+                        ]}
+                        noIndexPad
+                    />
+                )}
+            </Table>
 
         </Box>
     )
 }
 
 export default function OrderPage() {
+
+    const { data: orderData = {}, isLoading } = useGetAllOrders({})
+    const { data: orders = [] } = orderData
+
     return (
         <PageMainContainer title='Orders' description='Orders'>
             <MainAppLayout>
                 <Container>
                     <AnimateRoute>
-                        <OrdersMain />
+                        <OrdersMain 
+                            isLoading={isLoading}
+                            orders={orders}
+                        />
                     </AnimateRoute>
                 </Container>
             </MainAppLayout>

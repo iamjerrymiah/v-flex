@@ -35,7 +35,7 @@ export function ProfileLayout({children}: {children: React.ReactNode}) {
 
     useEffect(() => { 
         if(!isAuthenticated) {
-            navigate('/login')
+            navigate(-1)
         } 
     }, [isAuthenticated])
 

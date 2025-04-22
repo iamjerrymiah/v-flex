@@ -18,7 +18,7 @@ import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 import { useGetProduct } from "../../hooks/products/products";
 
 import noProductImg from '../../assets/icons/noproduct.png'
-import { capCase } from "../../utils/utils";
+import { capCase, moneyFormat } from "../../utils/utils";
 import { Container } from "../../styling/layout";
 import PageSk from "../../common/PageSk";
 // import ProductsSection from "./components/ProductsSection";
@@ -158,7 +158,7 @@ function SingleProductMain({ isAuthenticated, isLoading, product = {} }:{product
                         <Stack spacing={'-1'}>
                             <Text fontSize="2xl" fontWeight="bold">{capCase(product.name)}</Text>
                             <Text color="gray.500">{capCase(product.category)}</Text>
-                            <Text fontSize="xl" fontWeight="bold">€ {product.price}</Text>
+                            <Text fontSize="xl" fontWeight="bold">€ {moneyFormat(product.price)}</Text>
                         </Stack>
             
                         {/* Description */}
