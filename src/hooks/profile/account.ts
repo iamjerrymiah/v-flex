@@ -9,7 +9,7 @@ const key = 'account';
 export const useGetUserAddresses = (params:any) => {
     let queries = !!params ? queryString.stringify(params) : '';
     return useQuery({
-        queryKey: [key, 'address', params],
+        queryKey: [`${key}-address`, params],
         queryFn: async () => {
             const res: any = await fetcher('SECURITY', `/user/address?${queries}`);
             return res;
@@ -24,7 +24,7 @@ export const useAddUserAddress = () => {
             return customMutationRequest("SECURITY", `/user/address`, 'POST', data).then((res:any) => res)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [key, 'address'] });
+            queryClient.invalidateQueries({ queryKey: [`${key}-address`] });
         },
     });
 };
@@ -33,10 +33,10 @@ export const useUpdateUserAddress = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data :any) => {
-            return customMutationRequest("SECURITY", `/user/address/${data?.id}`, 'PATCH', data).then((res:any) => res)
+            return customMutationRequest("SECURITY", `/user/address`, 'PATCH', data).then((res:any) => res)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [key, 'address'] });
+            queryClient.invalidateQueries({ queryKey: [`${key}-address`] });
         },
     });
 };
@@ -45,10 +45,10 @@ export const useDeleteUserAddress = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data :any) => {
-            return deleteRequest("SECURITY", `/user/address/${data?.id}`).then((res:any) => res)
+            return deleteRequest("SECURITY", `/user/address`, data).then((res:any) => res)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [key, 'address'] });
+            queryClient.invalidateQueries({ queryKey: [`${key}-address`] });
         },
     });
 };

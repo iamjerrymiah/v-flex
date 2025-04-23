@@ -5,8 +5,8 @@ import MainAppLayout from "../../layouts/MainAppLayout";
 import { Container } from "../../styling/layout";
 // import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 // import { useEffect } from "react";
-import { Box, Button, Heading } from "@chakra-ui/react";
-import { MdOutlineArrowBackIos } from "react-icons/md";
+import { Box, Button, Heading, HStack } from "@chakra-ui/react";
+import { MdAddToPhotos, MdOutlineArrowBackIos } from "react-icons/md";
 import { Table, TableRow } from "../../common/Table/Table";
 import { useGetProducts } from "../../hooks/products/products";
 import { capCase, moneyFormat } from "../../utils/utils";
@@ -14,7 +14,7 @@ import Pagination from "../../common/Pagination/Pagination";
 import { useState } from "react";
 
 
-const tableHeads = ["S/N", "Name", "Price", "Quantity", "Is Available"]
+const tableHeads = ["S/N", "Name", "Price", "Quantity", "Is Available", ""]
 
 function AdminProductMain ({ products = [], isLoading = false, init, filters, setFilters }:any) {
 
@@ -36,16 +36,26 @@ function AdminProductMain ({ products = [], isLoading = false, init, filters, se
 
             <Heading textAlign="center" fontSize={["24px", '30px']} fontWeight={400} my={10}> PRODUCTS </Heading>
 
-            <Button
-                leftIcon={<MdOutlineArrowBackIos />}
-                variant="ghost"
-                onClick={() => navigate(-1)}
-                mt={4}
-                mb={4}
-                textDecor={'underline'}
-            >
-                Back
-            </Button>
+            <HStack justify={'space-between'} w={'100%'} my={4}>
+                <Button
+                    leftIcon={<MdOutlineArrowBackIos />}
+                    variant="ghost"
+                    onClick={() => navigate(-1)}
+                    textDecor={'underline'}
+                >
+                    Back
+                </Button>
+
+                <Button
+                    leftIcon={<MdAddToPhotos />}
+                    // onClick={onOpen}
+                    color={'white'}
+                    bgColor={'blue.700'}
+                >
+                    Add
+                </Button>
+
+            </HStack>
 
             <Table
                 headings={tableHeads}
@@ -69,6 +79,10 @@ function AdminProductMain ({ products = [], isLoading = false, init, filters, se
                             // item?.updatedAt
                         ]}
                         noIndexPad
+                        options={[
+                            {name: "View", onUse: () => {}},
+                            {name: "Delete", color: 'red.700', onUse: () => {}},
+                        ]}
                     />
                 )}
             </Table>
@@ -77,6 +91,7 @@ function AdminProductMain ({ products = [], isLoading = false, init, filters, se
                 pageCount={init?.totalPages}
                 onPageChange={changePage}
             />
+
         </Box>
     )
 }

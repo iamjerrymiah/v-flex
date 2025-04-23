@@ -32,3 +32,26 @@ export const resetPasswordSchema = Yup.object().shape({
     .oneOf([Yup.ref("password")], "Passwords must match")
     .required("Required"),
 })
+
+export const addressSchema = Yup.object().shape({
+  salutation: Yup.string().required("Salutation is Required"),
+  firstName: Yup.string().required("First Name is Required"),
+  lastName: Yup.string().required("Last Name is Required"),
+  address: Yup.string().required("Address is Required"),
+  city: Yup.string().required("City is Required"),
+  country: Yup.string().required("Country is Required"),
+  postalCode: Yup.string().required("Postal Code is Required"),
+  defaultAddress: Yup.string().required("Set Default Address"),
+  phoneNumber: Yup.string().required("Phone Number is Required"),
+  // phoneNumber2: Yup.string().required("Phone Number 2 is Required"),
+  // optionalData: Yup.string().required("Additional Info is Required"),
+})
+
+export const accountDetailsSchema = Yup.object().shape({
+  salutation: Yup.string().required("Salutation is Required"),
+  firstName: Yup.string().required("First Name is Required"),
+  lastName: Yup.string().required("Last Name is Required"),
+  // email: Yup.string().email("Invalid email").required("Email is Required"),
+  country: Yup.string().required("Country is Required"),
+  phoneNumber: Yup.string().required("Phone Number is Required"),
+})

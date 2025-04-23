@@ -6,7 +6,7 @@ import {
   } from "@chakra-ui/react";
 import { FaClipboardList, FaBookmark, FaAddressBook, FaUser, FaUsers } from "react-icons/fa";
 import { AiOutlineProduct } from "react-icons/ai";
-import { TbShoppingCartStar } from "react-icons/tb";
+import { TbCategoryFilled, TbShoppingCartStar } from "react-icons/tb";
 import React, { useEffect } from "react";
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 import { useNavigate } from "react-router";
@@ -15,23 +15,25 @@ import { Container } from "../../styling/layout";
 
 // Dashboard Items
 const dashboardItems = [
-  { label: "MY ORDERS", link: '/profile/my-orders', description: "Check order status", icon: FaClipboardList },
-  { label: "MY WISHLIST", link: '/my-wishlist', description: "View & modify wishlist", icon: FaBookmark },
-  { label: "ADDRESS BOOK", link: '/profile/address-book', description: "Manage addresses", icon: FaAddressBook },
-  { label: "ACCOUNT DETAILS", link: '/profile/account-details', description: "Update personal info", icon: FaUser },
+    { label: "ACCOUNT DETAILS", link: '/profile/account-details', description: "Update personal info", icon: FaUser },
+    { label: "ADDRESS BOOK", link: '/profile/address-book', description: "Manage addresses", icon: FaAddressBook },
+    { label: "MY WISHLIST", link: '/my-wishlist', description: "View & modify wishlist", icon: FaBookmark },
+    { label: "MY ORDERS", link: '/profile/my-orders', description: "Check order status", icon: FaClipboardList },
 //   { label: "MY RETURNS", link: '/profile/my-returns', description: "Return/exchange items", icon: FaUndo },
 
-  { label: "PRODUCTS", link: '/admin/products', description: "View, create, edit & delete products", icon: AiOutlineProduct },
-  { label: "USERS", link: '/admin/users', description: "View all users & disable users", icon: FaUsers },
-  { label: "ORDERS", link: '/admin/orders', description: "View all orders", icon: TbShoppingCartStar },
+    { label: "CATEGORIES", link: '/admin/categories', description: "View, create, edit & delete categories", icon: TbCategoryFilled },
+    { label: "PRODUCTS", link: '/admin/products', description: "View, create, edit & delete products", icon: AiOutlineProduct },
+    { label: "USERS", link: '/admin/users', description: "View all users & disable users", icon: FaUsers },
+    { label: "ORDERS", link: '/admin/orders', description: "View all orders", icon: TbShoppingCartStar },
 ];
 
 export function ProfileLayout({children}: {children: React.ReactNode}) {
     
     const navigate = useNavigate()
-    const { isAuthenticated, user } =  useGetAuthState();
-
+    
     const isMobile = useBreakpointValue({ base: true, md: false });
+
+    const { isAuthenticated, user } =  useGetAuthState();
 
     useEffect(() => { 
         if(!isAuthenticated) {

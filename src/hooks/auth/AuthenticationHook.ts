@@ -143,7 +143,7 @@ export const useGetAuthState = () => {
 export const useGetAuthUser = (execute: boolean = false) => {
     const queryClient = useQueryClient();
     return useQuery<any, Error>({
-        queryKey: [key, 'user'],
+        queryKey: [`${key}-user`],
         queryFn: async () => {
             queryClient.setQueryData<any>([key], (prevAuth: any) => prevAuth ? {...prevAuth, isLoading: true} : { isLoading: true});
             const res: any = await fetcher('SECURITY', '/user');
@@ -235,7 +235,7 @@ export const useUpdateUser = () => {
             return customMutationRequest("SECURITY", `/user`, 'PATCH', data).then((res:any) => res)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [key, 'user'] });
+            queryClient.invalidateQueries({ queryKey: [`${key}-user`] });
         },
     });
 };
@@ -248,7 +248,7 @@ export const useVerifyEmail = () => {
             return customMutationRequest("SECURITY", `/user/email`, 'POST', data).then((res:any) => res)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [key, 'verify-email'] });
+            queryClient.invalidateQueries({ queryKey: [`${key}-verify-email`] });
         },
     });
 };
@@ -261,7 +261,7 @@ export const useResetPasswordLink = () => {
             return customMutationRequest("SECURITY", `/user/reset/link`, 'POST', data).then((res:any) => res)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [key, 'reset-pass-link'] });
+            queryClient.invalidateQueries({ queryKey: [`${key}-reset-pass-link`] });
         },
     });
 };
@@ -274,7 +274,7 @@ export const useResetPassword = () => {
             return customMutationRequest("SECURITY", `/user/reset/password`, 'PATCH', data).then((res:any) => res)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [key, 'reset-password'] });
+            queryClient.invalidateQueries({ queryKey: [`${key}-reset-password`] });
         },
     });
 };
@@ -287,7 +287,7 @@ export const useChangePassword = () => {
             return customMutationRequest("SECURITY", `/user/change/password`, 'PATCH', data).then((res:any) => res)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [key, 'change-password'] });
+            queryClient.invalidateQueries({ queryKey: [`${key}-change-password`] });
         },
     });
 };

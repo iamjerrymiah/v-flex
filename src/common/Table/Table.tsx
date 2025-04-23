@@ -3,6 +3,7 @@ import { MdSort } from 'react-icons/md'
 import EmptyListHero from '../EmptyListHero'
 import { allLower } from '../../utils/utils'
 import MenuDropdown from '../MenuDropdown'
+import { MouseEventHandler } from 'react'
 
 export function Table({ title, headings = [], headerBg, headerColor, noIndexPad, onClickHeading, children, isEmpty, emptyText, loading, mt, ...props }: any) {
 
@@ -62,14 +63,19 @@ export function Table({ title, headings = [], headerBg, headerColor, noIndexPad,
 }
 
 
-export function TableRow({ data = [], onClickRow, options, noIndexPad }:any) {
+export function TableRow({ data = [], onClickRow, rowData, options, noIndexPad }:any) {
+
+    const stopPropagation: MouseEventHandler<HTMLButtonElement | HTMLDivElement> = (e:any) => {
+        e.stopPropagation()
+    }
+
     return (
-        <Tr onClick={onClickRow}>
+        <Tr onClick={e => { onClickRow ? onClickRow(rowData) : stopPropagation(e); }}>
             {data.map((datum:any, index:any) => (
                 <Td key={index} paddingLeft={(index === 0 && !noIndexPad) ? 0 : ''}>
-                    {allLower(datum) === 'active' ? (
+                    {allLower(datum) === 'yes' ? (
                         <Tag colorScheme='whatsapp' size='sm'>{datum}</Tag>
-                    ) : allLower(datum) === 'inactive' ? (
+                    ) : allLower(datum) === 'no' ? (
                         <Tag colorScheme='red' size='sm'>{datum}</Tag>
                     ) : (
                         <Text fontSize={['14px']}>{datum}</Text>
@@ -78,7 +84,7 @@ export function TableRow({ data = [], onClickRow, options, noIndexPad }:any) {
             ))}
             {options &&
                 <Td>
-                    <MenuDropdown data={options} />
+                    <MenuDropdown options={options} rowData={rowData}/>
                 </Td>
             }
         </Tr>

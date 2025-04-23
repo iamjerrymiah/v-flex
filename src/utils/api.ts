@@ -134,13 +134,14 @@ export const customFormdataMutationRequest = async (
 }
 
 
-export const deleteRequest = async (resourceType: ResourceType, url: string) => {
+export const deleteRequest = async (resourceType: ResourceType, url: string, arg?: {}) => {
     const HTTP = getHttpResource(resourceType);
     const headers = {"Content-Type": "application/json"};
     return new Promise((resolve, reject) => {
         HTTP({
             method: 'DELETE',
             url: url,
+            data: arg,
             headers: headers,
         }).then((res: any) => {
             return resolve(res.data);

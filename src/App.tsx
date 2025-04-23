@@ -22,6 +22,8 @@ import OrderPage from './pages/Order/Order'
 import ContactPage from './pages/Contact/Contact'
 import AdminProductPage from './pages/Products/AdminProductPage'
 import AdminUserPage from './pages/Admin/AdminUserPage'
+import MyAddressBook from './pages/Profile/MyAddressBook'
+import AccountDetails from './pages/Profile/AccountDetails'
 
 const router = createBrowserRouter([
 	{
@@ -73,6 +75,14 @@ const router = createBrowserRouter([
             {
                 path: '/profile/my-orders',
                 element: <MyOrderPage />,
+            },
+            {
+                path: '/profile/address-book',
+                element: <MyAddressBook />,
+            },
+            {
+                path: '/profile/account-details',
+                element: <AccountDetails />,
             },
 			{
                 path: '/products/vl',
