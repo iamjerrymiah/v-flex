@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import queryString from 'query-string';
-import { customMutationRequest, deleteRequest, fetcher } from '../../utils/api';
+import { customFormdataMutationRequest, customMutationRequest, deleteRequest, fetcher } from '../../utils/api';
 
 const key = 'products';
 
@@ -26,11 +26,11 @@ export const useGetProduct = (id: string | null | any) => {
     });
 };
 
-export const useAddProduct = () => {
+export const useCreateProduct = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data :any) => {
-            return customMutationRequest("SECURITY", `/product`, 'POST', data).then((res:any) => res)
+            return customFormdataMutationRequest("SECURITY", `/product`, 'POST', data).then((res:any) => res)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [key] });
@@ -42,7 +42,33 @@ export const useUpdateProduct = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data :any) => {
-            return customMutationRequest("SECURITY", `/product/${data?.id}`, 'PATCH', data).then((res:any) => res)
+            return customMutationRequest("SECURITY", `/product`, 'PATCH', data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [key] });
+        },
+    });
+};
+
+export const useUpdateProductMainImage = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return customFormdataMutationRequest("SECURITY", `/product/image/${data?.productId}`, 'PATCH', data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [key] });
+        },
+    });
+};
+
+export const useAddProductImages = (query: any) => {
+    let productId = query?.productId ?? ''
+
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return customFormdataMutationRequest("SECURITY", `/product/image/${productId}`, 'POST', data).then((res:any) => res)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [key] });
@@ -53,8 +79,8 @@ export const useUpdateProduct = () => {
 export const useDeleteProduct = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (data :any) => {
-            return deleteRequest("SECURITY", `/product/${data?.id}`).then((res:any) => res)
+        mutationFn: () => {
+            return deleteRequest("SECURITY", `/product`).then((res:any) => res)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [key] });

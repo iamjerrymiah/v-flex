@@ -3,8 +3,8 @@ import AnimateRoute from "../../common/AnimateRoute";
 import PageMainContainer from "../../common/PageMain";
 import MainAppLayout from "../../layouts/MainAppLayout";
 import { Container } from "../../styling/layout";
-// import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
-// import { useEffect } from "react";
+import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
+import { useEffect } from "react";
 import { Box, Button, Heading, HStack } from "@chakra-ui/react";
 import { MdAddToPhotos, MdOutlineArrowBackIos } from "react-icons/md";
 import { Table, TableRow } from "../../common/Table/Table";
@@ -19,13 +19,13 @@ const tableHeads = ["S/N", "Name", "Price", "Quantity", "Is Available", ""]
 function AdminProductMain ({ products = [], isLoading = false, init, filters, setFilters }:any) {
 
     const navigate = useNavigate()
-    // const { isAuthenticated } =  useGetAuthState();
+    const { isAuthenticated } =  useGetAuthState();
 
-    // useEffect(() => { 
-    //     if(!isAuthenticated) {
-    //         navigate(-1)
-    //     } 
-    // }, [isAuthenticated])
+    useEffect(() => { 
+        if(!isAuthenticated) {
+            navigate(-1)
+        } 
+    }, [isAuthenticated])
 
     const changePage = ({ selected = 0 }) => {
         setFilters({ ...filters, page: selected + 1 });
@@ -48,7 +48,7 @@ function AdminProductMain ({ products = [], isLoading = false, init, filters, se
 
                 <Button
                     leftIcon={<MdAddToPhotos />}
-                    // onClick={onOpen}
+                    onClick={() => navigate(`/admin/products/create`)}
                     color={'white'}
                     bgColor={'blue.700'}
                 >
@@ -68,19 +68,16 @@ function AdminProductMain ({ products = [], isLoading = false, init, filters, se
                 {products?.map((item:any, index:any) =>
                     <TableRow
                         key={index}
-                        // onClickRow={}
                         data={[
                             (index + 1 ),
                             capCase(item?.name ?? "-"),
                             moneyFormat(item?.price ?? 0.0),
                             item?.quantity ?? "-",
                             item?.availability == true ? "Yes" : "No",
-                            // item?.createdAt,
-                            // item?.updatedAt
                         ]}
                         noIndexPad
                         options={[
-                            {name: "View", onUse: () => {}},
+                            // {name: "View", onUse: () => navigate(`/admin/products/${selected?._id}`)},
                             {name: "Delete", color: 'red.700', onUse: () => {}},
                         ]}
                     />

@@ -60,7 +60,7 @@ export const useGetAllCoupons = (params:any) => {
     });
 };
 
-export const useCreateCoupojn = () => {
+export const useCreateCoupoun = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data :any) => {

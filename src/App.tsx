@@ -24,6 +24,7 @@ import AdminProductPage from './pages/Products/AdminProductPage'
 import AdminUserPage from './pages/Admin/AdminUserPage'
 import MyAddressBook from './pages/Profile/MyAddressBook'
 import AccountDetails from './pages/Profile/AccountDetails'
+import AdminCreateProductPage from './pages/Products/AdminCreateProductPage'
 
 const router = createBrowserRouter([
 	{
@@ -115,6 +116,10 @@ const router = createBrowserRouter([
             {
                 path: '/admin/products',
                 element: <AdminProductPage />,
+            },
+            {
+                path: '/admin/products/create',
+                element: <AdminCreateProductPage />,
             },
             {
                 path: '/admin/users',

@@ -8,21 +8,21 @@ import { useNavigate } from "react-router"
 import { useGetAllOrders } from "../../hooks/orders/orders"
 import { Table, TableRow } from "../../common/Table/Table"
 import { capCase } from "../../utils/utils"
-// import { useGetAuthState } from "../../hooks/auth/AuthenticationHook"
-// import { useEffect } from "react"
+import { useGetAuthState } from "../../hooks/auth/AuthenticationHook"
+import { useEffect } from "react"
 
 const tableHeads = ["S/N", "Name"]
 
 function OrdersMain ({ orders = [], isLoading = false }: any) {
     
     const navigate = useNavigate()
-    // const { isAuthenticated } =  useGetAuthState();
+    const { isAuthenticated } =  useGetAuthState();
 
-    // useEffect(() => { 
-    //     if(!isAuthenticated) {
-    //         navigate(-1)
-    //     } 
-    // }, [isAuthenticated])
+    useEffect(() => { 
+        if(!isAuthenticated) {
+            navigate(-1)
+        } 
+    }, [isAuthenticated])
 
     return (
         <Box pt={10}>

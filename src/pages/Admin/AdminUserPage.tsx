@@ -8,21 +8,21 @@ import { MdOutlineArrowBackIos } from "react-icons/md";
 import { Table, TableRow } from "../../common/Table/Table";
 import { useGetAllUsers } from "../../hooks/user/users";
 import { allCaps, allLower, capCase } from "../../utils/utils";
-// import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
-// import { useEffect } from "react";
+import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
+import { useEffect } from "react";
 
-const tableHeads = ["S/N", "Salutation", "First Name", "Last Name", "Email", "Phone Number", "Is Email Verified?", "Status"]
+const tableHeads = ["S/N", "Salutation", "First Name", "Last Name", "Email", "Phone Number", "Is Email Verified?", "Status", ""]
 
 function AdminUserMain ({ users = [], isLoading = false }: any) {
 
     const navigate = useNavigate()
-    // const { isAuthenticated } =  useGetAuthState();
+    const { isAuthenticated } =  useGetAuthState();
 
-    // useEffect(() => { 
-    //     if(!isAuthenticated) {
-    //         navigate(-1)
-    //     } 
-    // }, [isAuthenticated])
+    useEffect(() => { 
+        if(!isAuthenticated) {
+            navigate(-1)
+        } 
+    }, [isAuthenticated])
 
     return (
         <Box pt={10}>
@@ -74,7 +74,7 @@ function AdminUserMain ({ users = [], isLoading = false }: any) {
 export default function AdminUserPage() {
 
     const { data: userData = {}, isLoading } = useGetAllUsers({})
-    const { data: users = [] } = userData
+    const { data: users = {} } = userData
 
     return (
         <PageMainContainer title='Users' description='Users'>
@@ -83,7 +83,7 @@ export default function AdminUserPage() {
                     <AnimateRoute>
                         <AdminUserMain 
                             isLoading={isLoading}
-                            users={users}
+                            users={users?.users}
                         />
                     </AnimateRoute>
                 </Container>

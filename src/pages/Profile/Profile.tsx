@@ -2,7 +2,8 @@ import AnimateRoute from "../../common/AnimateRoute"
 import PageMainContainer from "../../common/PageMain"
 import MainAppLayout from "../../layouts/MainAppLayout"
 import { 
-    Box, Flex, Grid, GridItem, Text, VStack, Icon, Stack, useBreakpointValue 
+    Box, Grid, GridItem, Text, Icon,
+    // Flex,  VStack, Stack, useBreakpointValue 
   } from "@chakra-ui/react";
 import { FaClipboardList, FaBookmark, FaAddressBook, FaUser, FaUsers } from "react-icons/fa";
 import { AiOutlineProduct } from "react-icons/ai";
@@ -31,7 +32,7 @@ export function ProfileLayout({children}: {children: React.ReactNode}) {
     
     const navigate = useNavigate()
     
-    const isMobile = useBreakpointValue({ base: true, md: false });
+    // const isMobile = useBreakpointValue({ base: true, md: false });
 
     const { isAuthenticated, user } =  useGetAuthState();
 
@@ -42,7 +43,7 @@ export function ProfileLayout({children}: {children: React.ReactNode}) {
     }, [isAuthenticated])
 
     return (
-        <Box >
+        <Box pt={6}>
   
             <Text fontSize="2xl" fontWeight="bold" textAlign="center" mt={4} mb={8}>MY ACCOUNT </Text>
 
@@ -50,8 +51,8 @@ export function ProfileLayout({children}: {children: React.ReactNode}) {
                 WELCOME BACK. {allCaps(user?.fullName ?? "")}
             </Text>
 
-            <Flex direction={{ base: "column", md: "row" }} gap={8}>
-                {/* Sidebar */}
+            {/* <Flex direction={{ base: "column", md: "row" }} gap={8}>
+
                 {isMobile ? (
                 <Stack direction="row" wrap="wrap" spacing={4} justify="center">
                     <Text fontWeight="bold" fontSize="sm" cursor="pointer" _hover={{ color: "blue.500" }} onClick={() => navigate('/profile')}>
@@ -98,7 +99,9 @@ export function ProfileLayout({children}: {children: React.ReactNode}) {
 
                 {children}
 
-            </Flex>
+            </Flex> */}
+
+            {children}
       </Box>
     )
 }

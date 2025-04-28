@@ -8,21 +8,21 @@ import { useNavigate } from "react-router";
 import { useGetUserOrders } from "../../hooks/orders/orders";
 import { Table, TableRow } from "../../common/Table/Table";
 import { capCase } from "../../utils/utils";
-// import { useEffect } from "react";
-// import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
+import { useEffect } from "react";
+import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 
 const tableHeads = ["S/N", "Name"]
 
 function MyOrdersMain ({ myOrders = [], isLoading = false}:any) {
 
     const navigate = useNavigate()
-    // const { isAuthenticated } =  useGetAuthState();
+    const { isAuthenticated } =  useGetAuthState();
 
-    // useEffect(() => { 
-    //     if(!isAuthenticated) {
-    //         navigate(-1)
-    //     } 
-    // }, [isAuthenticated])
+    useEffect(() => { 
+        if(!isAuthenticated) {
+            navigate(-1)
+        } 
+    }, [isAuthenticated])
 
     return (
 
@@ -52,7 +52,6 @@ function MyOrdersMain ({ myOrders = [], isLoading = false}:any) {
                 {myOrders?.map((item:any, index:any) =>
                     <TableRow
                         key={index}
-                        // onClickRow={}
                         data={[
                             (index + 1 ),
                             capCase(item?.name ?? "-")

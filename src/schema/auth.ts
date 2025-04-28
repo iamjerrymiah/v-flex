@@ -55,3 +55,17 @@ export const accountDetailsSchema = Yup.object().shape({
   country: Yup.string().required("Country is Required"),
   phoneNumber: Yup.string().required("Phone Number is Required"),
 })
+
+export const productSchema = Yup.object().shape({
+  name: Yup.string().required("Product Name is Required"),
+  price: Yup.string().required("Price is Required"),
+  // oldPrice: Yup.string().required("Old Price is Required"),
+  quantity: Yup.string().required("Quantity is Required"),
+  sizes: Yup.string().required("Sizes is Required"),
+  colors: Yup.string().required("Colors is Required"),
+  freeShipping: Yup.string().required("Free Shipping is Required"),
+  availability: Yup.string().required("Availability is Required"),
+  categories: Yup.string().required("Categories is Required"),
+  description: Yup.string().required("Description is Required"),
+  // acceptCrypto: Yup.string().required("Accept Crypto is Required"),
+})

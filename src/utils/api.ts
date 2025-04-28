@@ -77,39 +77,46 @@ export const customMutationRequest = async (
 export const customFormdataMutationRequest = async (
     resourceType: ResourceType,
     url: string,
-    method: 'POST' | 'PUT' ,
+    method: 'POST' | 'PUT' | 'PATCH' ,
     arg: {},
     headers?: {},
 ) => {
 
-    // let formData = new FormData();
+    let formData = new FormData();
+
     // for (const [key, value] of Object.entries(arg)) {
     //     if (
-    //         (value !== '' &&
-    //             value !== 'null' &&
-    //             value !== 'undefined' &&
-    //             value !== null &&
-    //         value !== undefined)
+    //         value !== '' &&
+    //         value !== 'null' &&
+    //         value !== 'undefined' &&
+    //         value !== null &&
+    //         value !== undefined
     //     ) {
-    //         formData.append(`${key}`, value);
+    //         if (value instanceof File || value instanceof Blob) {
+    //             formData.append(key, value); // Keep files as they are
+    //         } else {
+    //             formData.append(key, String(value)); // Convert other values to string
+    //         }
     //     }
     // }
 
-    let formData = new FormData();
-
     for (const [key, value] of Object.entries(arg)) {
         if (
-            value !== '' &&
-            value !== 'null' &&
-            value !== 'undefined' &&
-            value !== null &&
-            value !== undefined
+          value !== '' &&
+          value !== 'null' &&
+          value !== 'undefined' &&
+          value !== null &&
+          value !== undefined
         ) {
-            if (value instanceof File || value instanceof Blob) {
-                formData.append(key, value); // Keep files as they are
-            } else {
-                formData.append(key, String(value)); // Convert other values to string
-            }
+          if (Array.isArray(value)) {
+            value.forEach((v) => {
+              formData.append(key, v);
+            });
+          } else if (value instanceof File || value instanceof Blob) {
+            formData.append(key, value);
+          } else {
+            formData.append(key, String(value));
+          }
         }
     }
 
