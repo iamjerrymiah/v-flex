@@ -11,7 +11,9 @@ export const useGetProducts = (params:any) => {
         queryFn: async () => {
             const res: any = await fetcher('SECURITY', `/product?${queries}`);
             return res;
-        }
+        },
+        staleTime: 0,
+        refetchOnWindowFocus: true,
     });
 };
 

@@ -31,7 +31,7 @@ export const useUpdateCartProduct = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data :any) => {
-            return customMutationRequest("SECURITY", `/user/cart/${data?._id}`, 'PATCH', data).then((res:any) => res)
+            return customMutationRequest("SECURITY", `/user/cart`, 'PATCH', data).then((res:any) => res)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [`${key}-carts`] });
@@ -43,7 +43,7 @@ export const useDeleteCartProduct = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data :any) => {
-            return deleteRequest("SECURITY", `/user/cart/${data?._id}`).then((res:any) => res)
+            return deleteRequest("SECURITY", `/user/cart`, data).then((res:any) => res)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [`${key}-carts`] });
@@ -79,7 +79,7 @@ export const useDeleteWishlistProduct = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data :any) => {
-            return deleteRequest("SECURITY", `/user/wishlist/${data?.id}`).then((res:any) => res)
+            return deleteRequest("SECURITY", `/user/wishlist`, data).then((res:any) => res)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [`${key}-wishlist`] });
@@ -96,5 +96,17 @@ export const useGetAllUsers = (params:any) => {
             const res: any = await fetcher('SECURITY', `/user/all?${queries}`);
             return res;
         }
+    });
+};
+
+export const useActivateDeactivate = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return customMutationRequest("SECURITY", `/user/status/${data?.id}`, 'PATCH', data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [`${key}-admin`] });
+        },
     });
 };

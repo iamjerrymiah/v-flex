@@ -43,7 +43,7 @@ export const useDeleteCollection = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data :any) => {
-            return deleteRequest("SECURITY", `/product/category/${data?.id}`).then((res:any) => res)
+            return deleteRequest("SECURITY", `/product/category`, data).then((res:any) => res)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [key] });

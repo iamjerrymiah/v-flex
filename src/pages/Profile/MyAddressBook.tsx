@@ -10,7 +10,7 @@ import { Table, TableRow } from "../../common/Table/Table";
 import { allCaps, capCase } from "../../utils/utils";
 import ModalCenter from "../../common/ModalCenter";
 import { Field, Form, Formik } from "formik";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { addressSchema } from "../../schema/auth";
 import Notify from "../../utils/notify";
 import PhoneInput from "react-phone-input-2";
@@ -19,7 +19,7 @@ import SelectComponent from "react-select";
 import countryList from "react-select-country-list";
 import { useConfirmAction } from "../../utils/useActions";
 import ConfirmModal from "../../common/ConfirmModal";
-import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
+// import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 
 
 function AddressBookForm ({ initData = {}, edit, onClose }: any) {
@@ -84,7 +84,7 @@ function AddressBookForm ({ initData = {}, edit, onClose }: any) {
                                 <FormLabel>* Salutation</FormLabel>
                                 <ChakraSelect 
                                     name="salutation"
-                                    value={values?.salutation}
+                                    value={capCase(values?.salutation)}
                                     onChange={handleChange}
                                     // border={errors?.salutation ? '1px solid red.400' : ""}
                                     required
@@ -122,6 +122,7 @@ function AddressBookForm ({ initData = {}, edit, onClose }: any) {
                                 <FormLabel>* Phone Number</FormLabel>
                                 <PhoneInput
                                     country={"nl"}
+                                    value={values?.phoneNumber} 
                                     inputStyle={{ width: "100%" }}
                                     onChange={(value) => setFieldValue("phoneNumber", value)}
                                 />
@@ -132,6 +133,7 @@ function AddressBookForm ({ initData = {}, edit, onClose }: any) {
                                 <FormLabel>Phone Number 2</FormLabel>
                                 <PhoneInput
                                     country={"nl"}
+                                    value={values?.phoneNumber2} 
                                     inputStyle={{ width: "100%" }}
                                     onChange={(value) => setFieldValue("phoneNumber2", value)}
                                 />
@@ -164,7 +166,8 @@ function AddressBookForm ({ initData = {}, edit, onClose }: any) {
                                 <SelectComponent
                                     options={countryOptions}
                                     placeholder="Select country"
-                                    onChange={(option:any) => setFieldValue("country", option.value)}
+                                    value={countryOptions.find(option => option?.label === values?.country)}
+                                    onChange={(option:any) => setFieldValue("country", option.label)}
                                     required
                                 />
                                 {errors?.country && <Text fontSize={'12px'} color={'red.400'}>{`${errors?.country}`}</Text>}
@@ -230,7 +233,7 @@ function AddressBookForm ({ initData = {}, edit, onClose }: any) {
     )
 }
 
-const tableHeads = [ "S/N", "Salutation", "First Name", "Last Name", "Phone Number", "Phone Number 2", "Postal Code", "Is default",  "Address", ""]
+const tableHeads = [ "S/N", "Salutation", "First Name", "Last Name", "Phone Number", "Postal Code", "Is default",  "Address", ""]
 function MyAddressBookMain ({ addressBooks = [], isLoading = false }: any) {
 
     const navigate = useNavigate()
@@ -266,17 +269,17 @@ function MyAddressBookMain ({ addressBooks = [], isLoading = false }: any) {
         }
     }
 
-    const { isAuthenticated } =  useGetAuthState();
+    // const { isAuthenticated } =  useGetAuthState();
 
-    useEffect(() => { 
-        if(!isAuthenticated) {
-            navigate(-1)
-        } 
-    }, [isAuthenticated])
+    // useEffect(() => { 
+    //     if(!isAuthenticated) {
+    //         navigate(-1)
+    //     } 
+    // }, [isAuthenticated])
     
 
     return (
-        <Box pt={10}>
+        <Box py={6}>
 
             <Heading textAlign="center" fontSize={["24px", '30px']} fontWeight={400} my={10}> ADDRESS BOOK </Heading>
 
@@ -290,6 +293,7 @@ function MyAddressBookMain ({ addressBooks = [], isLoading = false }: any) {
                     Back
                 </Button>
 
+                {addressBooks?.length < 3 &&
                 <Button
                     leftIcon={<MdAddToPhotos />}
                     onClick={onOpen}
@@ -297,7 +301,7 @@ function MyAddressBookMain ({ addressBooks = [], isLoading = false }: any) {
                     bgColor={'blue.700'}
                 >
                     Add
-                </Button>
+                </Button>}
 
             </HStack>
 
@@ -317,16 +321,16 @@ function MyAddressBookMain ({ addressBooks = [], isLoading = false }: any) {
                             allCaps(item?.salutation ?? "-"),
                             capCase(item?.firstName ?? "-"),
                             capCase(item?.lastName ?? "-"),
-                            item?.phoneNumber ?? "-",
-                            item?.phoneNumber2 ?? "-",
+                            `+${item?.phoneNumber}`,
+                            // `+${item?.phoneNumber2}`,
                             item?.postalCode ?? "-",
                             item?.defaultAddress == true ? "Yes" : "No",
                             `${capCase(item?.address)}, ${capCase(item?.city)}, ${capCase(item?.country)}`,
                         ]}
                         noIndexPad
                         options={[
-                            {name: "View", onUse: (item: any) => selectedInfo(item)},
-                            {name: "Delete", color: 'red.700', onUse: (item: any) => shouldDelete(item)},
+                            {name: "View", onUse: () => {selectedInfo(item)}},
+                            {name: "Delete", color: 'red.700', onUse: () => shouldDelete(item)},
                         ]}
                     />
                 )}
@@ -375,7 +379,7 @@ export default function MyAddressBook() {
 
     return (
         <PageMainContainer title='Address Book' description='Address Book'>
-            <MainAppLayout>
+            <MainAppLayout noFooter>
                 <Container>
                     <AnimateRoute>
                         <MyAddressBookMain 

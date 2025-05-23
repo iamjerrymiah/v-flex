@@ -13,74 +13,101 @@ import {
     Heading,
     Center,
     HStack,
+    Spinner,
   } from "@chakra-ui/react";
 import { FiMinus, FiPlus, FiTrash2 } from "react-icons/fi";
-import { useState } from "react";
-// import pic from '../../assets/images/sneaker3.webp'
 import Loader from "../../common/Loader";
 import PageSk from "../../common/PageSk";
 import EmptyListHero from "../../common/EmptyListHero";
 import { allCaps, capCase, moneyFormat } from "../../utils/utils";
-import { useGetUserCarts } from "../../hooks/user/users";
+import { useDeleteCartProduct, useGetUserCarts, useUpdateCartProduct } from "../../hooks/user/users";
 import { MdOutlineArrowBackIos } from "react-icons/md";
 import { useNavigate } from "react-router";
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
-  
-//   interface CartItem {
-//     id: string;
-//     name: string;
-//     image: string;
-//     price: number;
-//     quantity: number;
-//   }
-  
-//   const mockCart: any[] = [
-//     {
-//       product: {
-//         id: "1",
-//         name: "Modern Leather Bag",
-//         mainImage: pic,
-//         price: 89.99,
-//       },
-//       quantity: 1,
-//     },
-//   ];
 
 
-function CartsMain ({ carts = [], isLoading = false }:any) {
+function CartsMain ({ carts = [], isLoading }:any) {
     
     const navigate = useNavigate()
     const { isAuthenticated } =  useGetAuthState();
 
-    const [cartItems, setCartItems] = useState<any[]>(carts);
+    // const [cartItems, setCartItems] = useState<any[]>(carts);
 
-    const handleRemoveItem = (id: string) => {
-      setCartItems((prev) => prev.filter((item) => item._id !== id));
+    const { mutateAsync: updateCartAction, isPending } = useUpdateCartProduct()
+    const { mutateAsync: removeCartAction } = useDeleteCartProduct()
+
+    const handleRemoveItem = async (id: string) => {
+    //   setCartItems((prev) => prev.filter((item) => item._id !== id));
+        try { 
+            const res:any = await removeCartAction({ id: id }); 
+            return res 
+        } catch(e:any) {return e}
     };
 
-    const handleUpdateQty = (id: string, type: "increment" | "decrement") => {
-        setCartItems((prev) =>
-          prev.map((item) =>
-            item._id === id
-              ? {
-                  ...item,
-                  quantity:
-                    type === "increment"
-                      ? item?.quantity + 1
-                      : Math.max(1, item?.quantity - 1),
-                }
-              : item
-          )
-        );
+    const handleUpdateQty = async (id: string, type: "increment" | "decrement") => {
+        const item = carts?.find((item:any) => item?._id === id);
+        if (!item) return;
+
+        const newQuantity = type === "increment"
+        ? item.quantity + 1
+        : Math.max(1, item.quantity - 1);
+
+        try {
+            const res = await updateCartAction({
+                cartId: id,
+                quantity: newQuantity,
+                size: item.size,
+                color: item.color
+            });
+
+            return res
+        } catch (e) {
+            return e;
+        }
     };
+
+    // const handleUpdateQty = (id: string, type: "increment" | "decrement") => {
+    //     setCartItems((prev) =>
+    //       prev.map((item) =>
+    //         item._id === id
+    //           ? {
+    //               ...item,
+    //               quantity:
+    //                 type === "increment"
+    //                   ? item?.quantity + 1
+    //                   : Math.max(1, item?.quantity - 1),
+    //             }
+    //           : item
+    //       )
+    //     );
+    // };
   
-    const subtotal = cartItems.reduce((acc, item) => acc + item?.product?.price * item?.quantity, 0);
-    const tax = subtotal * 0.07; //tax
-    const total = subtotal + tax;
+    const subtotal = carts?.reduce((acc:any, item:any) => acc + item?.product?.price * item?.quantity, 0);
+    // const tax = subtotal * 0.07; //tax
+    const total = subtotal;
+
+    // useEffect(() => { if(!isLoading) { setCartItems(carts) } }, [isLoading])
 
 
     return(
-        <Box pt={10}>
+        <Box py={6}>
+
+            {isPending ?
+                <Box
+                    position="fixed"
+                    top={0}
+                    left={0}
+                    width="100vw"
+                    height="100vh"
+                    bg="rgba(255, 255, 255, 0.5)"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    zIndex={9999}
+                >
+                    <Spinner size="xl" color="blue.500" thickness="4px" />
+                </Box> : null
+            }
 
             <Heading textAlign="center" fontSize={["24px", '30px']} fontWeight={400} my={10}> CART </Heading>
 
@@ -103,7 +130,7 @@ function CartsMain ({ carts = [], isLoading = false }:any) {
                                 <PageSk />
                             </>
                         ) : 
-                        cartItems.length <= 0 ? (
+                        carts?.length <= 0 ? (
                             <Center mt={[4, 10]}>
                                 <EmptyListHero
                                     w="400px"
@@ -112,7 +139,7 @@ function CartsMain ({ carts = [], isLoading = false }:any) {
                             </Center>
                         ) :
                         <>
-                            {cartItems.map((item, i) => (
+                            {carts?.map((item:any, i:any) => (
                                 <Flex
                                     key={i}
                                     direction={{ base: "column", md: "row" }}
@@ -135,9 +162,7 @@ function CartsMain ({ carts = [], isLoading = false }:any) {
                                         <Box flex={1}>
                                             <Text fontSize={['md', "lg"]} fontWeight="semibold">{capCase(item?.product?.name)}</Text>
                                             <Text color="gray.800">€ {moneyFormat(item?.product?.price)}</Text>
-                                            <Text color={["white", "#fff", "#FFF", "#FFFFFF", "#ffffff"].includes(item?.color)
-                                                        ? "gray.500"
-                                                        : item?.color ?? "gray.500"}>Color: {item?.color}</Text>
+                                            <Text>Color: {capCase(item?.color)}</Text>
                                             <Text color="gray.800">Size: {allCaps(item?.size)}</Text>
                                             <Text color="gray.800">Available: {item?.product?.availability == true ? "YES" : "NO"}</Text>
                                         </Box>
@@ -196,7 +221,7 @@ function CartsMain ({ carts = [], isLoading = false }:any) {
                     borderRadius="xl"
                     shadow="md"
                     minW={{ base: "100%", md: "300px" }}
-                    display={cartItems.length <= 0 ? 'none': 'block'}
+                    display={carts?.length <= 0 ? 'none': 'block'}
                 >
                     <Text fontSize="xl" fontWeight="bold" mb={6}> Summary </Text>
         
@@ -205,8 +230,8 @@ function CartsMain ({ carts = [], isLoading = false }:any) {
                         <Text>€ {moneyFormat(subtotal)}</Text>
                     </Flex>
                     <Flex justify="space-between" mb={2}>
-                        <Text>Tax (7%)</Text>
-                        <Text>€ {moneyFormat(tax)}</Text>
+                        <Text>Tax (0%)</Text>
+                        <Text>€ {moneyFormat(0)}</Text>
                     </Flex>
                     <Divider my={3} />
                     <Flex justify="space-between" fontWeight="bold" fontSize="lg">
@@ -220,7 +245,7 @@ function CartsMain ({ carts = [], isLoading = false }:any) {
                         bg="black" 
                         color="white" 
                         _hover={{ bg: "gray.700" }} 
-                        isDisabled={cartItems.length === 0}
+                        isDisabled={carts?.length === 0}
                     >
                         Proceed to Checkout
                     </Button>
@@ -238,11 +263,11 @@ export default function CartPage() {
 
     return (
         <PageMainContainer title='Carts' description='Carts'>
-            <MainAppLayout>
+            <MainAppLayout noFooter>
                 <AnimateRoute>
                     <Container>
                         <CartsMain 
-                            carts={carts?.cart} 
+                            carts={carts?.cart ?? []} 
                             isLoading={isLoading} 
                         />
                     </Container>

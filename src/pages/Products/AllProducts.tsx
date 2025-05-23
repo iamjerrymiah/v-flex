@@ -2,7 +2,6 @@ import AnimateRoute from "../../common/AnimateRoute"
 import PageMainContainer from "../../common/PageMain"
 import MainAppLayout from "../../layouts/MainAppLayout"
 import { Image, Stack, Text, Box, Grid, GridItem, Icon, Button, Flex, Heading, Center  } from '@chakra-ui/react'
-// import { FaStar } from "react-icons/fa";
 import { FaCheckToSlot } from "react-icons/fa6"
 import { FcCancel } from 'react-icons/fc'
 import { capCase, moneyFormat } from "../../utils/utils"
@@ -17,8 +16,9 @@ import { useNavigate } from "react-router";
 import { useParams, useSearchParams, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Container } from "../../styling/layout"
-import PageSk from "../../common/PageSk"
+import { ProductPageSk } from "../../common/PageSk"
 import Pagination from "../../common/Pagination/Pagination"
+import { useQueryParams } from "../../providers/useQueryParams"
 
 
 const ProductGrid = ({ products, init, filters, setFilters }: {products: any[], init:any, filters:any, setFilters:any }) => {
@@ -31,8 +31,8 @@ const ProductGrid = ({ products, init, filters, setFilters }: {products: any[], 
         <>
             <Box cursor={'pointer'} mb={12}>
                 <Grid 
-                    templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" }}
-                    gap={[10, 6]}
+                    templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" }}
+                    gap={[14, 20]}
                 >
                 {products?.map((product:any) => (
                     <ProductCard 
@@ -77,7 +77,7 @@ const ProductCard = ({ product }:any) => {
                 _hover={{ transform: "scale(1.05)" }}
                 objectFit={'cover'}
                 w={'100%'}
-                h={['350px']}
+                h={['500px']}
             />
           
             <Button 
@@ -111,6 +111,7 @@ const ProductCard = ({ product }:any) => {
   function ProductsMain() {
 
     const location = useLocation();
+    const { queryParams } = useQueryParams()
     const { category } = useParams<{ category: string }>();
 
     const [searchParams] = useSearchParams();
@@ -118,12 +119,11 @@ const ProductCard = ({ product }:any) => {
 
     const [filter, setFilter] = useState({
         sortBy: 'recent',
-        limit: 30,
         categoryId: categoryId ?? ""
     })
 
-    const { data: productData = {}, isLoading } = useGetProducts(filter)
-    const { data: products = [] } = productData
+    const { data: productData = {}, isLoading } = useGetProducts({...filter, ...queryParams})
+    const { data: products = {} } = productData
 
     useEffect(() => {
         setFilter((prev) => ({
@@ -165,7 +165,7 @@ const ProductCard = ({ product }:any) => {
                     {isLoading ? (
                         <>
                             <Loader />
-                            <PageSk />
+                            <ProductPageSk />
                         </>
                     ) : products?.products?.length <= 0 ? (
                         <Center mt={10}>
@@ -192,11 +192,13 @@ const ProductCard = ({ product }:any) => {
 
 
 export default function AllProducts () {
+
+
     return(
         <PageMainContainer title='Products' description='Products'>
             <MainAppLayout px='0px'>
                 <AnimateRoute>
-                    <ProductsMain />
+                    <ProductsMain  />
                 </AnimateRoute>
             </MainAppLayout>
         </PageMainContainer>

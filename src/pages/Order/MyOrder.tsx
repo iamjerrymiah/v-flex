@@ -1,4 +1,4 @@
-import { Box, Button, Heading } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Icon, SimpleGrid, Spinner, Stack, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import AnimateRoute from "../../common/AnimateRoute";
 import PageMainContainer from "../../common/PageMain";
 import MainAppLayout from "../../layouts/MainAppLayout";
@@ -7,26 +7,201 @@ import { MdOutlineArrowBackIos } from "react-icons/md";
 import { useNavigate } from "react-router";
 import { useGetUserOrders } from "../../hooks/orders/orders";
 import { Table, TableRow } from "../../common/Table/Table";
-import { capCase } from "../../utils/utils";
-import { useEffect } from "react";
-import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
+import { allCaps, capCase, moneyFormat } from "../../utils/utils";
+import { useState } from "react";
+// import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
+import ModalCenter from "../../common/ModalCenter";
+import { BsCheck } from "react-icons/bs";
+import Pagination from "../../common/Pagination/Pagination";
 
-const tableHeads = ["S/N", "Name"]
+const statusHistory = [ "order placed", "payment successful", "delivery pending" ];
 
-function MyOrdersMain ({ myOrders = [], isLoading = false}:any) {
+// const backendStatuses = [ "order placed", "payment successful" ];
+
+export function TextDetails ({
+    title,
+    name = '-',
+    direction = 'column',
+    nameProps,
+    titleProps,
+    spacing,
+    separator = ':',
+    node,
+    minW,
+    my,
+    mt,
+    mb,
+    mx,
+    py,
+    allCap,
+}:any) {
+    return (
+        <Stack direction={direction} spacing={spacing} mx={mx} my={my} mt={mt} mb={mb} py={py}>
+            <Text minW={minW || '16%'} color={'gray.500'} fontSize='13px' {...titleProps}>{`${allCap ? allCaps(title) : capCase(title)}${separator}`}</Text>
+            {node ? 
+            <Box>{name}</Box> :
+            <Text fontSize='14px' fontWeight={600} {...nameProps}>{name}</Text>}
+        </Stack>
+    )
+}
+
+
+export function OrderView ({
+    admin,
+    // onClose,
+    isLoad,
+    initData = {}
+}:any) {
+
+
+    return (
+        <Stack>
+
+            {isLoad ?
+                <Box
+                    position="fixed"
+                    top={0}
+                    left={0}
+                    width="100vw"
+                    height="100vh"
+                    bg="rgba(255, 255, 255, 0.5)"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    zIndex={9999}
+                >
+                    <Spinner size="xl" color="blue.500" thickness="4px" />
+                </Box> : null
+            }
+
+            <VStack align="start" spacing={4} position="relative" mb={6}>
+                {statusHistory?.map((step, index) => {
+                    const isCompleted = initData?.statusHistory?.includes(step);
+                    const isLast = index === statusHistory?.length - 1;
+
+                    return (
+                    <Flex key={step} align="start" position="relative">
+                        
+                        <Box position="relative" mr={4}>
+                            <Box
+                                boxSize={8}
+                                borderRadius="full"
+                                bg={isCompleted ? "green.500" : "gray.300"}
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="center"
+                                color="white"
+                                zIndex={1}
+                            >
+                                <Icon as={BsCheck} w={8} h={8} />
+                            </Box>
+
+                            {/* Vertical Line (only if not last step) */}
+                            {!isLast && (
+                                <Box
+                                    position="absolute"
+                                    top="100%"
+                                    left="50%"
+                                    transform="translateX(-50%)"
+                                    width="2px"
+                                    height="32px"
+                                    bg="gray.200"
+                                />
+                            )}
+                        </Box>
+
+                        {/* Step label */}
+                        <Text
+                            fontWeight={500}
+                            color={isCompleted ? "green.600" : "gray.600"}
+                            textTransform="capitalize"
+                            mt={1}
+                        >
+                            {step}
+                        </Text>
+                    </Flex>
+                    );
+                })}
+            </VStack>
+
+            <Stack spacing={6}>
+
+            {admin && 
+                <Box borderBottom={'1px solid #ccc'} py={3}>
+                    <Text fontSize={'18px'} fontWeight={500}>User Details</Text>
+                    <SimpleGrid columns={2} spacing={4} my={3}>
+                        <TextDetails title="First Name" name={capCase(initData?.user?.firstName)} />
+                        <TextDetails title="Last Name" name={capCase(initData?.user?.lastName)} />
+                        <TextDetails title="Email" name={initData?.user?.email} />
+                        <TextDetails title="Phone Number" name={`+${initData?.user?.phoneNumber ?? ""}`} />
+                    </SimpleGrid>
+                </Box>
+            }
+
+                <Box borderBottom={'1px solid #ccc'} py={3}>
+                    <Text fontSize={'18px'} fontWeight={500}>Order Details</Text>
+                    <SimpleGrid columns={[2, 3]} spacing={4} my={3}>
+                        <TextDetails title="Order Number" name={initData?.orderNumber} />
+                        <TextDetails title="Total Amount Paid" name={`€ ${moneyFormat(initData?.totalPaid ?? 0)}`} />
+                        <TextDetails title="Products Amount" name={`€ ${moneyFormat(initData?.productsAmount ?? 0)}`} />
+                        <TextDetails title="Payment Method" name={capCase(initData?.paymentMethod)} />
+                        <TextDetails title="Payment Status" name={capCase(initData?.paymentStatus)} />
+                        <TextDetails title="Delivery Fee" name={`€ ${moneyFormat(initData?.deliveryFee ?? 0)}`} />
+                        <TextDetails title="Delivery Method" name={capCase(initData?.deliveryMethod)} />
+                        <TextDetails title="Delivery Status" name={capCase(initData?.deliveryStatus)} />
+                        <TextDetails title="Delivery Date" name={initData?.deliveryDate} />
+                    </SimpleGrid>
+                </Box>
+
+                <Box >
+                    <Text fontSize={'18px'} mb={3} fontWeight={500}>Selected Product's</Text>
+                    {initData?.selectedProducts?.map((p:any, i:number) => (
+                        <Box key={i} borderBottom={'1px solid #eee'}>
+                            <SimpleGrid columns={[2, 3]} spacing={4} py={3}>
+                                <TextDetails title="Product Name" name={capCase(p?.product?.name)} />
+                                <TextDetails title="Product Price" name={`€ ${moneyFormat(p?.product?.price ?? 0)}`} />
+                                <TextDetails title="Product Size" name={p?.size} />
+                                <TextDetails title="Product Color" name={p?.color} />
+                                <TextDetails title="Product Size" name={p?.quantity} />
+                            </SimpleGrid>
+                        </Box>
+                    ))}
+                </Box>
+
+            </Stack>
+
+        </Stack>
+    )
+}
+
+const tableHeads = ["S/N", "orderNumber", "Total Amount Paid", "Payment Method", "Payment Status", "Delivery Status", "Delivery Date", ""]
+function MyOrdersMain ({ init = {}, myOrders = [], isLoading, filters, setFilters}:any) {
 
     const navigate = useNavigate()
-    const { isAuthenticated } =  useGetAuthState();
+    // const { isAuthenticated } =  useGetAuthState();
 
-    useEffect(() => { 
-        if(!isAuthenticated) {
-            navigate(-1)
-        } 
-    }, [isAuthenticated])
+    const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure()
+
+    const [selected, setSelected] = useState({})
+
+    const selectedInfo = (d: any) => {
+        setSelected(d)
+        onOpenEdit()
+    }
+
+    const changePage = ({ selected = 0 }) => {
+        setFilters({ ...filters, page: selected + 1 });
+    }
+
+    // useEffect(() => { 
+    //     if(!isAuthenticated) {
+    //         navigate(-1)
+    //     } 
+    // }, [isAuthenticated])
 
     return (
 
-        <Box pt={10}>
+        <Box py={6}>
         
             <Heading textAlign="center" fontSize={["24px", '30px']} fontWeight={400} my={10}> MY ORDER </Heading>
 
@@ -54,12 +229,41 @@ function MyOrdersMain ({ myOrders = [], isLoading = false}:any) {
                         key={index}
                         data={[
                             (index + 1 ),
-                            capCase(item?.name ?? "-")
+                            item?.orderNumber,
+                            `€ ${moneyFormat(item?.totalPaid ?? 0)}`,
+                            capCase(item?.paymentMethod ?? "-"),
+                            capCase(item?.paymentStatus ?? "-"),
+                            capCase(item?.deliveryStatus ?? "-"),
+                            item?.deliveryDate ?? "-",
                         ]}
                         noIndexPad
+                        options={[
+                            {name: "View", onUse: () => {selectedInfo(item)}},
+                            // {name: "Delete", color: 'red.700', onUse: () => shouldDelete(item)},
+                        ]}
                     />
                 )}
             </Table>
+
+            <Pagination
+                pageCount={init?.totalPages}
+                onPageChange={changePage}
+            />
+
+            <ModalCenter 
+                size={'3xl'}
+                isOpen={isOpenEdit}
+                onClose={onCloseEdit}
+                header='View Order'
+                body={
+                    <OrderView 
+                        admin={false}
+                        isLoad={false}
+                        onClose={onCloseEdit}
+                        initData={selected ?? {}}
+                    />
+                }
+            />
 
         </Box>
     )
@@ -67,17 +271,23 @@ function MyOrdersMain ({ myOrders = [], isLoading = false}:any) {
 
 export default function MyOrderPage() {
 
-    const { data: orderData = {}, isLoading } = useGetUserOrders({})
-    const { data: myOrders = [] } = orderData
+    const [filters, setFilters] = useState({})
+
+    const { data: orderData = {}, isLoading } = useGetUserOrders(filters)
+    const { data: myOrders = {} } = orderData
+
 
     return (
         <PageMainContainer title='My Orders' description='My Orders'>
-            <MainAppLayout>
+            <MainAppLayout noFooter>
                 <Container>
                     <AnimateRoute>
                         <MyOrdersMain 
                             isLoading={isLoading}
-                            myOrders={myOrders}
+                            init={myOrders}
+                            myOrders={myOrders?.orders ?? []}
+                            filters={filters}
+                            setFilters={setFilters}
                         />
                     </AnimateRoute>
                 </Container>

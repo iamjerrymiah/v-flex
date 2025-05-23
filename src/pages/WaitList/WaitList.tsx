@@ -12,74 +12,83 @@ import {
     Center,
     HStack,
     Button,
+    Tooltip,
+    useDisclosure,
+    Stack,
+    Select,
+    Input,
   } from "@chakra-ui/react";
-  import { FiMinus, FiPlus } from "react-icons/fi";
   import { useState } from "react";
-//   import pic from '../../assets/images/sneaker3.webp'
 import Loader from "../../common/Loader";
 import PageSk from "../../common/PageSk";
 import EmptyListHero from "../../common/EmptyListHero";
 import { capCase, moneyFormat } from "../../utils/utils";
 import { MdCancel, MdOutlineArrowBackIos } from "react-icons/md";
-import { useGetUserWishlists } from "../../hooks/user/users";
+import { useAddProductToCart, useDeleteWishlistProduct, useGetUserCarts, useGetUserWishlists } from "../../hooks/user/users";
 import { useNavigate } from "react-router";
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
-// import { FaShoppingCart } from "react-icons/fa";
+import Notify from "../../utils/notify";
+import ModalCenter from "../../common/ModalCenter";
 
-// interface CartItem {
-//     id: string;
-//     name: string;
-//     image: string;
-//     price: number;
-//     quantity: number;
-//   }
-  
-//   const mockCart: CartItem[] = [
-//     {
-//       id: "1",
-//       name: "Modern Leather Bag",
-//       image: pic,
-//       price: 89.99,
-//       quantity: 1,
-//     },
-//     {
-//       id: "2",
-//       name: "Wireless Headphones",
-//       image: pic,
-//       price: 120,
-//       quantity: 2,
-//     },
-//   ];
 
-function WaitlistMain ({ wishLists = [], isLoading = false }: any) {
+function WaitlistMain ({ wishLists = [], carts = {}, isLoading }: any) {
 
     const navigate = useNavigate()
     const { isAuthenticated } =  useGetAuthState();
 
-    const [wishListItems, setWishlistItems] = useState<any[]>(wishLists);
+    // const [wishListItems, setWishlistItems] = useState<any[]>(wishLists);
+    const [selected, setSelected] = useState<any>({})
 
-    const handleRemoveItem = (id: string) => {
-      setWishlistItems((prev) => prev.filter((item) => item._id !== id));
+    const [selectedColor, setSelectedColor] = useState<string>("");
+    const [selectedSize, setSelectedSize] = useState<string>("");
+    const [quantity, setQuantity] = useState<any>(1);
+    
+    const {isOpen, onOpen, onClose } = useDisclosure()
+
+    const onSelected = (d:any) => {
+        setSelected(d)
+        onOpen()
+    }
+
+    const closed = () => {
+        setSelected({})
+        onClose()
+    }
+
+    const { mutateAsync: addCartAction, isPending: cartPend } = useAddProductToCart()
+    const { mutateAsync: removeWishlistAction } = useDeleteWishlistProduct()
+
+    const handleAddCart = async (data:any) => {
+        try {
+            const res:any =  await addCartAction({
+                product: data?._id,
+                size: selectedSize ?? data?.sizes[0],
+                color: selectedColor ?? data?.colors[0],
+                quantity: quantity ?? 1
+            })
+
+            Notify.success("Product added to cart successfully.")
+            closed()
+            return res;
+
+        } catch(e:any) {
+            Notify.error(e?.message ?? "Failed")
+            return e
+        }
+    }
+
+    const handleRemoveItem = async (id: string) => {
+        try { 
+            const res:any = await removeWishlistAction({ productId: id }); 
+            // setWishlistItems((prev) => prev?.filter((item) => item._id !== id)); 
+            return res 
+        } catch(e:any) {return e}
     };
 
-    const handleUpdateQty = (id: string, type: "increment" | "decrement") => {
-        setWishlistItems((prev) =>
-          prev.map((item) =>
-            item._id === id
-              ? {
-                  ...item,
-                  quantity:
-                    type === "increment"
-                      ? item.quantity + 1
-                      : Math.max(1, item.quantity - 1),
-                }
-              : item
-          )
-        );
-    };
+    // useEffect(() => { if(!isLoading) { setWishlistItems(wishLists) }}, [isLoading])
 
     return (
-        <Box pt={10}>
+        <Box py={6}>
 
             <Heading textAlign="center" fontSize={["24px", '30px']} fontWeight={400} mb={10}> MY WISHLIST </Heading>
 
@@ -100,7 +109,7 @@ function WaitlistMain ({ wishLists = [], isLoading = false }: any) {
                                 <PageSk />
                             </>
                         ) :
-                         wishListItems.length <= 0 ? (
+                         wishLists?.length <= 0 ? (
                             <Center mt={[4, 10]}>
                                 <EmptyListHero
                                     w="400px"
@@ -109,7 +118,7 @@ function WaitlistMain ({ wishLists = [], isLoading = false }: any) {
                             </Center>
                         ) :
                         <>
-                            {wishListItems.map((item, i) => (
+                            {wishLists?.map((item:any, i:any) => (
                                 <Flex
                                     key={i}
                                     direction={{ base: "column", md: "row" }}
@@ -121,7 +130,7 @@ function WaitlistMain ({ wishLists = [], isLoading = false }: any) {
                                     borderRadius="lg"
                                     gap={4}
                                 >
-                                    <HStack w={['100%', '60%']} spacing={2} mr={2}>
+                                    <HStack w={['100%']} spacing={2} mr={2}>
                                         <Image
                                             src={item?.mainImage}
                                             alt={item?.name}
@@ -131,15 +140,11 @@ function WaitlistMain ({ wishLists = [], isLoading = false }: any) {
                                         />
                                         <Box flex={1}>
                                             <Text fontSize={['md', "lg"]} fontWeight="semibold">{capCase(item?.name)}</Text>
-                                            <Text color="gray.800">€ {moneyFormat(item.price)}</Text>
+                                            {/* <Text color="gray.800">€ {moneyFormat(item.price)}</Text> */}
                                             <Text color="gray.500">Available: {item?.availability == true ? "YES" : "NO"}</Text>
                                             <Text color="gray.500">Available Quantity: {item?.quantity}</Text>
                                         </Box>
                                     </HStack>
-
-                                    {/* <Box>
-                                        <Text display={[ 'none', 'block' ]} fontWeight={'bold'}>€ {item.price.toFixed(2)}</Text>
-                                    </Box> */}
 
                                     <Flex
                                         direction={{ base: "row", sm: "row" }}
@@ -149,34 +154,28 @@ function WaitlistMain ({ wishLists = [], isLoading = false }: any) {
                                         justify="space-between"
                                         pt={[0,4]}
                                     >
-                                        {/* Quantity Controls */}
                                         <HStack>
-                                            <IconButton
-                                                icon={<FiMinus />}
-                                                aria-label="Decrease quantity"
-                                                size="sm"
-                                                onClick={() => handleUpdateQty(item._id, "decrement")}
-                                            />
-                                            <Text minW="20px" textAlign="center">
-                                                {item.quantity}
-                                            </Text>
-                                            <IconButton
-                                                icon={<FiPlus />}
-                                                aria-label="Increase quantity"
-                                                size="sm"
-                                                onClick={() => handleUpdateQty(item._id, "increment")}
-                                            />
+                                            <Text color="gray.800">Price: <Text color={'black'} fontWeight={500} fontSize={['16px', '20px']}>€ {moneyFormat(item.price)}</Text> </Text>
                                         </HStack>
 
-                                        <Button 
-                                            w="'10%'" 
-                                            bg="black" 
-                                            color="white" 
-                                            _hover={{ bg: "gray.700" }} 
-                                            // leftIcon={<FaShoppingCart />}
+                                        <Tooltip 
+                                            bgColor={'red.500'}
+                                            label={!isAuthenticated 
+                                            ? "Please log in to add to cart." 
+                                            : carts?.cart?.length >= 1000 ? "You've reached the limit amount in cart." : ""}
                                         >
-                                            ADD TO CART
-                                        </Button>
+                                            <Button 
+                                                bg="black" 
+                                                color="white" 
+                                                _hover={{ bg: "gray.700" }} 
+                                                isDisabled={!isAuthenticated || carts?.cart?.length >= 1000}
+                                                isLoading={cartPend}
+                                                // onClick={() => { handleAddCart(item) }}
+                                                onClick={() => { onSelected(item) }}
+                                            >
+                                                ADD TO CART
+                                            </Button>
+                                        </Tooltip>
 
                                         <IconButton
                                             icon={<MdCancel />}
@@ -189,8 +188,64 @@ function WaitlistMain ({ wishLists = [], isLoading = false }: any) {
                                 </Flex>
                             ))}
                         </>}
-
                 </Box>
+
+            <ModalCenter 
+                isOpen={isOpen}
+                onClose={onClose}
+                header='Add To Cart'
+                body={
+                    <form onSubmit={(e) => { e?.preventDefault(); handleAddCart(selected); }}>
+                        <Stack spacing={4}>
+                            <HStack>
+                                <Text w={'13%'}>Size:</Text>
+                                <Select mb={4} value={selectedSize} onChange={(e) => setSelectedSize(e.target.value)} required>
+                                    <option value={""}>{"Select Size"}</option>
+                                    {selected?.sizes?.map((size:any, index:any) => (
+                                        <option key={index} value={size}>{size}</option>
+                                    ))}
+                                </Select>
+                            </HStack>
+                            <HStack>
+                                <Text w={'13%'}>Color:</Text>
+                                <Select mb={4} value={selectedColor} onChange={(e) => setSelectedColor(e.target.value)} required>
+                                    <option value={""}>{"Select Color"}</option>
+                                    {selected?.colors?.map((size:any, index:any) => (
+                                        <option key={index} value={size}>{size}</option>
+                                    ))}
+                                </Select>
+                            </HStack>
+
+                            <HStack>
+                                <Text>Quantity:</Text>
+                                <Input type="number" value={quantity} placeholder={"Quantity"} onChange={ (e) => setQuantity(e.target.value) } required/>
+                            </HStack>
+
+                            <HStack w={'full'} justify={'space-between'} spacing={3} mt={6}>
+                                <Button 
+                                    w={'100%'} 
+                                    bg="gray.400" 
+                                    onClick={closed}
+                                > 
+                                    Back 
+                                </Button>
+                                <Button 
+                                    w={'100%'}
+                                    bg="blue.700" 
+                                    type='submit'
+                                    color="white" 
+                                    isDisabled={cartPend || selectedColor == "" || selectedSize == ""}
+                                    isLoading={cartPend}
+                                >
+                                    Save
+                                </Button>
+                                
+                            </HStack>
+                        </Stack>
+                    </form>
+                }
+            />
+
         </Box>
     )
 }
@@ -200,14 +255,19 @@ export default function WaitListPage() {
     const { data: wishListData = {}, isLoading } = useGetUserWishlists({})
     const { data: wishLists = [] } = wishListData
 
+
+    const { data: cartData = {} } = useGetUserCarts({})
+    const { data: carts = {} } = cartData
+
     return (
         <PageMainContainer title='Wishlist' description='Wishlist'>
-            <MainAppLayout>
+            <MainAppLayout noFooter>
                 <AnimateRoute>
                     <Container>
                         <WaitlistMain 
                             isLoading={isLoading}
-                            wishLists={wishLists}
+                            wishLists={wishLists ?? []}
+                            carts={carts}
                         />
                     </Container>
                 </AnimateRoute>

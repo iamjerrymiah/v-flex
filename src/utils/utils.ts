@@ -26,6 +26,19 @@ export const moneyFormat = (amount: string | number, integer?: boolean) => {
     }
 }
 
+ export const formatNumberToShortForm = (number:number|any) => {
+    if (number >= 1_000_000_000_000) {
+        return `${(number / 1_000_000_000_000).toFixed(0)}T`; // Trillions
+    } else if (number >= 1_000_000_000) {
+        return `${(number / 1_000_000_000).toFixed(0)}B`; // Billions
+    } else if (number >= 1_000_000) {
+        return `${(number / 1_000_000).toFixed(1)}M`; // Millions
+    } else if (number >= 1_000) {
+        return `${(number / 1_000).toFixed(1)}k`; // Thousands
+    }
+    return number; // Return as-is for numbers below 1000
+};
+
 export function inputDateFormat(date = '') {
     return date ? moment(date).format("YYYY-MM-DD") : '' 
 }

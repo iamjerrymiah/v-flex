@@ -122,7 +122,7 @@ function CreateProduct ({
     const sizeOptions = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL", "Others"];
     
     return (
-        <Box w='full' py={10}>
+        <Box w='full' py={6}>
 
             <Heading textAlign="center" fontSize={["24px", '30px']} fontWeight={400} mb={10}> CREATE PRODUCT </Heading>
 

@@ -29,9 +29,7 @@ export default function MainAppLayout(props:any) {
             <ChildrenWrapper px={props?.px} mt={props?.mt}>
                 {props.children}
             </ChildrenWrapper>
-            {!props?.noFooter &&
-                <Footer />
-            }
+            {!props?.noFooter && <Footer />}
         </React.Fragment>
     )
 }

@@ -153,7 +153,7 @@ export const useGetAuthUser = (execute: boolean = false) => {
             };
 
             // Update the auth state with the new user data
-            queryClient.setQueryData([key, 'user'], user?.data);
+            queryClient.setQueryData([`${key}-user`], user?.data);
 
             // Update the main auth state
             queryClient.setQueryData<any>([key], (oldData:any) => ({
@@ -291,52 +291,3 @@ export const useChangePassword = () => {
         },
     });
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// "data": {
-//     "user": {
-//         "_id": "67c31818e7f6a1ffa33043b9",
-//         "salutation": "mr",
-//         "firstName": "john",
-//         "lastName": "doe",
-//         "email": "nwfrgodwin@gmail.com",
-//         "phoneNumber": "909009909",
-//         "password": "$2b$10$qlFf.ZBRu0XeOoeZXv.LveKLlmqMKQ8cxd9OQH4w20zoqHlilpd0y",
-//         "status": "activated",
-//         "emailVerified": true,
-//         "country": "Nigeria",
-//         "verificationCode": 551215,
-//         "codeExpDate": "2025-03-02T15:23:31.967Z",
-//         "role": "user",
-//         "resetToken": "",
-//         "addresses": [],
-//         "createdAt": "2025-03-01T14:22:16.938Z",
-//         "updatedAt": "2025-03-01T14:24:32.039Z",
-//         "__v": 0
-//     },

@@ -4,6 +4,9 @@ import MainAppLayout from "../../layouts/MainAppLayout"
 import { 
     Box, Image, Text, Button, Grid, GridItem, Stack, HStack, VStack, 
     Select,
+    Heading,
+    Input,
+    Tooltip,
     // Accordion,
     // AccordionItem,
     // AccordionButton,
@@ -15,13 +18,15 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Loader from "../../common/Loader";
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
-import { useGetProduct } from "../../hooks/products/products";
+import { useGetProduct, useGetProducts } from "../../hooks/products/products";
 
 import noProductImg from '../../assets/icons/noproduct.png'
 import { capCase, moneyFormat } from "../../utils/utils";
 import { Container } from "../../styling/layout";
-import PageSk from "../../common/PageSk";
-// import ProductsSection from "./components/ProductsSection";
+import PageSk, { RecProductPageSk } from "../../common/PageSk";
+import ProductsSection from "./components/ProductsSection";
+import { useAddProductToCart, useAddProductToWishlist, useGetUserCarts, useGetUserWishlists } from "../../hooks/user/users";
+import Notify from "../../utils/notify";
   
 const emptyProduct = {
     name: "-",
@@ -35,9 +40,20 @@ const emptyProduct = {
     sizes: []
 };
 
-function SingleProductMain({ isAuthenticated, isLoading, product = {} }:{product: any, isLoading: boolean, isAuthenticated: boolean}) {
+function SingleProductMain({ 
+    isAuthenticated, 
+    isLoading, 
+    product = {}, 
+    recProducts = [], 
+    recLoad 
+}:{product: any, recProducts: any, recLoad?: boolean, isLoading: boolean, isAuthenticated: boolean}) {
 
-    console.log(isAuthenticated)
+    const { data: wishListData = {} } = useGetUserWishlists({})
+    const { data: cartData = {} } = useGetUserCarts({})
+
+    const { data: carts = {} } = cartData
+    const { data: wishLists = [] } = wishListData
+
     const [selectedIndex, setSelectedIndex] = useState(0);
     // const isMobile = useBreakpointValue({ base: true, md: false });
 
@@ -57,9 +73,44 @@ function SingleProductMain({ isAuthenticated, isLoading, product = {} }:{product
         );
     };
 
-    const [selectedColor, setSelectedColor] = useState(product?.colors[0]);
-    const [selectedSize, setSelectedSize] = useState(product?.sizes[0]);
-  
+    const [selectedColor, setSelectedColor] = useState<string>("");
+    const [selectedSize, setSelectedSize] = useState<string>("");
+    const [quantity, setQuantity] = useState<any>(1);
+
+    const { mutateAsync: addWishlistAction, isPending: wishPend } = useAddProductToWishlist()
+    const { mutateAsync: addCartAction, isPending: cartPend } = useAddProductToCart()
+
+    const handleAddWishList = async () => {
+        try {
+            const res:any =  await addWishlistAction({productId: product?._id})
+
+            Notify.success("Product added to wishlist successfully.")
+            return res;
+
+        } catch(e:any) {
+            Notify.error(e?.message ?? "Failed")
+            return e
+        }
+    }
+
+    const handleAddCart = async () => {
+        try {
+            const res:any =  await addCartAction({
+                product: product?._id,
+                size: selectedSize,
+                color: selectedColor,
+                quantity: quantity
+            })
+
+            Notify.success("Product added to cart successfully.")
+            return res;
+
+        } catch(e:any) {
+            Notify.error(e?.message ?? "Failed")
+            return e
+        }
+    }
+
     // Enable keyboard navigation
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -69,6 +120,11 @@ function SingleProductMain({ isAuthenticated, isLoading, product = {} }:{product
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, []);
+
+    useEffect(() => { 
+        setSelectedColor(product?.colors[0]) 
+        setSelectedSize(product?.sizes[0]) 
+    }, [product?.colors[0], product?.sizes[0]])
 
     return (
         <Box>
@@ -156,13 +212,13 @@ function SingleProductMain({ isAuthenticated, isLoading, product = {} }:{product
                 <GridItem>
                     <Stack spacing={4}>
                         <Stack spacing={'-1'}>
-                            <Text fontSize="2xl" fontWeight="bold">{capCase(product.name)}</Text>
-                            <Text color="gray.500">{capCase(product.category)}</Text>
-                            <Text fontSize="xl" fontWeight="bold">€ {moneyFormat(product.price)}</Text>
+                            <Text fontSize="2xl" fontWeight="bold">{capCase(product?.name)}</Text>
+                            <Text color="gray.500">{capCase(product?.category)}</Text>
+                            <Text fontSize="xl" fontWeight="bold">€ {moneyFormat(product?.price)}</Text>
                         </Stack>
             
                         {/* Description */}
-                        <Text color="gray.600">{product.description}</Text>
+                        <Text color="gray.600">{product?.description}</Text>
             
                         {/* Product Details */}
                         {/* <VStack align="start">
@@ -173,56 +229,81 @@ function SingleProductMain({ isAuthenticated, isLoading, product = {} }:{product
                             ))}
                         </VStack> */}
 
-                        {/* Color Selection */}
-                        <Text fontWeight="bold" mb={2}>COLOR: <Text as="span" fontWeight="normal">{capCase(selectedColor)}</Text></Text>
-                        <HStack spacing={2} mb={4}>
-                            {product?.colors?.map((color:any, index:any) => (
-                            <Box 
-                                key={index} 
-                                w="24px" h="24px" 
-                                bg={color} 
-                                border="2px solid"
-                                borderColor={selectedColor === color ? "black" : "gray.300"} 
-                                borderRadius="full"
-                                cursor="pointer"
-                                onClick={() => setSelectedColor(color)}
-                            />
-                            ))}
-                        </HStack>
+                        <Stack spacing={2}>
 
-                        {/* Size Selection */}
-                        <Select mb={4} value={selectedSize} onChange={(e) => setSelectedSize(e.target.value)}>
-                            {product?.sizes?.map((size:any, index:any) => (
-                            <option key={index} value={size}>{size}</option>
-                            ))}
-                        </Select>
+                            <Text fontWeight="bold" mb={2}>COLOR: <Text as="span" fontWeight="normal">{capCase(selectedColor)}</Text></Text>
+                            <HStack spacing={2} mb={4}>
+                                {product?.colors?.map((color:any, index:any) => (
+                                <Box 
+                                    key={index} 
+                                    w="24px" h="24px" 
+                                    bg={color} 
+                                    border="2px solid"
+                                    borderColor={selectedColor === color ? "black" : "gray.300"} 
+                                    borderRadius="full"
+                                    cursor="pointer"
+                                    onClick={() => setSelectedColor(color)}
+                                />
+                                ))}
+                            </HStack>
 
-                        {/* Wishlist Button */}
-                        {/* <HStack spacing={2} mb={4} cursor="pointer">
-                            <Icon as={FaStar} color="gray.500" />
-                            <Text color="gray.500">ADD TO WISHLIST</Text>
-                        </HStack> */}
+                            <HStack>
+                                <Text w={'13%'}>Size:</Text>
+                                <Select mb={4} value={selectedSize} onChange={(e) => setSelectedSize(e.target.value)}>
+                                    {/* <option value={""}>{"Select Size"}</option> */}
+                                    {product?.sizes?.map((size:any, index:any) => (
+                                        <option key={index} value={size}>{size}</option>
+                                    ))}
+                                </Select>
+                            </HStack>
 
-                        {/* Buttons */}
-                        <Button 
-                            w="full" 
-                            bg="gray.300" 
-                            color="black" 
-                            mt={2} 
-                            leftIcon={<FaStar />}
+                            <HStack>
+                                <Text>Quantity:</Text>
+                                <Input type="number" value={quantity} placeholder={"Quantity"} onChange={ (e) => setQuantity(e.target.value) }/>
+                            </HStack>
+
+                        </Stack>
+
+                        <Tooltip 
+                            bgColor={'red.500'}
+                            label={!isAuthenticated 
+                            ? "Please log in to add to cart." 
+                            : carts?.cart?.length >= 1000 ? "You've reached the limit amount in cart." : ""}
                         >
-                            ADD TO WISHLIST
-                        </Button>
+                            <Button 
+                                w="full" 
+                                bg="black" 
+                                color="white" 
+                                _hover={{ bg: "gray.700" }} 
+                                leftIcon={<FaShoppingCart />}
+                                isDisabled={!isAuthenticated || carts?.cart?.length >= 1000}
+                                isLoading={cartPend}
+                                onClick={() => { handleAddCart() }}
+                            >
+                                ADD TO CART
+                            </Button>
+                        </Tooltip>
 
-                        <Button 
-                            w="full" 
-                            bg="black" 
-                            color="white" 
-                            _hover={{ bg: "gray.700" }} 
-                            leftIcon={<FaShoppingCart />}
+                        <Tooltip 
+                            bgColor={'red.500'}
+                            placement="top"
+                            label={!isAuthenticated 
+                            ? "Please log in to add to wishlist." 
+                            : wishLists?.length >= 1000 ? "You've reached the limit amount in wishlist." : ""}
                         >
-                            ADD TO CART
-                        </Button>
+                            <Button 
+                                w="full" 
+                                bg="gray.300" 
+                                color="black" 
+                                mt={2} 
+                                leftIcon={<FaStar />}
+                                isDisabled={!isAuthenticated || wishLists?.length >= 1000}
+                                isLoading={wishPend}
+                                onClick={() => { handleAddWishList() }}
+                            >
+                                ADD TO WISHLIST
+                            </Button>
+                        </Tooltip>
                         
                         {/* Icons Section */}
                         {/* <HStack w={'100%'} spacing={6} mt={6} justify="center">
@@ -274,7 +355,23 @@ function SingleProductMain({ isAuthenticated, isLoading, product = {} }:{product
         </Grid> }
 
         {/* Recommend Product */}
-        {/* <ProductsSection /> */}
+        
+        <Box mt={'100px'} >
+            <Heading fontSize={['16px', '20px']} fontWeight={400} mb={6}>Recommendations</Heading>
+                <Box>
+                    {recLoad ? (
+                        <>
+                            <RecProductPageSk />
+                        </>
+                    ) : recProducts?.length <= 0 ? (
+                        <Text>No Recommend Product Found</Text>
+                    ) : (
+                        <Box mt={2}>
+                            <ProductsSection products={recProducts}/>
+                        </Box>
+                    )}
+                </Box>
+        </Box>
 
       </Box>
     )
@@ -287,9 +384,25 @@ export default function SingleProduct () {
 
     const { isAuthenticated } = useGetAuthState()
 
-    // // const { isAuthenticated } = useGetAuthState()
     const { data: productData = {}, isLoading } = useGetProduct(productId)
     const product = productData?.data
+
+    const [filter, setFilter] = useState({
+        sortBy: 'recent',
+        order: 'shuffle',
+        limit: 20,
+        categoryId: product?.categories[0]?._id
+    })
+
+    const { data: recommendData = {}, isLoading: recLoad } = useGetProducts(filter)
+    const { data: recProducts = {} } = recommendData
+
+    useEffect(() => {
+        setFilter((prev) => ({
+            ...prev,
+            categoryId: product?.categories[0]?._id || "",
+        }));
+    }, [product?.categories[0]?._id]);
 
 
     return(
@@ -300,6 +413,8 @@ export default function SingleProduct () {
                         <SingleProductMain 
                             isAuthenticated={isAuthenticated}
                             product={product ?? emptyProduct} 
+                            recProducts={recProducts?.products ?? []}
+                            recLoad={recLoad}
                             isLoading={isLoading}
                         />
                     </Container>

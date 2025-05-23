@@ -21,7 +21,7 @@ export default function ImageUploader({ msg, file, onUpload, onRemove }: ImageUp
         setError('Only JPG, PNG, and JPEG image files are allowed');
         return;
       }
-      if (selectedFile.size > 5 * 1024 * 1024) {
+      if (selectedFile.size > 2 * 1024 * 1024) {
         setError('File must be smaller than 5MB');
         return;
       }
@@ -77,7 +77,7 @@ export default function ImageUploader({ msg, file, onUpload, onRemove }: ImageUp
             <VStack spacing={2}>
                 <FiUpload size={32} color="gray" />
                 <Text fontSize="sm" color="gray.500">{msg ?? "Click to upload image"}</Text>
-                <Text fontSize="xs" color="gray.400">(Max size: 5MB)</Text>
+                <Text fontSize="xs" color="gray.400">(Max size: 2MB)</Text>
           </VStack>
       )}
 

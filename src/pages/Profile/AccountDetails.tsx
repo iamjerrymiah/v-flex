@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import AnimateRoute from "../../common/AnimateRoute";
 import PageMainContainer from "../../common/PageMain";
 import { useGetAuthState, useUpdateUser } from "../../hooks/auth/AuthenticationHook";
@@ -45,7 +45,7 @@ function AccountDetailMain ({ initData = {} }: any) {
 
 
     return (
-        <Box pt={10}>
+        <Box py={6}>
 
             <Heading textAlign="center" fontSize={["24px", '30px']} fontWeight={400} my={10}> PERSONAL DETAILS </Heading>
 
@@ -143,6 +143,7 @@ function AccountDetailMain ({ initData = {} }: any) {
                                     <FormLabel fontWeight={700}>* Phone Number</FormLabel>
                                     <PhoneInput
                                         country={"nl"}
+                                        value={values?.phoneNumber} 
                                         inputStyle={{ width: "100%" }}
                                         onChange={(value) => setFieldValue("phoneNumber", value)}
                                     />
@@ -154,7 +155,8 @@ function AccountDetailMain ({ initData = {} }: any) {
                                     <SelectComponent
                                         options={countryOptions}
                                         placeholder="Select country"
-                                        onChange={(option:any) => setFieldValue("country", option.value)}
+                                        value={countryOptions.find(option => option?.label === values?.country)}
+                                        onChange={(option:any) => setFieldValue("country", option.label)}
                                         required
                                     />
                                     {errors?.country && <Text fontSize={'12px'} color={'red.400'}>{`${errors?.country}`}</Text>}
@@ -189,18 +191,18 @@ function AccountDetailMain ({ initData = {} }: any) {
 
 export default function AccountDetails() {
 
-    const navigate = useNavigate()
-    const { isAuthenticated, user } =  useGetAuthState();
+    // const navigate = useNavigate()
+    const { user } =  useGetAuthState();
     
-    useEffect(() => { 
-        if(!isAuthenticated) {
-            navigate(-1)
-        } 
-    }, [isAuthenticated])
+    // useEffect(() => { 
+    //     if(!isAuthenticated) {
+    //         navigate(-1)
+    //     } 
+    // }, [isAuthenticated, user])
 
     return (
         <PageMainContainer title='Account Details' description='Account Details'>
-            <MainAppLayout>
+            <MainAppLayout noFooter>
                 <Container>
                     <AnimateRoute>
                         <AccountDetailMain 

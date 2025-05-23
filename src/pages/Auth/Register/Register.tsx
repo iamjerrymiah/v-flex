@@ -136,7 +136,7 @@ function RegisterMain () {
                                 <SelectComponent
                                     options={countryOptions}
                                     placeholder="Select country"
-                                    onChange={(option:any) => setFieldValue("country", option.value)}
+                                    onChange={(option:any) => setFieldValue("country", option.label)}
                                     required
                                 />
                                 {errors.country && <Text fontSize={'12px'} color={'red.400'}>{errors.country}</Text>}
@@ -151,7 +151,7 @@ function RegisterMain () {
                                     onChange={(value) => setFieldValue("phoneNumber", value)}
                                 />
                                 {errors.phoneNumber && <Text fontSize={'12px'} color={'red.400'}>{errors.phoneNumber}</Text>}
-                                <Text fontSize="11px">Format: 333-333-3333</Text>
+                                {/* <Text fontSize="11px">Format: 333-333-3333</Text> */}
                             </FormControl>
                 
                             <FormControl>
