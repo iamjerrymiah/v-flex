@@ -24,6 +24,7 @@ import { useDeleteCartProduct, useGetUserCarts, useUpdateCartProduct } from "../
 import { MdOutlineArrowBackIos } from "react-icons/md";
 import { useNavigate } from "react-router";
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
+import { BsClipboard2CheckFill, BsClipboardXFill } from "react-icons/bs";
 
 
 function CartsMain ({ carts = [], isLoading }:any) {
@@ -34,7 +35,7 @@ function CartsMain ({ carts = [], isLoading }:any) {
     // const [cartItems, setCartItems] = useState<any[]>(carts);
 
     const { mutateAsync: updateCartAction, isPending } = useUpdateCartProduct()
-    const { mutateAsync: removeCartAction } = useDeleteCartProduct()
+    const { mutateAsync: removeCartAction, isPending: removePend } = useDeleteCartProduct()
 
     const handleRemoveItem = async (id: string) => {
     //   setCartItems((prev) => prev.filter((item) => item._id !== id));
@@ -92,7 +93,7 @@ function CartsMain ({ carts = [], isLoading }:any) {
     return(
         <Box py={6}>
 
-            {isPending ?
+            {isPending || removePend ?
                 <Box
                     position="fixed"
                     top={0}
@@ -164,7 +165,8 @@ function CartsMain ({ carts = [], isLoading }:any) {
                                             <Text color="gray.800">€ {moneyFormat(item?.product?.price)}</Text>
                                             <Text>Color: {capCase(item?.color)}</Text>
                                             <Text color="gray.800">Size: {allCaps(item?.size)}</Text>
-                                            <Text color="gray.800">Available: {item?.product?.availability == true ? "YES" : "NO"}</Text>
+                                            {/* <Text color="gray.800">Available: {item?.product?.availability == true ? "YES" : "NO"}</Text> */}
+                                            <HStack><Text color="gray.500">Available:</Text> <Text>{item?.product?.availability == true ? <BsClipboard2CheckFill color="green" size={20}/> : <BsClipboardXFill color="red" size={20}/>}</Text></HStack>
                                         </Box>
                                     </HStack>
 

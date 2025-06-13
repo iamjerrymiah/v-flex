@@ -1,0 +1,71 @@
+import {
+  Box,
+  HStack,
+  Button,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverBody,
+  SimpleGrid,
+} from '@chakra-ui/react';
+import { useCategoryContext } from '../../../providers/CategoryContext';
+import { capCase } from '../../../utils/utils';
+
+const SubNav: React.FC = () => {
+	const { topCategory, setSubCategory } = useCategoryContext();
+
+	if (!topCategory) return null;
+
+	return (
+		<Box w='100%' mb={6} borderBottom={'1px solid'}>
+			<HStack overflowX={'scroll'} className='scroll-custom'>
+				{topCategory.subcategories?.map((sub:any) => (
+					<Popover trigger="hover" placement='bottom-start' key={sub._id}>
+						<PopoverTrigger>
+							<Button 
+								variant="ghost" 
+								onClick={() => setSubCategory(sub)}
+							>
+								{capCase(sub.name)}
+							</Button>
+						</PopoverTrigger>
+						{sub.subcategories && (
+							<PopoverContent
+								width={['100%', "98vw"]}
+								height={['100px', '300px']}
+								boxShadow="lg"
+								bg="white"
+							>
+								<PopoverBody w='100%'>
+									<SimpleGrid 
+										columns={5} 
+										w='100%' 
+										spacing={6}
+										py={6}
+										px={'20%'}
+									>
+										{sub.subcategories.map((child:any, index:any) => (
+											<Box 
+												key={index} 
+												py={1}
+												fontWeight={500}
+												cursor={'pointer'}
+												textAlign={'center'}
+												justifyContent={'center'}
+												alignItems={'center'}
+											>
+												{capCase(child.name)}
+											</Box>
+										))}
+									</SimpleGrid>
+								</PopoverBody>
+							</PopoverContent>
+							)}
+					</Popover>
+				))}
+			</HStack>
+		</Box>
+	);
+};
+
+export default SubNav;

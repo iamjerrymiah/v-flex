@@ -119,7 +119,7 @@ function CreateProduct ({
 
     const [file, setFile] = useState(null)
 
-    const sizeOptions = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL", "Others"];
+    // const sizeOptions = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL", "Others"];
     
     return (
         <Box w='full' py={6}>
@@ -194,17 +194,6 @@ function CreateProduct ({
                                 {errors?.price && <Text fontSize={'12px'} color={'red.400'}>{`${errors?.price}`}</Text>}
                             </FormControl>
 
-                            {/* <FormControl>
-                                <FormLabel fontWeight={700}>Old Price</FormLabel>
-                                <Input
-                                    name="oldPrice" 
-                                    value={values?.oldPrice}
-                                    onChange={handleChange}
-                                    type='number'
-                                />
-                                {errors?.oldPrice && <Text fontSize={'12px'} color={'red.400'}>{`${errors?.oldPrice}`}</Text>}
-                            </FormControl> */}
-
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Quantity</FormLabel>
                                 <Input
@@ -267,31 +256,22 @@ function CreateProduct ({
 
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Sizes</FormLabel>
-                                <ReactSelect
+                                <CreatableSelect
                                     isMulti
-                                    name="sizes"
-                                    options={sizeOptions.map((size: string) => ({
-                                    value: size,
-                                    label: size,
-                                    }))}
-                                    value={values?.sizes
-                                    ?.split(',')
-                                    .map((size: string) => size.trim())
-                                    .filter((size: string) => size)
-                                    .map((size: string) => ({
-                                        value: size,
-                                        label: size,
-                                    }))
-                                    }
-                                    onChange={(selectedOptions: any) => {
-                                    const selectedSizes = selectedOptions.map((option: any) => option.value).join(',');
-                                    setFieldValue('sizes', selectedSizes);
+                                    required
+                                    placeholder="Type and press enter..."
+                                    value={(values?.sizes || '').split(',').filter(c => c).map(size => ({ label: size, value: size }))}
+                                    onChange={(selectedOptions:any) => {
+                                    const sizeString = selectedOptions.map((option:any) => option.value).join(',');
+                                        setFieldValue('sizes', sizeString);
                                     }}
-                                    placeholder="Select Sizes"
+                                    styles={{
+                                    control: (base:any) => ({
+                                        ...base,
+                                        borderColor: errors?.colors ? "red" : base.borderColor,
+                                    }),
+                                    }}
                                 />
-                                {errors?.sizes && (
-                                    <Text fontSize="12px" color="red.400">{`${errors.sizes}`}</Text>
-                                )}
                             </FormControl>
 
                             <FormControl>
@@ -438,3 +418,38 @@ export function ProductImages({
       </Box>
     );
 }
+
+
+
+
+
+
+
+
+
+
+{/* <ReactSelect
+    isMulti
+    name="sizes"
+    options={sizeOptions.map((size: string) => ({
+    value: size,
+    label: size,
+    }))}
+    value={values?.sizes
+    ?.split(',')
+    .map((size: string) => size.trim())
+    .filter((size: string) => size)
+    .map((size: string) => ({
+        value: size,
+        label: size,
+    }))
+    }
+    onChange={(selectedOptions: any) => {
+    const selectedSizes = selectedOptions.map((option: any) => option.value).join(',');
+    setFieldValue('sizes', selectedSizes);
+    }}
+    placeholder="Select Sizes"
+/>
+{errors?.sizes && (
+    <Text fontSize="12px" color="red.400">{`${errors.sizes}`}</Text>
+)} */}

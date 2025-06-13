@@ -1,13 +1,38 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
-
-
-// body {
-//   font-family: "Poppins", sans-serif;
-// }
+// @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
 
 body {
-    font-family: "Century Gothic", "Avant Garde", sans-serif;
+    // font-family: "Century Gothic", "Avant Garde", sans-serif;
+    font-family: 'Futura', 'Poppins', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
     color: #000;
+}
+
+.scroll-custom::-webkit-scrollbar {
+    background-color: transparent;
+    width: 5px;
+    height: 5px;
+}
+.scroll-custom::-webkit-scrollbar-thumb {
+    background-color: #D3D3D3 ;
+    border-radius: 3px;
+    background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
+}
+
+.scroll-custom-light::-webkit-scrollbar {
+    background-color: transparent;
+    width: 5px;
+    height: 5px;
+}
+.scroll-custom-light::-webkit-scrollbar-thumb {
+    background-color: #D3D3D3;
+    border-radius: 3px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar::-webkit-scrollbar-thumb {
+    display: none;
 }
 
 // #root {

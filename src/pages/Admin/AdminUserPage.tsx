@@ -1,4 +1,4 @@
-import { Box, Button, Heading, HStack, Input, SimpleGrid, Stack, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, Heading, HStack, Input, Select, SimpleGrid, Stack, Text, useDisclosure } from "@chakra-ui/react";
 import AnimateRoute from "../../common/AnimateRoute";
 import PageMainContainer from "../../common/PageMain";
 import MainAppLayout from "../../layouts/MainAppLayout";
@@ -6,7 +6,7 @@ import { Container } from "../../styling/layout";
 import { useNavigate } from "react-router";
 import { MdLockReset, MdOutlineArrowBackIos } from "react-icons/md";
 import { Table, TableRow } from "../../common/Table/Table";
-import { useActivateDeactivate, useGetAllUsers } from "../../hooks/user/users";
+import { useActivateDeactivate, useChangeUserRole, useGetAllUsers } from "../../hooks/user/users";
 import { allCaps, allLower, capCase } from "../../utils/utils";
 import { useState } from "react";
 import { BsFilter, BsSearch } from "react-icons/bs";
@@ -24,12 +24,16 @@ const tableHeads = ["S/N", "Salutation", "First Name", "Last Name", "Email", "Ph
 function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters }: any) {
     
     const [selected, setSelected] = useState<any>({})
+    const [changeRole, setChangeRole] = useState<any>({})
     const [search, setSearch] = useState<any>({});
+
+    const [selectedRole, setSelectedRole] = useState<string>(changeRole?.role ?? "");
 
     const navigate = useNavigate()
     // const { isAuthenticated } =  useGetAuthState();
 
     const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure()
+    const { isOpen: isOpenRole, onOpen: onOpenRole, onClose: onCloseRole } = useDisclosure()
     const { isOpen: isOpenFilter, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure()
 
     const { openConfirm: openConfirmActivate, closeConfirm: closeConfirmActivate, isOpenConfirm: isOpenConfirmActivate, current: currentActivate } = useConfirmAction()
@@ -38,6 +42,11 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
     const selectedInfo = (d: any) => {
         setSelected(d)
         onOpenEdit()
+    }
+
+    const changeRoleInfo = (d: any) => {
+        setChangeRole(d)
+        onOpenRole()
     }
 
     const onFilter = () => {
@@ -49,8 +58,14 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
     const changePage = ({ selected = 0 }) => {
         setFilters({ ...filters, page: selected + 1 });
     }
+
+    const closed = () => {
+        setChangeRole({})
+        onCloseRole()
+    }
     
     const { mutateAsync: action } = useActivateDeactivate()
+    const { mutateAsync: changeRoleAction, isPending: rolePend } = useChangeUserRole()
 
     const shouldActivate = (data: any) => { openConfirmActivate(data) }
     const shouldDeactivate = (data: any) => { openConfirmDeactivate(data) }
@@ -59,11 +74,25 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
         try {
             const res:any =  await action({id: current?._id, status: status})
 
-            Notify.success("Done")
+            Notify.success("Success")
             return res;
 
         } catch(e:any) {
             
+            Notify.error(e?.message ?? "Failed")
+            return e
+        }
+    }
+
+    const handleRoleChange = async (data:any) => {
+        try {
+            const res:any =  await changeRoleAction({ userId: data?._id, role: selectedRole ?? changeRole?.role })
+
+            Notify.success("Success")
+            closed()
+            return res;
+
+        } catch(e:any) {
             Notify.error(e?.message ?? "Failed")
             return e
         }
@@ -158,6 +187,7 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
                         ]}
                         options={[
                             {name: "View", onUse: () => { selectedInfo(item) }},
+                            {name: "Change Role", onUse: () => { changeRoleInfo(item) }},
                             {
                                 name: `${allLower(item?.status) === "activated" ? "Deactivate" : "Activate"}`, 
                                 color: `${allLower(item?.status) === "activated" ? "red.700" : "green.700"}`, 
@@ -204,6 +234,49 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
                         <Button leftIcon={<MdLockReset />} onClick={ () => { setFilters({}); onCloseFilter();} } />
                         <Button leftIcon={<BsSearch />} color={'white'} bgColor={'blackAlpha.800'} onClick={onFilter} />
                     </HStack>
+                }
+            />
+
+            <ModalCenter 
+                size={'3xl'}
+                isOpen={isOpenRole}
+                onClose={onCloseRole}
+                header='Change Role'
+                body={
+                    <form onSubmit={(e) => { e?.preventDefault(); handleRoleChange(changeRole); }}>
+                        <Stack spacing={4}>
+                            <HStack>
+                                <Text w={'13%'}>Role:</Text>
+                                <Select mb={4} value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)} required>
+                                    <option value={""}>{"Select Role"}</option>
+                                    {["user", "admin", "superAdmin"]?.map((role:any, index:any) => (
+                                        <option key={index} value={role}>{role}</option>
+                                    ))}
+                                </Select>
+                            </HStack>
+
+                            <HStack w={'full'} justify={'space-between'} spacing={3} mt={6}>
+                                <Button 
+                                    w={'100%'} 
+                                    bg="gray.400" 
+                                    onClick={closed}
+                                > 
+                                    Back 
+                                </Button>
+                                <Button 
+                                    w={'100%'}
+                                    bg="blue.700" 
+                                    type='submit'
+                                    color="white" 
+                                    isDisabled={rolePend || selectedRole == ""}
+                                    isLoading={rolePend}
+                                >
+                                    Save
+                                </Button>
+                                
+                            </HStack>
+                        </Stack>
+                    </form>
                 }
             />
 

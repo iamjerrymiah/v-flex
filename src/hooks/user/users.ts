@@ -99,6 +99,18 @@ export const useGetAllUsers = (params:any) => {
     });
 };
 
+export const useChangeUserRole = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return customMutationRequest("SECURITY", `/user/admin`, 'POST', data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [`${key}-admin`] });
+        },
+    });
+};
+
 export const useActivateDeactivate = () => {
     const queryClient = useQueryClient();
     return useMutation({

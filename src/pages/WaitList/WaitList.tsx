@@ -17,6 +17,7 @@ import {
     Stack,
     Select,
     Input,
+    Spinner,
   } from "@chakra-ui/react";
   import { useState } from "react";
 import Loader from "../../common/Loader";
@@ -29,6 +30,7 @@ import { useNavigate } from "react-router";
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 import Notify from "../../utils/notify";
 import ModalCenter from "../../common/ModalCenter";
+import { BsClipboard2CheckFill, BsClipboardXFill } from "react-icons/bs";
 
 
 function WaitlistMain ({ wishLists = [], carts = {}, isLoading }: any) {
@@ -56,7 +58,7 @@ function WaitlistMain ({ wishLists = [], carts = {}, isLoading }: any) {
     }
 
     const { mutateAsync: addCartAction, isPending: cartPend } = useAddProductToCart()
-    const { mutateAsync: removeWishlistAction } = useDeleteWishlistProduct()
+    const { mutateAsync: removeWishlistAction, isPending } = useDeleteWishlistProduct()
 
     const handleAddCart = async (data:any) => {
         try {
@@ -89,6 +91,23 @@ function WaitlistMain ({ wishLists = [], carts = {}, isLoading }: any) {
 
     return (
         <Box py={6}>
+
+            {isPending ?
+                <Box
+                    position="fixed"
+                    top={0}
+                    left={0}
+                    width="100vw"
+                    height="100vh"
+                    bg="rgba(255, 255, 255, 0.5)"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    zIndex={9999}
+                >
+                    <Spinner size="xl" color="blue.500" thickness="4px" />
+                </Box> : null
+            }
 
             <Heading textAlign="center" fontSize={["24px", '30px']} fontWeight={400} mb={10}> MY WISHLIST </Heading>
 
@@ -141,8 +160,8 @@ function WaitlistMain ({ wishLists = [], carts = {}, isLoading }: any) {
                                         <Box flex={1}>
                                             <Text fontSize={['md', "lg"]} fontWeight="semibold">{capCase(item?.name)}</Text>
                                             {/* <Text color="gray.800">€ {moneyFormat(item.price)}</Text> */}
-                                            <Text color="gray.500">Available: {item?.availability == true ? "YES" : "NO"}</Text>
-                                            <Text color="gray.500">Available Quantity: {item?.quantity}</Text>
+                                            <HStack><Text color="gray.500">Available:</Text> <Text>{item?.availability == true ? <BsClipboard2CheckFill color="green" size={20}/> : <BsClipboardXFill color="red" size={20}/>}</Text></HStack>
+                                            {/* <Text color="gray.500">Available Quantity: {item?.quantity}</Text> */}
                                         </Box>
                                     </HStack>
 

@@ -1,19 +1,19 @@
-import React, { useCallback, useState } from "react";
-import { Box, Button, HStack, Input, SimpleGrid, Stack, Tooltip, useDisclosure } from "@chakra-ui/react";
+import React from "react";
+import { Box, Button, HStack, Tooltip, useDisclosure } from "@chakra-ui/react";
 import { FaRegUser } from "react-icons/fa";
-import { IoIosStarOutline, IoMdMenu } from 'react-icons/io'
-import { BsCart, BsSearch } from "react-icons/bs";
+import { IoIosStarOutline } from 'react-icons/io'
+import { BsCart } from "react-icons/bs";
 import Drawer from "../../../common/Drawer";
 import { useNavigate } from "react-router";
 import Sidebar from "./sidebar";
 import { useGetAuthState } from "../../../hooks/auth/AuthenticationHook";
 import { capCase, formatNumberToShortForm } from "../../../utils/utils";
-import { useProductFilter } from "../../../providers/ProductFilterProvider";
-import { MdLockReset } from "react-icons/md";
-import queryString from "query-string";
-import { useGetProductCollections } from "../../../hooks/products/collections";
+// import { useProductFilter } from "../../../providers/ProductFilterProvider";
+// import { MdLockReset } from "react-icons/md";
+// import queryString from "query-string";
+// import { useGetProductCollections } from "../../../hooks/products/collections";
 import { useGetUserCarts, useGetUserWishlists } from "../../../hooks/user/users";
-import { TbWorldSearch } from "react-icons/tb";
+// import { TbWorldSearch } from "react-icons/tb";
 
 export function IconIndicator (props:any) {
     return (
@@ -46,42 +46,42 @@ export function IconIndicator (props:any) {
 export default function HeaderRight({mobile}: {mobile?:boolean}) {
 
     const navigate = useNavigate();  
-    const { isOpen, onToggle, onClose } = useDisclosure()
+    const { isOpen, onClose } = useDisclosure()
 
     const { isAuthenticated, user } =  useGetAuthState();
 
-    const { data: collectionData = {} } = useGetProductCollections({})
+    // const { data: collectionData = {} } = useGetProductCollections({})
     const { data: wishListData = {} } = useGetUserWishlists({})
     const { data: cartData = {} } = useGetUserCarts({})
 
     const { data: carts = {} } = cartData
     const { data: wishLists = [] } = wishListData
-    const { data: categories = [] } = collectionData
+    // const { data: categories = [] } = collectionData
 
-    const { isOpenSearch, openSearch, closeSearch } = useProductFilter()
+    // const { isOpenSearch, openSearch, closeSearch } = useProductFilter()
 
-    const [search, setSearch] = useState<any>({
-        minPrice: 0,
-        maxPrice: 1000000000000000
-    });
+    // const [search, setSearch] = useState<any>({
+    //     minPrice: 0,
+    //     maxPrice: 1000000000000000
+    // });
 
-    const onFilter = useCallback(() => {
-        let queries = queryString.stringify({...search});
-        closeSearch()
-        navigate(`/products/vl?${queries}`)
-    }, [search])
+    // const onFilter = useCallback(() => {
+    //     let queries = queryString.stringify({...search});
+    //     closeSearch()
+    //     navigate(`/products/vl?${queries}`)
+    // }, [search])
 
     return (
         <React.Fragment>
             <HStack spacing={4} justify={'flex-end'} ml={'50px'}>
-                <Tooltip label={'Search'}>
+                {/* <Tooltip label={'Search'}>
                     <TbWorldSearch 
                         size={28} 
                         cursor={'pointer'}
                         onClick={openSearch}
                         color="#00008B"
                     />
-                </Tooltip> 
+                </Tooltip>  */}
 
                 {!isAuthenticated ? 
                     <HStack spacing={4}>
@@ -102,7 +102,7 @@ export default function HeaderRight({mobile}: {mobile?:boolean}) {
                         >
                             <Tooltip label={'My Wishlist'}>
                                 <IoIosStarOutline 
-                                    size={24} 
+                                    size={28} 
                                     cursor={'pointer'}
                                 />
                             </Tooltip>
@@ -114,14 +114,14 @@ export default function HeaderRight({mobile}: {mobile?:boolean}) {
                         >
                             <Tooltip label={'Shopping Bag'}>
                                 <BsCart 
-                                    size={20} 
+                                    size={28} 
                                     cursor={'pointer'}
                                 />
                             </Tooltip>
                         </IconIndicator>
                         <Tooltip label={isAuthenticated ? capCase(`${user?.firstName} ${user?.lastName}`) : 'Sign In'}>
                             <FaRegUser 
-                                size={20} 
+                                size={28} 
                                 onClick={() => navigate(isAuthenticated ? '/profile' : '/login')} 
                                 cursor={'pointer'}
                             />
@@ -131,19 +131,19 @@ export default function HeaderRight({mobile}: {mobile?:boolean}) {
 
                 {/* {isAuthenticated && <Button bg={'red.700'} fontSize={'10px'} color={'white'} isLoading={isPending} onClick={handleLogout}>Logout</Button>} */}
 
-                {categories?.length > 0 ?
+                {/* {categories?.length > 0 ?
                     <IoMdMenu 
                         cursor={'pointer'} 
                         onClick={onToggle} 
                         size={30} 
                         style={{ marginLeft: '10px' }}
                     />
-                : null}
+                : null} */}
 
             </HStack>
 
             <Drawer 
-                size={mobile ? '500px': '850px'}
+                size={mobile ? '500px': '600px'}
                 isOpen={isOpen}
                 onClose={onClose}
                 body={
@@ -153,7 +153,7 @@ export default function HeaderRight({mobile}: {mobile?:boolean}) {
                     />
                 }
             />
-            <Drawer 
+            {/* <Drawer 
                 placement={'top'}
                 isOpen={isOpenSearch}
                 onClose={closeSearch}
@@ -174,7 +174,7 @@ export default function HeaderRight({mobile}: {mobile?:boolean}) {
                         <Button leftIcon={<BsSearch />} color={'white'} bgColor={'blackAlpha.800'} onClick={onFilter} />
                     </HStack>
                 }
-            />
+            /> */}
 
         </React.Fragment>
     )

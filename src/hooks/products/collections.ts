@@ -39,11 +39,47 @@ export const useAddCollectionSubCategory = () => {
     });
 };
 
+export const useEditCollectionCategory = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return customMutationRequest("SECURITY", `/product/category`, 'PATCH', data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [key] });
+        },
+    });
+};
+
+export const useEditCollectionSubCategory = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return customMutationRequest("SECURITY", `/product/sub-category`, 'PATCH', data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [key] });
+        },
+    });
+};
+
 export const useDeleteCollection = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data :any) => {
             return deleteRequest("SECURITY", `/product/category`, data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [key] });
+        },
+    });
+};
+
+export const useDeleteSubCollection = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return deleteRequest("SECURITY", `/product/sub-category`, data).then((res:any) => res)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [key] });
