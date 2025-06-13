@@ -52,11 +52,11 @@ export const useUpdateProduct = () => {
     });
 };
 
-export const useUpdateProductMainImage = () => {
+export const useUpdateProductMainImage = (productId:string) => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data :any) => {
-            return customFormdataMutationRequest("SECURITY", `/product/image/${data?.productId}`, 'PATCH', data).then((res:any) => res)
+            return customFormdataMutationRequest("SECURITY", `/product/image/${productId}`, 'PATCH', data).then((res:any) => res)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [key] });
@@ -81,8 +81,20 @@ export const useAddProductImages = (query: any) => {
 export const useDeleteProduct = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: () => {
-            return deleteRequest("SECURITY", `/product`).then((res:any) => res)
+        mutationFn: (data:any) => {
+            return deleteRequest("SECURITY", `/product`, data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [key] });
+        },
+    });
+};
+
+export const useDeleteProductImage = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data:any) => {
+            return deleteRequest("SECURITY", `/product/image/${data?.productId}`, data).then((res:any) => res)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [key] });

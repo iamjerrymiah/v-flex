@@ -26,6 +26,7 @@ import MyAddressBook from './pages/Profile/MyAddressBook'
 import AccountDetails from './pages/Profile/AccountDetails'
 import AdminCreateProductPage from './pages/Products/AdminCreateProductPage'
 import AdminCategoryPage from './pages/Admin/AdminCategoryPage'
+import AdminEditProductPage from './pages/Products/AdminEditProductPage'
 
 const router = createBrowserRouter([
 	{
@@ -125,6 +126,10 @@ const router = createBrowserRouter([
             {
                 path: '/vl/admin/products/create',
                 element: <AdminCreateProductPage />,
+            },
+            {
+                path: '/vl/admin/products/:id',
+                element: <AdminEditProductPage />,
             },
             {
                 path: '/vl/admin/users',

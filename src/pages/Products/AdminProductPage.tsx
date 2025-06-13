@@ -5,12 +5,15 @@ import MainAppLayout from "../../layouts/MainAppLayout";
 import { Container } from "../../styling/layout";
 import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
 import { Table, TableRow } from "../../common/Table/Table";
-import { useGetProducts } from "../../hooks/products/products";
+import { useDeleteProduct, useGetProducts, useUpdateProduct } from "../../hooks/products/products";
 import { capCase, moneyFormat } from "../../utils/utils";
 import Pagination from "../../common/Pagination/Pagination";
 import { useState } from "react";
 import { useGetProductCollections } from "../../hooks/products/collections";
 import AdminProductLayout from "./components/AdminProductLayout";
+import Notify from "../../utils/notify";
+import { useConfirmAction } from "../../utils/useActions";
+import ConfirmModal from "../../common/ConfirmModal";
 
 export function withImg (datum:any, img:any) {
     return (
@@ -24,12 +27,15 @@ export function withImg (datum:any, img:any) {
 }
 
 
-const tableHeads = ["S/N", "Product", "Price", "Quantity", "Is Available", ""]
-
+const tableHeads = ["S/N", "Product", "Price", "Quantity", "Is Available", "Is Disabled", ""]
 function AdminProductMain ({ products = [], isLoading = false, init, filters, setFilters }:any) {
 
     const navigate = useNavigate()
     // const { isAuthenticated } =  useGetAuthState();
+
+    const { openConfirm, closeConfirm, isOpenConfirm, current } = useConfirmAction()
+    const { openConfirm: openConfirmActivate, closeConfirm: closeConfirmActivate, isOpenConfirm: isOpenConfirmActivate, current: currentActivate } = useConfirmAction()
+    const { openConfirm: openConfirmDeactivate, closeConfirm: closeConfirmDeactivate, isOpenConfirm: isOpenConfirmDeactivate, current: currentDeactivate } = useConfirmAction()
 
     // useEffect(() => { 
     //     if(!isAuthenticated) {
@@ -39,6 +45,36 @@ function AdminProductMain ({ products = [], isLoading = false, init, filters, se
 
     const changePage = ({ selected = 0 }) => {
         setFilters({ ...filters, page: selected + 1 });
+    }
+
+    const shouldDelete = (data: any) => {
+        openConfirm(data)
+    }
+    const shouldActivate = (data: any) => { openConfirmActivate(data) }
+    const shouldDeactivate = (data: any) => { openConfirmDeactivate(data) }
+
+    const { mutateAsync: action } = useUpdateProduct()
+    const handleActivateDeactivate = async (status:boolean, current:any) => {
+        try {
+            const res:any =  await action({productId: current?._id, disabled: status})
+            Notify.success("Success")
+            return res;
+        } catch(e:any) {
+            Notify.error(e?.message ?? "Failed")
+            return e
+        }
+    }
+
+    const { mutateAsync: deleteProductAction } = useDeleteProduct()
+    const handleDelete = async () => {
+        try {
+            const res:any =  await deleteProductAction({productId: current?._id})
+            Notify.success("Deleted")
+            return res;
+        } catch(e:any) {
+            Notify.error(e?.message ?? "Failed")
+            return e
+        }
     }
 
 
@@ -62,11 +98,17 @@ function AdminProductMain ({ products = [], isLoading = false, init, filters, se
                             `€ ${moneyFormat(item?.price ?? 0)}`,
                             item?.quantity ?? "-",
                             item?.availability == true ? "Yes" : "No",
+                            item?.disabled == true ? "Disabled" : "Enabled",
                         ]}
                         noIndexPad
                         options={[
-                            {name: "View", onUse: () => navigate(`/admin/products/${item?._id}`)},
-                            {name: "Delete", color: 'red.700', onUse: () => {}},
+                            {name: "View", onUse: () => navigate(`/vl/admin/products/${item?._id}`)},
+                            {
+                                name: `${item?.disabled === true ? "Enable" : "Disable"}`, 
+                                color: `${item?.disabled === true ? "green.700" : "red.700"}`, 
+                                onUse: item?.status === true ? () => { shouldActivate(item) } : () => { shouldDeactivate(item) } 
+                            },
+                            {name: "Delete", color: 'red.900', onUse: () => shouldDelete(item)},
                         ]}
                     />
                 )}
@@ -75,6 +117,24 @@ function AdminProductMain ({ products = [], isLoading = false, init, filters, se
             <Pagination
                 pageCount={init?.totalPages}
                 onPageChange={changePage}
+            />
+
+            <ConfirmModal
+                isOpen={isOpenConfirm}
+                onConfirm={handleDelete}
+                onClose={closeConfirm}
+            />
+
+            <ConfirmModal
+                isOpen={isOpenConfirmActivate}
+                onConfirm={() => handleActivateDeactivate(false, currentActivate)}
+                onClose={closeConfirmActivate}
+            />
+
+            <ConfirmModal
+                isOpen={isOpenConfirmDeactivate}
+                onConfirm={() => handleActivateDeactivate(true, currentDeactivate)}
+                onClose={closeConfirmDeactivate}
             />
 
         </Box>
@@ -91,7 +151,7 @@ export default function AdminProductPage() {
         maxPrice: 1000000000000000
     });
     
-    const [filters, setFilters] = useState({} as any)
+    const [filters, setFilters] = useState({ disabled: "all",} as any)
     
     const { data: productData = {}, isLoading } = useGetProducts(filters)
     const { data: products = {} } = productData

@@ -65,7 +65,8 @@ export const productSchema = Yup.object().shape({
   colors: Yup.string().required("Colors is Required"),
   freeShipping: Yup.string().required("Free Shipping is Required"),
   availability: Yup.string().required("Availability is Required"),
-  categories: Yup.string().required("Categories is Required"),
+  category: Yup.string().required("Categories is Required"),
+  // subCategories: Yup.string().required("Sub Categories is Required"),
   description: Yup.string().required("Description is Required"),
   // acceptCrypto: Yup.string().required("Accept Crypto is Required"),
 })

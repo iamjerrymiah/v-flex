@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { FaChevronLeft, FaChevronRight, FaShoppingCart, FaStar } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Loader from "../../common/Loader";
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 import { useGetProduct, useGetProducts } from "../../hooks/products/products";
@@ -27,6 +27,7 @@ import PageSk, { RecProductPageSk } from "../../common/PageSk";
 import ProductsSection from "./components/ProductsSection";
 import { useAddProductToCart, useAddProductToWishlist, useGetUserCarts, useGetUserWishlists } from "../../hooks/user/users";
 import Notify from "../../utils/notify";
+import { MdOutlineArrowBackIos } from "react-icons/md";
   
 const emptyProduct = {
     name: "-",
@@ -47,6 +48,8 @@ function SingleProductMain({
     recProducts = [], 
     recLoad 
 }:{product: any, recProducts: any, recLoad?: boolean, isLoading: boolean, isAuthenticated: boolean}) {
+
+    const navigate = useNavigate()
 
     const { data: wishListData = {} } = useGetUserWishlists({})
     const { data: cartData = {} } = useGetUserCarts({})
@@ -128,6 +131,18 @@ function SingleProductMain({
 
     return (
         <Box>
+            <HStack justify={'space-between'} w={'100%'} my={4}>
+                <Button
+                    leftIcon={<MdOutlineArrowBackIos />}
+                    variant="ghost"
+                    onClick={() => navigate(-1)}
+                    textDecor={'underline'}
+                >
+                    Back
+                </Button>
+
+            </HStack>
+
             {isLoading ? (
                 <>  
                     <Loader /> 
@@ -305,51 +320,6 @@ function SingleProductMain({
                             </Button>
                         </Tooltip>
                         
-                        {/* Icons Section */}
-                        {/* <HStack w={'100%'} spacing={6} mt={6} justify="center">
-                            <Tooltip label="Crypto Payment">
-                            <Icon as={FaEthereum} boxSize={6} />
-                            </Tooltip>
-                            <Tooltip label="Free Returns">
-                            <Icon as={FaUndo} boxSize={6} />
-                            </Tooltip>
-                            <Tooltip label="Pick Up in Store">
-                            <Icon as={FaBox} boxSize={6} />
-                            </Tooltip>
-                        </HStack> */}
-
-                        {/* Accordion - Expandable Sections */}
-                        {/* <Accordion allowToggle mt={6}>
-                            <AccordionItem>
-                                <AccordionButton>
-                                    <Box flex="1" textAlign="left">PRODUCT DETAILS</Box>
-                                    <AccordionIcon />
-                                </AccordionButton>
-                                <AccordionPanel pb={4}>
-                                    High-quality materials and premium comfort for your daily wear.
-                                </AccordionPanel>
-                            </AccordionItem>
-
-                            <AccordionItem>
-                                <AccordionButton>
-                                    <Box flex="1" textAlign="left">COMPOSITION</Box>
-                                    <AccordionIcon />
-                                </AccordionButton>
-                                <AccordionPanel pb={4}>
-                                    70% Synthetic, 30% Leather.
-                                </AccordionPanel>
-                            </AccordionItem>
-
-                            <AccordionItem>
-                                <AccordionButton>
-                                    <Box flex="1" textAlign="left">DELIVERY & RETURNS</Box>
-                                    <AccordionIcon />
-                                </AccordionButton>
-                                <AccordionPanel pb={4}>
-                                    Free returns within 30 days of purchase.
-                                </AccordionPanel>
-                            </AccordionItem>
-                        </Accordion> */}
                     </Stack>
                 </GridItem>
         </Grid> }

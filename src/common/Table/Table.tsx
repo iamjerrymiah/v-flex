@@ -73,9 +73,9 @@ export function TableRow({ data = [], onClickRow, rowData, options, noIndexPad }
         <Tr onClick={e => { onClickRow ? onClickRow(rowData) : stopPropagation(e); }}>
             {data.map((datum:any, index:any) => (
                 <Td key={index} paddingLeft={(index === 0 && !noIndexPad) ? 0 : ''}>
-                    {allLower(datum) === 'yes' || allLower(datum) === 'activated' || allLower(datum) === 'successful' ? (
+                    {allLower(datum) === 'yes' || allLower(datum) === 'activated' || allLower(datum) === 'successful' || allLower(datum) === 'enabled' ? (
                         <Tag colorScheme='whatsapp' size='sm'>{datum}</Tag>
-                    ) : allLower(datum) === 'no' || allLower(datum) === 'deactivated' || allLower(datum) === 'failed' ? (
+                    ) : allLower(datum) === 'no' || allLower(datum) === 'deactivated' || allLower(datum) === 'failed' || allLower(datum) === 'disabled' ? (
                         <Tag colorScheme='red' size='sm'>{datum}</Tag>
                     ): allLower(datum) === 'pending' ? (
                         <Tag colorScheme='gray' size='sm'>{datum}</Tag>

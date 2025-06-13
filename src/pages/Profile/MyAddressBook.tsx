@@ -258,12 +258,9 @@ function MyAddressBookMain ({ addressBooks = [], isLoading = false }: any) {
     const handleDelete = async () => {
         try {
             const res:any =  await deleteAddressAction({addressId: current?._id})
-
             Notify.success("Deleted")
             return res;
-
         } catch(e:any) {
-            
             Notify.error(e?.message ?? "Failed")
             return e
         }
@@ -294,14 +291,15 @@ function MyAddressBookMain ({ addressBooks = [], isLoading = false }: any) {
                 </Button>
 
                 {addressBooks?.length < 3 &&
-                <Button
-                    leftIcon={<MdAddToPhotos />}
-                    onClick={onOpen}
-                    color={'white'}
-                    bgColor={'blue.700'}
-                >
-                    Add
-                </Button>}
+                    <Button
+                        leftIcon={<MdAddToPhotos />}
+                        onClick={onOpen}
+                        color={'white'}
+                        bgColor={'blue.700'}
+                    >
+                        Add
+                    </Button>
+                }
 
             </HStack>
 
