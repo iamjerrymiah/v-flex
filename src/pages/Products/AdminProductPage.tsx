@@ -8,12 +8,13 @@ import { Table, TableRow } from "../../common/Table/Table";
 import { useDeleteProduct, useGetProducts, useUpdateProduct } from "../../hooks/products/products";
 import { capCase, moneyFormat } from "../../utils/utils";
 import Pagination from "../../common/Pagination/Pagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetProductCollections } from "../../hooks/products/collections";
 import AdminProductLayout from "./components/AdminProductLayout";
 import Notify from "../../utils/notify";
 import { useConfirmAction } from "../../utils/useActions";
 import ConfirmModal from "../../common/ConfirmModal";
+import { useCategoryContext } from "../../providers/CategoryContext";
 
 export function withImg (datum:any, img:any) {
     return (
@@ -143,18 +144,29 @@ function AdminProductMain ({ products = [], isLoading = false, init, filters, se
 
 export default function AdminProductPage() {
 
+    const { topCategory, subCategory, linkCategory } = useCategoryContext();
+
     const { data: collectionData = {} } = useGetProductCollections({})
     const { data: categories = [] } = collectionData
 
-    const [search, setSearch] = useState<any>({
-        minPrice: 0,
-        maxPrice: 1000000000000000
-    });
+    const [search, setSearch] = useState<any>({});
     
-    const [filters, setFilters] = useState({ disabled: "all",} as any)
+    const [filters, setFilters] = useState({ disabled: "all"})
     
     const { data: productData = {}, isLoading } = useGetProducts(filters)
     const { data: products = {} } = productData
+
+    useEffect(() => {
+        if (linkCategory?._id) { setFilters(prev => ({ ...prev, categoryId: linkCategory._id })) }
+    }, [linkCategory]);
+
+    useEffect(() => {
+        if (subCategory?._id) { setFilters(prev => ({ ...prev, categoryId: subCategory._id })) }
+    }, [subCategory]);
+
+    useEffect(() => {
+        if (topCategory?._id) { setFilters(prev => ({ ...prev, categoryId: topCategory._id })) }
+    }, [topCategory]);
 
     return (
         <PageMainContainer title='Products' description='Products'>

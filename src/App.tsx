@@ -95,22 +95,22 @@ const router = createBrowserRouter([
                 path: '/products/:slug',
                 element: <SingleProduct />,
             },
-			{
-                path: '/products/vl/:category',
-                element: <AllProducts />,
-            },
-			{
-                path: '/products/:category/:slug',
-                element: <SingleProduct />,
-            },
-			{
-                path: '/products/vl/:category/:subCategory',
-                element: <AllProducts />,
-            },
-			{
-                path: '/products/:category/:subCategory/:slug',
-                element: <SingleProduct />,
-            },
+			// {
+            //     path: '/products/vl/:category',
+            //     element: <AllProducts />,
+            // },
+			// {
+            //     path: '/products/:category/:slug',
+            //     element: <SingleProduct />,
+            // },
+			// {
+            //     path: '/products/vl/:category/:subCategory',
+            //     element: <AllProducts />,
+            // },
+			// {
+            //     path: '/products/:category/:subCategory/:slug',
+            //     element: <SingleProduct />,
+            // },
             {
                 path: '/vl/admin/orders',
                 element: <OrderPage />,

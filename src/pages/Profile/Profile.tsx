@@ -3,6 +3,8 @@ import PageMainContainer from "../../common/PageMain"
 import MainAppLayout from "../../layouts/MainAppLayout"
 import { 
     Box, Grid, GridItem, Text, Icon,
+    Button,
+    HStack,
     // Flex,  VStack, Stack, useBreakpointValue 
   } from "@chakra-ui/react";
 import { FaClipboardList, FaBookmark, FaAddressBook, FaUser, FaUsers } from "react-icons/fa";
@@ -13,7 +15,7 @@ import { useGetAuthState, useLogout } from "../../hooks/auth/AuthenticationHook"
 import { useNavigate } from "react-router";
 import { allCaps } from "../../utils/utils";
 import { Container } from "../../styling/layout";
-import { MdLogout } from "react-icons/md";
+import { MdLogout, MdOutlineArrowBackIos } from "react-icons/md";
 import Notify from "../../utils/notify";
 import { BsCart } from "react-icons/bs";
 import { useConfirmAction } from "../../utils/useActions";
@@ -61,6 +63,17 @@ export function ProfileLayout({children}: {children: React.ReactNode}) {
             <Text fontSize="md" textAlign="center" fontWeight="semibold" my={4}>
                 WELCOME BACK. {allCaps(`${user?.firstName} ${user?.lastName}`)}
             </Text>
+
+            <HStack justify={'space-between'} w={'100%'} my={4}>
+                <Button
+                    leftIcon={<MdOutlineArrowBackIos />}
+                    variant="ghost"
+                    onClick={() => navigate('/')}
+                    textDecor={'underline'}
+                >
+                    Back
+                </Button>
+            </HStack>
 
             {/* <Flex direction={{ base: "column", md: "row" }} gap={8}>
 

@@ -7,16 +7,11 @@ import {
     Heading,
     Input,
     Tooltip,
-    // Accordion,
-    // AccordionItem,
-    // AccordionButton,
-    // AccordionIcon,
-    // AccordionPanel
 } from "@chakra-ui/react";
 import { FaChevronLeft, FaChevronRight, FaShoppingCart, FaStar } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Loader from "../../common/Loader";
+// import Loader from "../../common/Loader";
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 import { useGetProduct, useGetProducts } from "../../hooks/products/products";
 
@@ -104,10 +99,8 @@ function SingleProductMain({
                 color: selectedColor,
                 quantity: quantity
             })
-
             Notify.success("Product added to cart successfully.")
             return res;
-
         } catch(e:any) {
             Notify.error(e?.message ?? "Failed")
             return e
@@ -140,12 +133,11 @@ function SingleProductMain({
                 >
                     Back
                 </Button>
-
             </HStack>
 
             {isLoading ? (
                 <>  
-                    <Loader /> 
+                    {/* <Loader />  */}
                     <PageSk />
                 </>
             ) :

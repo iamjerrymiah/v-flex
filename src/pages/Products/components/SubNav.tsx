@@ -26,7 +26,7 @@ const SubNav: React.FC = () => {
 	}
 
 	return (
-		<Box w='100%' mb={6} borderBottom={'1px solid'}>
+		<Box w='100%' mb={6} borderBottom={'1px solid #ccc'}>
 			<HStack overflowX={'scroll'} className='scroll-custom'>
 				{topCategory.subcategories?.map((sub:any) => (
 					<Popover trigger="hover" placement='bottom-start' key={sub._id}>

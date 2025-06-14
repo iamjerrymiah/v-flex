@@ -258,7 +258,7 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
                             <HStack w={'full'} justify={'space-between'} spacing={3} mt={6}>
                                 <Button 
                                     w={'100%'} 
-                                    bg="gray.400" 
+                                    bg="gray" 
                                     onClick={closed}
                                 > 
                                     Back 

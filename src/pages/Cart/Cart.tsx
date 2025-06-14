@@ -16,7 +16,7 @@ import {
     Spinner,
   } from "@chakra-ui/react";
 import { FiMinus, FiPlus, FiTrash2 } from "react-icons/fi";
-import Loader from "../../common/Loader";
+// import Loader from "../../common/Loader";
 import PageSk from "../../common/PageSk";
 import EmptyListHero from "../../common/EmptyListHero";
 import { allCaps, capCase, moneyFormat } from "../../utils/utils";
@@ -127,8 +127,8 @@ function CartsMain ({ carts = [], isLoading }:any) {
                 <Box flex={3} borderRadius="xl">
                         {isLoading ? (
                             <>
-                                <Loader />
-                                <PageSk />
+                                {/* <Loader /> */}
+                                <PageSk tiny/>
                             </>
                         ) : 
                         carts?.length <= 0 ? (
@@ -159,9 +159,19 @@ function CartsMain ({ carts = [], isLoading }:any) {
                                             boxSize="80px"
                                             objectFit="cover"
                                             borderRadius="md"
+                                            cursor={'pointer'}
+                                            onClick={() => navigate(`/products/${item?.product?.slug}?componentsVfproduct=${item?.product?._id}`)}
                                         />
                                         <Box flex={1}>
-                                            <Text fontSize={['md', "lg"]} fontWeight="semibold">{capCase(item?.product?.name)}</Text>
+                                            <Text 
+                                                fontSize={['md', "lg"]} 
+                                                fontWeight="semibold"
+                                                cursor={'pointer'}
+                                                _hover={{ color: 'gray' }}
+                                                onClick={() => navigate(`/products/${item?.product?.slug}?componentsVfproduct=${item?.product?._id}`)}
+                                            >
+                                                {capCase(item?.product?.name)}
+                                            </Text>
                                             <Text color="gray.800">€ {moneyFormat(item?.product?.price)}</Text>
                                             <Text>Color: {capCase(item?.color)}</Text>
                                             <Text color="gray.800">Size: {allCaps(item?.size)}</Text>
@@ -232,7 +242,7 @@ function CartsMain ({ carts = [], isLoading }:any) {
                         <Text>€ {moneyFormat(subtotal)}</Text>
                     </Flex>
                     <Flex justify="space-between" mb={2}>
-                        <Text>Tax (0%)</Text>
+                        <Text>Delivery Fee</Text>
                         <Text>€ {moneyFormat(0)}</Text>
                     </Flex>
                     <Divider my={3} />

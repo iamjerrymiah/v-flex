@@ -208,7 +208,7 @@ function AddressBookForm ({ initData = {}, edit, onClose }: any) {
                         <HStack w={'full'} justify={'space-between'} spacing={3} mt={12}>
                             <Button 
                                 w={'100%'} 
-                                bg="gray.400" 
+                                bg="gray" 
                                 onClick={onClose}
                             > 
                                 Back 

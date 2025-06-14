@@ -21,8 +21,10 @@ function ProductsMain() {
 
     // const [searchParams] = useSearchParams();
     // const categoryId = searchParams.get("componentsVfcategory");
+    
     const { topCategory, subCategory, linkCategory } = useCategoryContext();
 
+    const [search, setSearch] = useState<any>({})
     const [filter, setFilter] = useState({
         sortBy: 'recent',
         // categoryId: categoryId ?? ""
@@ -34,15 +36,6 @@ function ProductsMain() {
 
     const { data: collectionData = {} } = useGetProductCollections({})
     const { data: categories = [] } = collectionData
-
-    // useEffect(() => {
-    //     setFilter((prev) => ({
-    //         ...prev,
-    //         categoryId: linkCategory?._id || subCategory?._id || "",
-    //         nameJ: linkCategory?.name || subCategory?.name || "",
-    //     //   categoryId: searchParams.get("componentsVfcategory") || "",
-    //     }));
-    // }, [linkCategory, subCategory ]);
 
     useEffect(() => {
         if (linkCategory?._id) { setFilter(prev => ({ ...prev, categoryId: linkCategory._id })) }
@@ -93,6 +86,8 @@ function ProductsMain() {
                             categories={categories ?? []}
                             filter={filter}
                             setFilter={setFilter}
+                            search={search}
+                            setSearch={setSearch}
                         >
                             <ProductGrid 
                                 products={products?.products}

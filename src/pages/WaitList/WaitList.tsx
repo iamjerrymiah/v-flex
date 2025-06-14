@@ -20,7 +20,7 @@ import {
     Spinner,
   } from "@chakra-ui/react";
   import { useState } from "react";
-import Loader from "../../common/Loader";
+// import Loader from "../../common/Loader";
 import PageSk from "../../common/PageSk";
 import EmptyListHero from "../../common/EmptyListHero";
 import { capCase, moneyFormat } from "../../utils/utils";
@@ -68,11 +68,9 @@ function WaitlistMain ({ wishLists = [], carts = {}, isLoading }: any) {
                 color: selectedColor ?? data?.colors[0],
                 quantity: quantity ?? 1
             })
-
             Notify.success("Product added to cart successfully.")
             closed()
             return res;
-
         } catch(e:any) {
             Notify.error(e?.message ?? "Failed")
             return e
@@ -88,6 +86,8 @@ function WaitlistMain ({ wishLists = [], carts = {}, isLoading }: any) {
     };
 
     // useEffect(() => { if(!isLoading) { setWishlistItems(wishLists) }}, [isLoading])
+
+    // const link = `/products/${product?.slug}?componentsVfproduct=${product?._id}`;
 
     return (
         <Box py={6}>
@@ -124,8 +124,8 @@ function WaitlistMain ({ wishLists = [], carts = {}, isLoading }: any) {
                 <Box flex={3} borderRadius="xl">
                         {isLoading ? (
                             <>
-                                <Loader />
-                                <PageSk />
+                                {/* <Loader /> */}
+                                <PageSk tiny/>
                             </>
                         ) :
                          wishLists?.length <= 0 ? (
@@ -156,9 +156,19 @@ function WaitlistMain ({ wishLists = [], carts = {}, isLoading }: any) {
                                             boxSize="80px"
                                             objectFit="cover"
                                             borderRadius="md"
+                                            cursor={'pointer'}
+                                            onClick={() => navigate(`/products/${item?.slug}?componentsVfproduct=${item?._id}`)}
                                         />
                                         <Box flex={1}>
-                                            <Text fontSize={['md', "lg"]} fontWeight="semibold">{capCase(item?.name)}</Text>
+                                            <Text 
+                                                fontSize={['md', "lg"]} 
+                                                fontWeight="semibold"
+                                                cursor={'pointer'}
+                                                _hover={{ color: 'gray' }}
+                                                onClick={() => navigate(`/products/${item?.slug}?componentsVfproduct=${item?._id}`)}
+                                            >
+                                                {capCase(item?.name)}
+                                            </Text>
                                             {/* <Text color="gray.800">€ {moneyFormat(item.price)}</Text> */}
                                             <HStack><Text color="gray.500">Available:</Text> <Text>{item?.availability == true ? <BsClipboard2CheckFill color="green" size={20}/> : <BsClipboardXFill color="red" size={20}/>}</Text></HStack>
                                             {/* <Text color="gray.500">Available Quantity: {item?.quantity}</Text> */}
@@ -243,7 +253,7 @@ function WaitlistMain ({ wishLists = [], carts = {}, isLoading }: any) {
                             <HStack w={'full'} justify={'space-between'} spacing={3} mt={6}>
                                 <Button 
                                     w={'100%'} 
-                                    bg="gray.400" 
+                                    bg="gray" 
                                     onClick={closed}
                                 > 
                                     Back 

@@ -5,7 +5,7 @@ interface DrawerProps {
     onClose: () => void;
     body: React.ReactNode;
     headerColor?: string;
-    size?: string;
+    size?: any;
     header?: string;
     footer?: React.ReactNode;
     placement?: any;
@@ -34,7 +34,7 @@ function Drawer({
             <DrawerContent maxW={!size ? '500px' : size}>
                 <DrawerCloseButton fontSize='md'/>
                 <DrawerHeader color={headerColor}>{header}</DrawerHeader>
-                <DrawerBody  overflowY="auto">
+                <DrawerBody overflowY="scroll" className='scroll-custom'>
                     {body}
                 </DrawerBody>
                 {footer && <DrawerFooter justifyContent='center'>{footer}</DrawerFooter>}

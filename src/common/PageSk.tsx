@@ -1,12 +1,19 @@
 
 import { Box, SimpleGrid, Skeleton } from '@chakra-ui/react'
 
-export default function PageSk() {
+export default function PageSk({tiny}:any) {
     return (
         <Box w='full' borderRadius='md' py={8}>
-            <Skeleton borderRadius='md' h='100px' mb={2} />
-            <Skeleton borderRadius='md' h='100px' mb={2}/>
-            <Skeleton borderRadius='md' h='100px' mb={2}/>
+            <Skeleton borderRadius='md' h={tiny ? '50px' : '100px'} mb={2} />
+            <Skeleton borderRadius='md' h={tiny ? '50px' : '100px'} mb={2}/>
+            <Skeleton borderRadius='md' h={tiny ? '50px' : '100px'} mb={2}/>
+            {tiny && 
+                <>
+                    <Skeleton borderRadius='md' h={'50px'} mb={2} />
+                    <Skeleton borderRadius='md' h={'50px'} mb={2}/>
+                    <Skeleton borderRadius='md' h={'50px'} mb={2}/>
+                </>
+            }
         </Box>
     )
 }

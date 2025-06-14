@@ -169,16 +169,16 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
                 body={
                     <Stack w='100%'>
                         <SimpleGrid columns={[1,2,4]} spacing={4} py={4}>
-                            <Select placeholder="Search Delivery Status" onChange={ (e) => setSearch((prev: any) => ({...prev, deliveryStatus: e.target.value })) }>
+                            <Select border={'1px solid gray'} placeholder="Search Delivery Status" onChange={ (e) => setSearch((prev: any) => ({...prev, deliveryStatus: e.target.value })) }>
                                 {["pending", "shipped", "delivered", "out for delivery", "waiting to be shipped", "cancelled"].map((status:any, i) => ( <option key={i} value={status}>{capCase(status)} </option> ))}
                             </Select>
-                            <Select placeholder="Search Payment Status" onChange={ (e) => setSearch((prev: any) => ({...prev, paymentStatus: e.target.value })) }>
+                            <Select border={'1px solid gray'} placeholder="Search Payment Status" onChange={ (e) => setSearch((prev: any) => ({...prev, paymentStatus: e.target.value })) }>
                                 {["pending", "successful", "failed", "cancelled"].map((status:any, i) => ( <option key={i} value={status}>{capCase(status)} </option> ))}
                             </Select>
-                            <Select placeholder="Search Delivery Method" onChange={ (e) => setSearch((prev: any) => ({...prev, deliveryMethod: e.target.value })) }>
+                            <Select border={'1px solid gray'} placeholder="Search Delivery Method" onChange={ (e) => setSearch((prev: any) => ({...prev, deliveryMethod: e.target.value })) }>
                                 {["door delivery", "pick up"].map((status:any, i) => ( <option key={i} value={status}>{capCase(status)} </option> ))}
                             </Select>
-                            <Select placeholder="Search Payment Method" onChange={ (e) => setSearch((prev: any) => ({...prev, paymentMethod: e.target.value })) }>
+                            <Select border={'1px solid gray'} placeholder="Search Payment Method" onChange={ (e) => setSearch((prev: any) => ({...prev, paymentMethod: e.target.value })) }>
                                 {["paypal", "card", "transfer", "ideal"].map((status:any, i) => ( <option key={i} value={status}>{capCase(status)} </option> ))}
                             </Select>
                         </SimpleGrid>

@@ -245,7 +245,7 @@ const CategoryManager = ({categories, isLoading}:any) => {
                             <HStack w={'full'} justify={'space-between'} spacing={3} mt={6}>
                                 <Button 
                                     w={'100%'} 
-                                    bg="gray.400" 
+                                    bg="gray" 
                                     onClick={onClose}
                                 > 
                                     Back 
@@ -289,7 +289,7 @@ const CategoryManager = ({categories, isLoading}:any) => {
                             <HStack w={'full'} justify={'space-between'} spacing={3} mt={6}>
                                 <Button 
                                     w={'100%'} 
-                                    bg="gray.400" 
+                                    bg="gray" 
                                     onClick={onCloseEdit}
                                 > 
                                     Back 
