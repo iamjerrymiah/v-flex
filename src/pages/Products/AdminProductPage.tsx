@@ -106,7 +106,7 @@ function AdminProductMain ({ products = [], isLoading = false, init, filters, se
                             {
                                 name: `${item?.disabled === true ? "Enable" : "Disable"}`, 
                                 color: `${item?.disabled === true ? "green.700" : "red.700"}`, 
-                                onUse: item?.status === true ? () => { shouldActivate(item) } : () => { shouldDeactivate(item) } 
+                                onUse: item?.disabled === true ? () => { shouldActivate(item) } : () => { shouldDeactivate(item) } 
                             },
                             {name: "Delete", color: 'red.900', onUse: () => shouldDelete(item)},
                         ]}

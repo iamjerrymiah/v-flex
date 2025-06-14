@@ -137,7 +137,6 @@ function LoginMain() {
                         }}
                         validationSchema={loginSchema}
                         onSubmit={(values, actions) => {
-                            // console.log("Form Submitted", values);
                             handleLogin(values)
                             actions.setSubmitting(false); 
                         }}

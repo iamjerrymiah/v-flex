@@ -75,7 +75,6 @@ function RegisterMain () {
                         }}
                         validationSchema={registerSchema}
                         onSubmit={(values, actions) => {
-                            // console.log("Form Submitted", values);
                             handleRegister(values)
                             actions.setSubmitting(false); 
                         }}

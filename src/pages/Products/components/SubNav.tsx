@@ -12,9 +12,18 @@ import { useCategoryContext } from '../../../providers/CategoryContext';
 import { capCase } from '../../../utils/utils';
 
 const SubNav: React.FC = () => {
-	const { topCategory, setSubCategory } = useCategoryContext();
+	const { topCategory, setSubCategory, setLinkCategory } = useCategoryContext();
 
 	if (!topCategory) return null;
+	const handleSubClick = (sub:any) => {
+		setSubCategory(sub)
+		setLinkCategory(null)
+	}
+
+	const handleLinkClick = (link:any) => {
+		setLinkCategory(link)
+		// setSubCategory(null)
+	}
 
 	return (
 		<Box w='100%' mb={6} borderBottom={'1px solid'}>
@@ -24,7 +33,7 @@ const SubNav: React.FC = () => {
 						<PopoverTrigger>
 							<Button 
 								variant="ghost" 
-								onClick={() => setSubCategory(sub)}
+								onClick={() => handleSubClick(sub)}
 							>
 								{capCase(sub.name)}
 							</Button>
@@ -42,7 +51,7 @@ const SubNav: React.FC = () => {
 										w='100%' 
 										spacing={6}
 										py={6}
-										px={'20%'}
+										px={['10%', '10%', '10%', '20%']}
 									>
 										{sub.subcategories.map((child:any, index:any) => (
 											<Box 
@@ -53,6 +62,8 @@ const SubNav: React.FC = () => {
 												textAlign={'center'}
 												justifyContent={'center'}
 												alignItems={'center'}
+												_hover={{ color: 'gray' }}
+												onClick={() => handleLinkClick(child)}
 											>
 												{capCase(child.name)}
 											</Box>

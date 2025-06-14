@@ -13,13 +13,13 @@ export default function PageSk() {
 
 export function ProductPageSk() {
     return (
-        <SimpleGrid w='full' py={8} columns={[1,2,4]} spacing={[10, 6]}>
+        <SimpleGrid w='full' py={8} columns={[1,2,2,4]} spacing={[10, 6]}>
             <Skeleton borderRadius='md' h='250px' mb={2}/>
             <Skeleton borderRadius='md' h='250px' mb={2}/>
             <Skeleton borderRadius='md' h='250px' mb={2}/>
             <Skeleton borderRadius='md' h='250px' mb={2}/>
-            <Skeleton borderRadius='md' h='250px' mb={2} display={['none', 'none', 'none', 'block']}/>
-            <Skeleton borderRadius='md' h='250px' mb={2} display={['none', 'none', 'none', 'block']}/>
+            <Skeleton borderRadius='md' h='250px' mb={2} display={['none', 'block', 'block', 'block']}/>
+            <Skeleton borderRadius='md' h='250px' mb={2} display={['none', 'block', 'block', 'block']}/>
             <Skeleton borderRadius='md' h='250px' mb={2} display={['none', 'none', 'none', 'block']}/>
             <Skeleton borderRadius='md' h='250px' mb={2} display={['none', 'none', 'none', 'block']}/>
         </SimpleGrid>

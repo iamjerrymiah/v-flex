@@ -3,28 +3,40 @@ import { useCategoryContext } from '../../../providers/CategoryContext';
 import { useState } from 'react';
 import { TbWorldSearch } from 'react-icons/tb';
 import { capCase } from '../../../utils/utils';
+import { IoReloadCircle } from "react-icons/io5";
 
 interface TopNavProps {
   categories: any[];
-  admin?: boolean
+  admin?: boolean;
+  filter?: any;
+  setFilter?: any;
 }
 
-const TopNav: React.FC<TopNavProps> = ({ categories, admin }) => {
+const TopNav: React.FC<TopNavProps> = ({ categories, admin, setFilter }) => {
 
-    const { topCategory, setTopCategory, setSubCategory } = useCategoryContext();
+    const { topCategory, setTopCategory, setSubCategory, setLinkCategory } = useCategoryContext();
 
     const handleTopClick = (cat: any) => {
         setTopCategory(cat);
         setSubCategory(null);
+        setLinkCategory(null)
     };
 
     const [search, setSearch] = useState<any>({});
+
+    const resetFilter = () => {
+        setFilter((prev:any) => ({ ...prev, categoryId: null }))
+        setTopCategory(null);
+        setSubCategory(null);
+        setLinkCategory(null)
+    }
+
     console.log(search)
 
     return (
         <Stack pt={4} pb={2} justify={'space-between'} spacing={4} direction={['column', 'row']}>
             <HStack>
-                {/* <Text fontSize={['14px', '18px']} >Categories: </Text> */}
+                <IoReloadCircle size={30} cursor={'pointer'} onClick={() => resetFilter()}/>
                 {categories.map((cat) => (
                     <Box
                         key={cat._id}
@@ -37,7 +49,7 @@ const TopNav: React.FC<TopNavProps> = ({ categories, admin }) => {
                         cursor={'pointer'}
                         _hover={{ bgColor: 'black', color: 'white' }}
                     >
-                        {capCase(cat.name)}
+                        {capCase(cat?.name)}
                     </Box>
                 ))}
             </HStack>

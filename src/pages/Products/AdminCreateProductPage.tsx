@@ -14,6 +14,7 @@ import { useGetProductCollections } from '../../hooks/products/collections'
 import CreatableSelect from 'react-select/creatable';
 import ReactSelect from 'react-select';
 import ImageUploader from '../../common/ImageUploader'
+import { capCase } from '../../utils/utils'
 
 export interface AdminCreateProductProps {
     steps: { component: React.ComponentType; label: string }[];
@@ -121,19 +122,41 @@ function CreateProduct ({
 
     const [file, setFile] = useState(null)
 
-    const flattenSubcategories = (subcategories: any[]): any[] => {
+    // const flattenSubcategories = (subcategories: any[]): any[] => {
+    //     let result: any[] = [];
+
+    //     subcategories.forEach(sub => {
+    //     result.push({
+    //         _id: sub?._id,
+    //         name: sub?.name,
+    //         parent: sub?.parent
+    //     });
+
+    //     if (sub.subcategories && sub.subcategories.length > 0) {
+    //         result = result.concat(flattenSubcategories(sub.subcategories));
+    //     }
+    //     });
+
+    //     return result;
+    // };
+
+    const flattenSubcategories = (subcategories: any[], parentName: string = ""): any[] => {
         let result: any[] = [];
 
         subcategories.forEach(sub => {
-        result.push({
-            _id: sub?._id,
-            name: sub?.name,
-            parent: sub?.parent
-        });
+            const label = parentName 
+                ? `${sub?.name} (${parentName})`
+                : sub?.name;
 
-        if (sub.subcategories && sub.subcategories.length > 0) {
-            result = result.concat(flattenSubcategories(sub.subcategories));
-        }
+            result.push({
+                _id: sub?._id,
+                name: label,
+                parent: sub?.parent
+            });
+
+            if (sub.subcategories && sub.subcategories.length > 0) {
+                result = result.concat(flattenSubcategories(sub.subcategories, sub?.name));
+            }
         });
 
         return result;
@@ -185,7 +208,7 @@ function CreateProduct ({
                     setFieldValue,
                     handleSubmit, 
                 }) => {
-
+                    
                     const selectedCategory = categories?.find((cat: any) => cat._id === values?.category);
                     const allSubcategories = selectedCategory ? flattenSubcategories(selectedCategory.subcategories) : [];
                     
@@ -235,7 +258,7 @@ function CreateProduct ({
                                     name="category"
                                     options={categories?.map((cat: any) => ({
                                         value: cat._id,
-                                        label: cat.name,
+                                        label: capCase(cat.name),
                                     }))}
                                     value={categories
                                         ?.filter((cat: any) => cat._id === values?.category)
@@ -258,7 +281,7 @@ function CreateProduct ({
                                     name="subCategories"
                                     options={allSubcategories.map((sub: any) => ({
                                         value: sub._id,
-                                        label: sub.name,
+                                        label: capCase(sub.name),
                                         parent: sub.parent
                                     }))}
                                     value={

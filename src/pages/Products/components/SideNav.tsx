@@ -3,13 +3,26 @@ import { useCategoryContext } from '../../../providers/CategoryContext';
 import { capCase } from '../../../utils/utils';
 
 const renderSubcategories = (subcategories?: any[], level = 0) => {
+	const { setLinkCategory } = useCategoryContext();
+
 	if (!subcategories || subcategories.length === 0) return null;
+
+	const handleLinkClick = (link:any) => {
+		setLinkCategory(link)
+	}
 
 	return (
 		<VStack align="start" pl={level * 4} spacing={1}>
 			{subcategories.map((sub) => (
 				<Box key={sub._id}>
-					<Text fontWeight={level == 0 ? "medium" : 'normal'}>{capCase(sub.name)}</Text>
+					<Text 
+						fontWeight={level == 0 ? "medium" : 'normal'} 
+						onClick={() => handleLinkClick(sub)}
+						cursor={'pointer'}
+						_hover={{ color: 'gray' }}
+					>
+						{capCase(sub.name)}
+					</Text>
 					{renderSubcategories(sub.subcategories, level + 1)}
 				</Box>
 			))}

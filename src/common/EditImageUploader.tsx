@@ -44,7 +44,7 @@ export default function EditImageUploader({
     isLoadingImages,
     setImageUrlArray
 }: EditImageUploaderProps) {
-    // console.log('img', imageUrlArray)
+    
     const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
     const mainFileInputRef = useRef<HTMLInputElement | null>(null);
 

@@ -1,49 +1,60 @@
 import AnimateRoute from "../../common/AnimateRoute"
 import PageMainContainer from "../../common/PageMain"
 import MainAppLayout from "../../layouts/MainAppLayout"
-import { Box, Center } from '@chakra-ui/react'
-// import { MotionAnimator } from "../../common/MotionAnimator"
-import EmptyListHero from "../../common/EmptyListHero"
-import Loader from "../../common/Loader"
+import { Box } from '@chakra-ui/react'
 import { useGetProducts } from "../../hooks/products/products";
 
-import { useSearchParams, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Container } from "../../styling/layout"
-import { ProductPageSk } from "../../common/PageSk"
-import { useQueryParams } from "../../providers/useQueryParams"
 import ProductGrid from "./components/ProductGrid"
 
 import { useGetProductCollections } from "../../hooks/products/collections"
 import ProductLayout from "./components/ProductLayout"
+import { useCategoryContext } from "../../providers/CategoryContext"
 
 
 function ProductsMain() {
 
-    const location = useLocation();
-    const { queryParams } = useQueryParams()
+    // const location = useLocation();
+    // const { queryParams } = useQueryParams()
     // const { category } = useParams<{ category: string }>();
 
-    const [searchParams] = useSearchParams();
-    const categoryId = searchParams.get("componentsVfcategory");
+    // const [searchParams] = useSearchParams();
+    // const categoryId = searchParams.get("componentsVfcategory");
+    const { topCategory, subCategory, linkCategory } = useCategoryContext();
 
     const [filter, setFilter] = useState({
         sortBy: 'recent',
-        categoryId: categoryId ?? ""
+        // categoryId: categoryId ?? ""
     })
+    const [isOpen, setIsOpen] = useState(true);
 
-    const { data: productData = {}, isLoading } = useGetProducts({...filter, ...queryParams})
+    const { data: productData = {}, isLoading } = useGetProducts({...filter})
     const { data: products = {} } = productData
 
     const { data: collectionData = {} } = useGetProductCollections({})
     const { data: categories = [] } = collectionData
 
+    // useEffect(() => {
+    //     setFilter((prev) => ({
+    //         ...prev,
+    //         categoryId: linkCategory?._id || subCategory?._id || "",
+    //         nameJ: linkCategory?.name || subCategory?.name || "",
+    //     //   categoryId: searchParams.get("componentsVfcategory") || "",
+    //     }));
+    // }, [linkCategory, subCategory ]);
+
     useEffect(() => {
-        setFilter((prev) => ({
-          ...prev,
-          categoryId: searchParams.get("componentsVfcategory") || "",
-        }));
-    }, [location.search]);
+        if (linkCategory?._id) { setFilter(prev => ({ ...prev, categoryId: linkCategory._id })) }
+    }, [linkCategory]);
+
+    useEffect(() => {
+        if (subCategory?._id) { setFilter(prev => ({ ...prev, categoryId: subCategory._id })) }
+    }, [subCategory]);
+
+    useEffect(() => {
+        if (topCategory?._id) { setFilter(prev => ({ ...prev, categoryId: topCategory._id })) }
+    }, [topCategory]);
 
     return (
         <>
@@ -75,32 +86,26 @@ function ProductsMain() {
 
             <Container>
                 <Box px={['20px', '20px', '30px', '50px']}>
-                    {isLoading ? (
-                        <>
-                            <Loader />
-                            <ProductPageSk />
-                        </>
-                    ) : products?.products?.length <= 0 ? (
-                        <Center mt={10}>
-                            <EmptyListHero
-                                w="400px"
-                                text="Sorry, can't find the product you're looking for" 
+                    <Box mt={[14]}>
+                        <ProductLayout
+                            isOpen={isOpen}
+                            setIsOpen={setIsOpen} 
+                            categories={categories ?? []}
+                            filter={filter}
+                            setFilter={setFilter}
+                        >
+                            <ProductGrid 
+                                products={products?.products}
+                                init={products}
+                                filters={filter}
+                                setFilters={setFilter}
+                                isOpen={isOpen}
+                                setIsOpen={setIsOpen}
+                                isLoading={isLoading}
                             />
-                        </Center>
-                    ) : (
-                        <Box mt={[14]}>
-                            
-                            <ProductLayout categories={categories ?? []}>
-                                <ProductGrid 
-                                    products={products?.products}
-                                    init={products}
-                                    filters={filter}
-                                    setFilters={setFilter}
-                                />
-                            </ProductLayout>
+                        </ProductLayout>
 
-                        </Box>
-                    )}
+                    </Box>
                 </Box>
             </Container>
         </>
