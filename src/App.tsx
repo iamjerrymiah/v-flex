@@ -27,6 +27,8 @@ import AccountDetails from './pages/Profile/AccountDetails'
 import AdminCreateProductPage from './pages/Products/AdminCreateProductPage'
 import AdminCategoryPage from './pages/Admin/AdminCategoryPage'
 import AdminEditProductPage from './pages/Products/AdminEditProductPage'
+import CheckoutPage from './pages/Cart/CheckoutPage'
+import MollieConfirmPage from './pages/Order/MollieConfirmPage'
 
 const router = createBrowserRouter([
 	{
@@ -86,6 +88,14 @@ const router = createBrowserRouter([
             {
                 path: '/profile/account-details',
                 element: <AccountDetails />,
+            },
+            {
+                path: '/order/checkout',
+                element: <CheckoutPage />,
+            },
+            {
+                path: '/order/confirm-payment/:orderId',
+                element: <MollieConfirmPage />,
             },
 			{
                 path: '/products/vl',

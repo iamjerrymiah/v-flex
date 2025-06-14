@@ -31,12 +31,9 @@ function AddressBookForm ({ initData = {}, edit, onClose }: any) {
 
     const handleAddressBook = async (data: any) => {
         try {
-
             const payload: any = edit ? await updateAddressAction({addressId: initData?._id, ...data}) : await mutateAsync({...data})
-
             Notify.success("Done")
             onClose()
-
             return payload;
         } catch (e:any) {
             Notify.error(e?.message ?? "Failed")

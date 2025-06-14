@@ -25,7 +25,7 @@ export default function MainAppLayout(props:any) {
 
     return (
         <React.Fragment>
-            <Header />
+            <Header justLogo={props?.justLogo} />
             <ChildrenWrapper px={props?.px} mt={props?.mt}>
                 {props.children}
             </ChildrenWrapper>

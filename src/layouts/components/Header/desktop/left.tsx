@@ -25,7 +25,7 @@ export default function HeaderLeft() {
                 <Image
                     src={vEditionLogo}
                     width={'120px'}
-                    height={'55px'}
+                    height={'45px'}
                     alt='logo'
                     objectFit={'contain'}
                 />

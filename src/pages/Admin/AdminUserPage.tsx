@@ -73,12 +73,9 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
     const handleActivateDeactivate = async (status:string, current:any) => {
         try {
             const res:any =  await action({id: current?._id, status: status})
-
             Notify.success("Success")
             return res;
-
         } catch(e:any) {
-            
             Notify.error(e?.message ?? "Failed")
             return e
         }
@@ -87,11 +84,9 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
     const handleRoleChange = async (data:any) => {
         try {
             const res:any =  await changeRoleAction({ userId: data?._id, role: selectedRole ?? changeRole?.role })
-
             Notify.success("Success")
             closed()
             return res;
-
         } catch(e:any) {
             Notify.error(e?.message ?? "Failed")
             return e
@@ -115,6 +110,17 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
         <Box py={6}>
 
             <Heading textAlign="center" fontSize={["24px", '30px']} fontWeight={400} my={4}> USERS </Heading>
+
+            <Button
+                leftIcon={<MdOutlineArrowBackIos />}
+                variant="ghost"
+                onClick={() => navigate(-1)}
+                mt={4}
+                mb={4}
+                textDecor={'underline'}
+            >
+                Back
+            </Button>
 
             <Box
                 overflowX="scroll"
@@ -141,17 +147,7 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
                 </HStack>
             </Box>
 
-            <HStack justify={'space-between'} w='100%'>
-                <Button
-                    leftIcon={<MdOutlineArrowBackIos />}
-                    variant="ghost"
-                    onClick={() => navigate(-1)}
-                    mt={4}
-                    mb={4}
-                    textDecor={'underline'}
-                >
-                    Back
-                </Button>
+            <HStack justify={'flex-end'} w='100%'>
 
                 <Button
                     leftIcon={<BsFilter size={20}/>}

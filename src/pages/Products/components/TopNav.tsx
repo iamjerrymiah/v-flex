@@ -118,7 +118,7 @@ const TopNav: React.FC<TopNavProps> = ({ categories, admin, filter, setFilter, s
             }
 
             <Drawer 
-                placement={'left'}
+                placement={'right'}
                 size={'300px'}
                 isOpen={isOpen}
                 onClose={onClose}

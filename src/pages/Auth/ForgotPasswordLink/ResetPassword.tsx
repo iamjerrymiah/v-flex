@@ -25,14 +25,12 @@ function ResetPasswordMain() {
 
     const handleSubmit = async (data: any) => {
         try {
-
             const payload: any = await mutateAsync({
                 userId: id,
                 password: data?.password,
                 token: token
             });
             Notify.success("Success")
-
             navigate('/login')
             return payload;
         } catch (e:any) {

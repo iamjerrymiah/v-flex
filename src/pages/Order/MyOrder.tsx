@@ -5,7 +5,7 @@ import MainAppLayout from "../../layouts/MainAppLayout";
 import { Container } from "../../styling/layout";
 import { MdOutlineArrowBackIos } from "react-icons/md";
 import { useNavigate } from "react-router";
-import { useGetUserOrders } from "../../hooks/orders/orders";
+import { useGetOrder, useGetUserOrders } from "../../hooks/orders/orders";
 import { Table, TableRow } from "../../common/Table/Table";
 import { allCaps, capCase, moneyFormat } from "../../utils/utils";
 import { useState } from "react";
@@ -14,7 +14,7 @@ import ModalCenter from "../../common/ModalCenter";
 import { BsCheck } from "react-icons/bs";
 import Pagination from "../../common/Pagination/Pagination";
 
-const statusHistory = [ "order placed", "payment successful", "delivery pending" ];
+const statusHistory = [ "order placed", "pending payment", "payment successful", "waiting to be shipped" ];
 
 // const backendStatuses = [ "order placed", "payment successful" ];
 
@@ -174,7 +174,7 @@ export function OrderView ({
     )
 }
 
-const tableHeads = ["S/N", "orderNumber", "Total Amount Paid", "Payment Method", "Payment Status", "Delivery Status", "Delivery Date", ""]
+const tableHeads = ["S/N", "orderNumber", "Total Amount Paid", "Payment Method", "Payment Status", "Delivery Status", ""]
 function MyOrdersMain ({ init = {}, myOrders = [], isLoading, filters, setFilters}:any) {
 
     const navigate = useNavigate()
@@ -182,7 +182,9 @@ function MyOrdersMain ({ init = {}, myOrders = [], isLoading, filters, setFilter
 
     const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure()
 
-    const [selected, setSelected] = useState({})
+    const [selected, setSelected] = useState<any>({})
+
+    const { data: order, isLoading: isLoad } = useGetOrder(selected?._id)
 
     const selectedInfo = (d: any) => {
         setSelected(d)
@@ -231,10 +233,10 @@ function MyOrdersMain ({ init = {}, myOrders = [], isLoading, filters, setFilter
                             (index + 1 ),
                             item?.orderNumber,
                             `€ ${moneyFormat(item?.totalPaid ?? 0)}`,
-                            capCase(item?.paymentMethod ?? "-"),
+                            allCaps(item?.paymentMethod ?? "-"),
                             capCase(item?.paymentStatus ?? "-"),
                             capCase(item?.deliveryStatus ?? "-"),
-                            item?.deliveryDate ?? "-",
+                            // item?.deliveryDate ?? "-",
                         ]}
                         noIndexPad
                         options={[
@@ -258,9 +260,9 @@ function MyOrdersMain ({ init = {}, myOrders = [], isLoading, filters, setFilter
                 body={
                     <OrderView 
                         admin={false}
-                        isLoad={false}
+                        isLoad={isLoad}
                         onClose={onCloseEdit}
-                        initData={selected ?? {}}
+                        initData={order?.data ?? {}}
                     />
                 }
             />

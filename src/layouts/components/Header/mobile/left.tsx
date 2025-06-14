@@ -13,7 +13,7 @@ export default function HeaderLeft() {
                 <Image
                     src={vEditionLogo}
                     width={'80px'}
-                    height={'50px'}
+                    height={'45px'}
                     alt='logo'
                     objectFit={'contain'}
                 />

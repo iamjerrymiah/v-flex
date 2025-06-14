@@ -1,13 +1,17 @@
-import { Flex, Center, Text, Image } from '@chakra-ui/react'
+import { Flex, Center, Text, Image, Button } from '@chakra-ui/react'
 import emptyListImg from '../assets/icons/emptyList.png'
+import { useNavigate } from 'react-router';
 
 interface EmptyListHeroProps {
     text: string;
     w?: string;
     h?: string;
+    link?: string;
+    linkName?: string;
 }
 
-function EmptyListHero({ text, w, h }: EmptyListHeroProps) {
+function EmptyListHero({ text, w, h, link, linkName }: EmptyListHeroProps) {
+    const navigate = useNavigate()
     return (
         <Flex bg='transparent' direction='column' py='50px' w='full'>
             <Center mb={3}>
@@ -19,6 +23,13 @@ function EmptyListHero({ text, w, h }: EmptyListHeroProps) {
                 />
             </Center>
             <Text fontSize='lg' fontWeight={500} px={6} color='#56505B' textAlign='center'>{text}</Text>
+            {link &&
+                <Center>
+                    <Button mt={2} bgColor={'gray'} color={'white'} onClick={() => navigate(link)}>
+                        {linkName}
+                    </Button>
+                </Center>
+            }
         </Flex>
     )
 }

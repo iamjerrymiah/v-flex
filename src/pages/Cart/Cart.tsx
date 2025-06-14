@@ -258,6 +258,7 @@ function CartsMain ({ carts = [], isLoading }:any) {
                         color="white" 
                         _hover={{ bg: "gray.700" }} 
                         isDisabled={carts?.length === 0}
+                        onClick={() => navigate(`/order/checkout`)}
                     >
                         Proceed to Checkout
                     </Button>

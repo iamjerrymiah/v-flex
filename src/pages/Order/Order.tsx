@@ -7,7 +7,7 @@ import { MdLockReset, MdOutlineArrowBackIos } from "react-icons/md"
 import { useNavigate } from "react-router"
 import { useGetAllOrders, useGetOrder } from "../../hooks/orders/orders"
 import { Table, TableRow } from "../../common/Table/Table"
-import { capCase, moneyFormat } from "../../utils/utils"
+import { allCaps, capCase, moneyFormat } from "../../utils/utils"
 import { useState } from "react"
 import Pagination from "../../common/Pagination/Pagination"
 import ModalCenter from "../../common/ModalCenter"
@@ -49,9 +49,9 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
 
     const dataInformationArray = [
         {title: 'Total Orders', value: init?.totalOrders ?? "-", iconColor: 'black', icon: TbShoppingCartStar},
+        {title: 'Total Pending Orders', value: init?.pendingOrders ?? "-", iconColor: 'gray', icon: TbShoppingCartStar},
         {title: 'Total Successful Orders', value: init?.successOrders ?? "-", iconColor: 'green', icon: TbShoppingCartStar},
         {title: 'Total Failed Orders', value: init?.failedOrders ?? "-", iconColor: 'red', icon: TbShoppingCartStar},
-        {title: 'Total Pending Orders', value: init?.pendingOrders ?? "-", iconColor: 'gray', icon: TbShoppingCartStar},
     ]
 
     // useEffect(() => { 
@@ -64,6 +64,17 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
         <Box py={6}>
         
             <Heading textAlign="center" fontSize={["24px", '30px']} fontWeight={400} my={6}> ORDER LIST </Heading>
+
+            <Button
+                leftIcon={<MdOutlineArrowBackIos />}
+                variant="ghost"
+                onClick={() => navigate(-1)}
+                mt={4}
+                mb={4}
+                textDecor={'underline'}
+            >
+                Back
+            </Button>
 
             <Box
                 overflowX="scroll"
@@ -90,17 +101,7 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
                 </HStack>
             </Box>
 
-            <HStack justify={'space-between'} w='100%'>
-                <Button
-                    leftIcon={<MdOutlineArrowBackIos />}
-                    variant="ghost"
-                    onClick={() => navigate(-1)}
-                    mt={4}
-                    mb={4}
-                    textDecor={'underline'}
-                >
-                    Back
-                </Button>
+            <HStack justify={'flex-end'} w='100%'>
 
                 <Button
                     leftIcon={<BsFilter size={20}/>}
@@ -127,7 +128,7 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
                             (index + 1 ),
                             item?.orderNumber,
                             `€ ${moneyFormat(item?.totalPaid ?? 0)}`,
-                            capCase(item?.paymentMethod ?? "-"),
+                            allCaps(item?.paymentMethod ?? "-"),
                             capCase(item?.paymentStatus ?? "-"),
                             capCase(item?.deliveryStatus ?? "-"),
                             // item?.deliveryDate ?? "-",

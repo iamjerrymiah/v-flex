@@ -49,6 +49,18 @@ export const useGetAllOrders = (params:any) => {
     });
 };
 
+export const useValidateOrder = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return customMutationRequest("SECURITY", `/order/validate`, 'POST', data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [`${key}`] });
+        },
+    });
+};
+
 export const useGetAllCoupons = (params:any) => {
     let queries = !!params ? queryString.stringify(params) : '';
     return useQuery({
@@ -68,6 +80,31 @@ export const useCreateCoupoun = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [`${key}-coupons`] });
+        },
+    });
+};
+
+
+export const usePaymentWithMollie = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return customMutationRequest("SECURITY", `/payment/mollie`, 'POST', data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [`payment`] });
+        },
+    });
+};
+
+export const useMollieConfirmPayment = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return customMutationRequest("SECURITY", `/payment/mollie`, 'PATCH', data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [`payment`] });
         },
     });
 };
