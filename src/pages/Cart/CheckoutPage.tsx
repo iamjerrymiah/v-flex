@@ -59,18 +59,30 @@ function CheckoutMain ({carts = [], addressBooks = [], cartLoad, addressLoad}: a
     // const tax = subtotal * 0.07; //tax
     const total = subtotal;
 
+    const [pay, setPay] = useState<any>(null)
+
     const { mutateAsync, isPending} = useValidateOrder()
     const { mutateAsync: paymentWithMollieAction, isPending: mollieLoad} = usePaymentWithMollie()
 
-    const handleMolliePay = async (orderId:any) => {
-        const mollieRes:any = await paymentWithMollieAction({orderDataID: orderId})
-        // window.location.href = mollieRes?.data?.paymentUrl
-    
-        if (mollieRes?.data?.paymentUrl) {
-            window.open(mollieRes.data.paymentUrl, '_blank', 'noopener,noreferrer');
+    const handleMolliePay = async (orderId: any) => {
+        try {
+            const mollieRes: any = await paymentWithMollieAction({ orderDataID: orderId });
+
+            if (mollieRes?.data?.paymentUrl) {
+                window.location.href = mollieRes.data.paymentUrl;
+            } else {
+                // If no paymentUrl, treat as error
+                Notify.error("Something went wrong! Please try again.")
+                // throw new Error(mollieRes?.message || "Payment URL not available.");
+                // window.open(mollieRes.data.paymentUrl, '_blank', 'noopener,noreferrer');
+            }
+
+            return mollieRes;
+        } catch (e: any) {
+            // Try to get deep error message
+            Notify.error("The payment method is not currently available");
+            return e;
         }
-        console.log(mollieRes)
-        return mollieRes
     }
 
     const handleValidateOrder = async () => {
@@ -81,14 +93,16 @@ function CheckoutMain ({carts = [], addressBooks = [], cartLoad, addressLoad}: a
                 deliveryMethod: deliveryMethod,
                 // coupon 
             })
-            // Notify.success("Success")
-            if(res) { handleMolliePay(res?.data?._id) }
+            if(res) { setPay(res) }
             return res;
         } catch(e:any) {
             Notify.error(e?.message ?? "Failed")
             return e
         }
     }
+
+    useEffect(() => { if(pay?.data?._id) { handleMolliePay(pay?.data?._id) } }, [pay?.data?._id])
+
 
     return (
         <Box py={6}>
@@ -271,9 +285,9 @@ function CheckoutMain ({carts = [], addressBooks = [], cartLoad, addressLoad}: a
                             bg="black" 
                             color="white" 
                             _hover={{ bg: "gray.700" }} 
-                            isDisabled={carts?.length === 0 || isPending}
+                            isDisabled={carts?.length === 0}
                             isLoading={isPending || mollieLoad}
-                            onClick={handleValidateOrder}
+                            onClick={() => handleValidateOrder()}
                         >
                             Proceed to Checkout
                         </Button>

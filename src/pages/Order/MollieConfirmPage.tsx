@@ -25,7 +25,8 @@ export default function MollieConfirmPage() {
         try {
             const res:any = await mutateAsync({orderDataID: orderId})
             setData(res)
-        } catch { }
+            return res
+        } catch(e:any) { setData(e); return e; }
     }
 
     useEffect(() => {
@@ -49,10 +50,10 @@ export default function MollieConfirmPage() {
                                         />
                                         <Stack textAlign={'center'}>
                                             <Text fontSize={['30px']} fontWeight={700}>
-                                                {data?.status == 200 ? "Order Successful" : "Order Failed"} 
+                                                {data?.status == 200 ?  "Order Successful" : "Order Failed"} 
                                             </Text>
                                             <Text fontSize={[ '16px', '18px' ]} >
-                                                {data?.status == 200 ? "Your order was successfully placed." : 'Your order failed!! Please try again.'}
+                                                {data?.status == 200 ? "Your order was successfully placed." : 'Order status uncertain. Please go back to confirm.'}
                                             </Text>
                                         </Stack>
                                         <Button

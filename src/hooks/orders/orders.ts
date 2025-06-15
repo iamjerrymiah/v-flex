@@ -56,7 +56,7 @@ export const useValidateOrder = () => {
             return customMutationRequest("SECURITY", `/order/validate`, 'POST', data).then((res:any) => res)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [`${key}`] });
+            queryClient.invalidateQueries({ queryKey: [`${key}-pay`] });
         },
     });
 };
@@ -92,7 +92,7 @@ export const usePaymentWithMollie = () => {
             return customMutationRequest("SECURITY", `/payment/mollie`, 'POST', data).then((res:any) => res)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [`payment`] });
+            queryClient.invalidateQueries({ queryKey: [`mollie-payment`] });
         },
     });
 };
@@ -104,7 +104,7 @@ export const useMollieConfirmPayment = () => {
             return customMutationRequest("SECURITY", `/payment/mollie`, 'PATCH', data).then((res:any) => res)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [`payment`] });
+            queryClient.invalidateQueries({ queryKey: [`payment-mollie`] });
         },
     });
 };
