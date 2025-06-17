@@ -289,7 +289,7 @@ function CheckoutMain ({carts = [], addressBooks = [], cartLoad, addressLoad}: a
                             isLoading={isPending || mollieLoad}
                             onClick={() => handleValidateOrder()}
                         >
-                            Proceed to Checkout
+                            Place Order
                         </Button>
                     </VStack>
                 </Box>

@@ -33,6 +33,11 @@ export const resetPasswordSchema = Yup.object().shape({
     .required("Required"),
 })
 
+export const changePasswordSchema = Yup.object().shape({
+  oldPassword: Yup.string().min(8, "At least 8 characters").required("Password is Required"),
+  newPassword: Yup.string().min(8, "At least 8 characters").required("New Password is Required"),
+})
+
 export const addressSchema = Yup.object().shape({
   salutation: Yup.string().required("Salutation is Required"),
   firstName: Yup.string().required("First Name is Required"),

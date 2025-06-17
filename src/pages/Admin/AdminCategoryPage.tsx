@@ -6,8 +6,8 @@ import AnimateRoute from "../../common/AnimateRoute"
 import { useAddCollectionCategory, useAddCollectionSubCategory, useDeleteCollection, useDeleteSubCollection, useEditCollectionCategory, useEditCollectionSubCategory, useGetProductCollections } from "../../hooks/products/collections"
 import { MdAddToPhotos, MdOutlineArrowBackIos } from "react-icons/md"
 import { useNavigate } from "react-router"
-import { useState } from "react"
-import { capCase } from "../../utils/utils"
+import { useEffect, useState } from "react"
+import { capCase, isSuperUser } from "../../utils/utils"
 import { useConfirmAction } from "../../utils/useActions"
 import Notify from "../../utils/notify"
 import ConfirmModal from "../../common/ConfirmModal"
@@ -16,6 +16,8 @@ import { MdOutlineAdd } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import EmptyListHero from "../../common/EmptyListHero"
+import { useGetAuthState } from "../../hooks/auth/AuthenticationHook"
+import Loader from "../../common/Loader"
 
 
 const CategoryManager = ({categories, isLoading}:any) => {
@@ -64,14 +66,12 @@ const CategoryManager = ({categories, isLoading}:any) => {
             Notify.success("Success")
             setL(null)
             onClose()     
-            // setData((prev: any) => ({...prev, categoryName: "", subCategoryName: "" }))
             setData({})
             return payload;
         } catch (e:any) {
             Notify.error(e?.message ?? "Failed")
             setL(null)
             onClose()
-            // setData((prev: any) => ({...prev, categoryName: "", subCategoryName: "" }))
             setData({})
             return e
         }
@@ -84,7 +84,6 @@ const CategoryManager = ({categories, isLoading}:any) => {
             setL(null)
             setSelected({})
             onCloseEdit()
-            // l == 0 ? setData2((prev: any) => ({...prev, name: "", categoryId: null, })) : setData2((prev: any) => ({...prev, name: "", categoryId: null, subCategoryId: null, }))
             setData2({})
             return payload;
         } catch (e:any) {
@@ -93,7 +92,6 @@ const CategoryManager = ({categories, isLoading}:any) => {
             setSelected({})
             onCloseEdit()
             setData2({})
-            // l == 0 ? setData2((prev: any) => ({...prev, name: "", categoryId: null, })) : setData2((prev: any) => ({...prev, name: "", categoryId: null, subCategoryId: null, }))
             return e
         }
     };
@@ -178,7 +176,7 @@ const CategoryManager = ({categories, isLoading}:any) => {
                 <Button
                     leftIcon={<MdOutlineArrowBackIos />}
                     variant="ghost"
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate(`/profile`)}
                     mt={4}
                     mb={4}
                     textDecor={'underline'}
@@ -319,31 +317,34 @@ const CategoryManager = ({categories, isLoading}:any) => {
 
 
 
-
-
-
-
-
-
-
-
 export default function AdminCategoryPage() {
 
-    const { data: collectionData = {}, isLoading } = useGetProductCollections({})
+    const navigate = useNavigate()
+    const { data: collectionData = {}, isLoading: collectionLoad } = useGetProductCollections({})
     const { data: categories = [] } = collectionData
 
+    const { isLoading, isAuthenticated, user } = useGetAuthState()
+    const isAdmin = isSuperUser(user?.role)
+    useEffect(() => { if(!isLoading && isAuthenticated == false) { navigate('/products/vl') } }, [isLoading, isAuthenticated])
+    useEffect(() => { if(!isLoading && isAdmin == false && isAuthenticated == true ) {navigate('/profile'); Notify.error("Not Authorized!!")} }, [isLoading, isAuthenticated])
+    if(isLoading) { return (<Loader />) }
+
     return (
-        <PageMainContainer title='Product Category' description='Product Category'>
-            <MainAppLayout noFooter>
-                <Container>
-                    <AnimateRoute>
-                        <CategoryManager 
-                            isLoading={isLoading}
-                            categories={categories ?? []}
-                        />
-                    </AnimateRoute>
-                </Container>
-            </MainAppLayout>
-        </PageMainContainer>
+        <>
+            {/* {isAdmin &&  */}
+                <PageMainContainer title='Product Category' description='Product Category'>
+                    <MainAppLayout noFooter>
+                        <Container>
+                            <AnimateRoute>
+                                <CategoryManager 
+                                    isLoading={collectionLoad}
+                                    categories={categories ?? []}
+                                />
+                            </AnimateRoute>
+                        </Container>
+                    </MainAppLayout>
+                </PageMainContainer>
+            {/* } */}
+        </>
     )
 }

@@ -123,7 +123,7 @@ function ForgotPasswordLinkMain() {
 export default function ForgotPasswordLink() {
     return (
         <PageMainContainer title='Forgot Password' description='Forgot Password'>
-            <MainAppLayout noFooter>
+            <MainAppLayout noFooter justLogo>
                 <Container>
                     <AnimateRoute>
                         <ForgotPasswordLinkMain />

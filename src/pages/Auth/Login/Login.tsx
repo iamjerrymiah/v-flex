@@ -1,6 +1,6 @@
 import { Box, Button, Divider, Flex, FormControl, Grid, Heading, Input, InputGroup, InputRightElement, Stack, Text, VStack } from "@chakra-ui/react";
-import { FaEye, FaEyeSlash, FaFacebook, FaGoogle } from "react-icons/fa";
-import { useState } from "react";
+import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
+import { useEffect, useState } from "react";
 import PageMainContainer from "../../../common/PageMain";
 import { Container } from "../../../styling/layout";
 import MainAppLayout from "../../../layouts/MainAppLayout";
@@ -9,7 +9,11 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { loginSchema } from "../../../schema/auth";
 import { Form, Formik } from "formik";
 import Notify from "../../../utils/notify";
-import { useLogin } from "../../../hooks/auth/AuthenticationHook";
+import { AuthState, useGetAuthState, useGoogleLogin, useLogin } from "../../../hooks/auth/AuthenticationHook";
+import { queryClient } from "../../../providers/QueryClientProvider";
+import { SECHTTP } from "../../../utils/api";
+import { storeToken } from "../../../constants/constants";
+import { AuthStateEnum } from "../../../utils/types";
 
 function LoginMain() {
 
@@ -17,6 +21,8 @@ function LoginMain() {
 
     const navigate = useNavigate();
     const location = useLocation();
+
+    const { isLoading, isAuthenticated } = useGetAuthState()
 
     // Get query parameters
     const searchParams = new URLSearchParams(location.search);
@@ -26,23 +32,25 @@ function LoginMain() {
         if (redirect) {
             navigate(redirect);
         } else {
-            navigate("/");
+            navigate("/products/vl");
         }
     };
 
     const { mutateAsync, isPending } = useLogin();
 
-
     const handleLogin = async (data: any) => {
         try {
-
             const payload: any = await mutateAsync(data);
-            Notify.success("Login Successful!")
-            onSuccess()
-
+            if(payload?.data?.user?.emailVerified === false) {
+                Notify.warning("Please verify your account!")
+                navigate(`/auth/verify?login=emailVerification`)
+            } else {
+                Notify.success("Login Successful!")
+                onSuccess()
+            }
+            
             return payload;
         } catch (e:any) {
-
             if (e) {
                 e.hasError = true;
                 e.status = e.statusCode;
@@ -54,10 +62,67 @@ function LoginMain() {
             {
                 Notify.error("Incorrect Credentials")
             }
-
             return e
         }
     };
+
+    const { mutateAsync: googleLoginAction, isPending: googlePend } = useGoogleLogin()
+    const handleGoogleAuth = async () => {
+        try {
+            const res: any = await googleLoginAction({})
+            console.log('res', res)
+            if (res) {
+                localStorage.setItem('v_userId', res?.data?.user?._id);
+                localStorage.setItem(storeToken, res?.data?.token);
+                [SECHTTP].forEach(instance => {
+                    instance.defaults.headers.common['Authorization'] = `Bearer ${res?.data?.token}`;
+                });
+
+                const auth: AuthState = {
+                    isAuthenticated: true,
+                    authToken: res?.data?.token,
+                    v_userId: res?.data?.user?._id,
+                    authState: AuthStateEnum.Authenticated,
+                    user: {
+                        ...res?.data?.user,
+                        fullName: `${res?.data?.user?.firstName} ${res?.data?.user?.lastName}`
+                    },
+                    isLoading: false,
+                    networkFailure: false,
+                };
+
+                queryClient.setQueryData<AuthState>(['auth'], (prevAuth) =>
+                    prevAuth ? { ...prevAuth, ...auth } : auth
+                );
+
+                Notify.success("Success");
+            }
+            return res;
+        } catch (err) {
+            console.error('error', err);
+            localStorage.removeItem('v_userId');
+            localStorage.removeItem(storeToken);
+            [SECHTTP].forEach(instance => {
+                instance.defaults.headers.common['Authorization'] = '';
+            });
+
+            const auth: Partial<AuthState> = {
+                isAuthenticated: false,
+                authToken: null,
+                v_userId: null,
+                authState: AuthStateEnum.Unauthenticated,
+                user: null,
+            };
+
+            queryClient.setQueryData<AuthState>(['auth'], (prevAuth) =>
+                prevAuth ? { ...prevAuth, ...auth } : auth as AuthState
+            );
+
+            Notify.error("Something went wrong! Please try again.");
+        }
+    };
+
+    useEffect(() => { if(!isLoading && isAuthenticated === true) { navigate('/products/vl') } }, [isLoading, isAuthenticated])
 
     return (
         <Flex 
@@ -107,7 +172,7 @@ function LoginMain() {
                             Connect with your existing social network account
                         </Text>
                         <Stack spacing={3} w="full" mt={4}>
-                            <Button 
+                            {/* <Button 
                                 leftIcon={<FaFacebook size={24}/>} 
                                 bg="black" 
                                 color="white" 
@@ -115,13 +180,16 @@ function LoginMain() {
                                 w="full"
                             >
                                 FACEBOOK
-                            </Button>
+                            </Button> */}
                             <Button 
                                 leftIcon={<FaGoogle size={24}/>} 
                                 bg="black" 
                                 color="white" 
                                 _hover={{ bg: "gray" }} 
                                 w="full"
+                                disabled={googlePend}
+                                isLoading={googlePend}
+                                onClick={() => handleGoogleAuth()}
                             >
                                 GOOGLE
                             </Button>

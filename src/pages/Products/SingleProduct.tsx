@@ -39,10 +39,11 @@ const emptyProduct = {
 function SingleProductMain({ 
     isAuthenticated, 
     isLoading, 
+    user = {},
     product = {}, 
     recProducts = [], 
     recLoad 
-}:{product: any, recProducts: any, recLoad?: boolean, isLoading: boolean, isAuthenticated: boolean}) {
+}:{product: any, recProducts: any, recLoad?: boolean, isLoading: boolean, user?:any; isAuthenticated: boolean | null}) {
 
     const navigate = useNavigate()
 
@@ -81,10 +82,8 @@ function SingleProductMain({
     const handleAddWishList = async () => {
         try {
             const res:any =  await addWishlistAction({productId: product?._id})
-
             Notify.success("Product added to wishlist successfully.")
             return res;
-
         } catch(e:any) {
             Notify.error(e?.message ?? "Failed")
             return e
@@ -137,14 +136,12 @@ function SingleProductMain({
 
             {isLoading ? (
                 <>  
-                    {/* <Loader />  */}
                     <PageSk />
                 </>
             ) :
             <Grid 
                 templateColumns={{ base: "1fr", md: "1.5fr 1fr" }} 
                 gap={10} 
-                // alignItems="center"
             >
                 {/* Left Side: Product Image Gallery */}
                 <GridItem>
@@ -226,15 +223,6 @@ function SingleProductMain({
             
                         {/* Description */}
                         <Text color="gray.600">{product?.description}</Text>
-            
-                        {/* Product Details */}
-                        {/* <VStack align="start">
-                            {product.details.map((detail:any, index:any) => (
-                            <Text key={index} fontSize="sm" color="gray.700">
-                                • {detail}
-                            </Text>
-                            ))}
-                        </VStack> */}
 
                         <Stack spacing={2}>
 
@@ -274,8 +262,8 @@ function SingleProductMain({
                         <Tooltip 
                             bgColor={'red.500'}
                             label={!isAuthenticated 
-                            ? "Please log in to add to cart." 
-                            : carts?.cart?.length >= 1000 ? "You've reached the limit amount in cart." : ""}
+                            ? "Please log in to add to cart." : !user?.emailVerified ? "Please verify your account" 
+                            : carts?.cart?.length >= 1000 ? "You've reached the limit amount in cart(1000)." : ""}
                         >
                             <Button 
                                 w="full" 
@@ -283,7 +271,7 @@ function SingleProductMain({
                                 color="white" 
                                 _hover={{ bg: "gray.700" }} 
                                 leftIcon={<FaShoppingCart />}
-                                isDisabled={!isAuthenticated || carts?.cart?.length >= 1000}
+                                isDisabled={!isAuthenticated || !user?.emailVerified || carts?.cart?.length >= 1000}
                                 isLoading={cartPend}
                                 onClick={() => { handleAddCart() }}
                             >
@@ -295,8 +283,8 @@ function SingleProductMain({
                             bgColor={'red.500'}
                             placement="top"
                             label={!isAuthenticated 
-                            ? "Please log in to add to wishlist." 
-                            : wishLists?.length >= 1000 ? "You've reached the limit amount in wishlist." : ""}
+                            ? "Please log in to add to wishlist." : !user?.emailVerified ? "Please verify your account"
+                            : wishLists?.length >= 1000 ? "You've reached the limit amount in wishlist(1000)." : ""}
                         >
                             <Button 
                                 w="full" 
@@ -304,13 +292,22 @@ function SingleProductMain({
                                 color="black" 
                                 mt={2} 
                                 leftIcon={<FaStar />}
-                                isDisabled={!isAuthenticated || wishLists?.length >= 1000}
+                                isDisabled={!isAuthenticated || !user?.emailVerified  || wishLists?.length >= 1000}
                                 isLoading={wishPend}
                                 onClick={() => { handleAddWishList() }}
                             >
                                 ADD TO WISHLIST
                             </Button>
                         </Tooltip>
+
+                        <Stack px={4} color={'crimson'} spacing={'-1'} fontSize={'11px'}>
+                            <ul>
+                                {!isAuthenticated && <li>Please log in to get full access!</li>}
+                                {isAuthenticated && !user?.emailVerified && <li>Your account is yet to be verified!</li>}
+                                {carts?.cart?.length >= 1000 && <li>You've reached the limit amount in cart(1000).</li>}
+                                {wishLists?.length >= 1000 && <li>You've reached the limit amount in wishlist(1000).</li>}
+                            </ul>
+                        </Stack>
                         
                     </Stack>
                 </GridItem>
@@ -344,7 +341,7 @@ export default function SingleProduct () {
     const [searchParams] = useSearchParams();
     const productId = searchParams.get("componentsVfproduct");
 
-    const { isAuthenticated } = useGetAuthState()
+    const { isAuthenticated, user } = useGetAuthState()
 
     const { data: productData = {}, isLoading } = useGetProduct(productId)
     const product = productData?.data
@@ -373,6 +370,7 @@ export default function SingleProduct () {
                 <AnimateRoute>
                     <Container>
                         <SingleProductMain 
+                            user={user}
                             isAuthenticated={isAuthenticated}
                             product={product ?? emptyProduct} 
                             recProducts={recProducts?.products ?? []}

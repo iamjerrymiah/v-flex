@@ -47,7 +47,6 @@ function AdminSubNav () {
 export default function AdminProductLayout({ children, categories, init, isLoading, filters, search, setFilters, setSearch, }:any) {
 
     const navigate = useNavigate()
-    // const { isAuthenticated } =  useGetAuthState();
 
     const isMobileTablet = useBreakpointValue({ base: true, sm: true, md: true, lg: false });
     const { isOpen: isOpenBar, onToggle, onClose: onCloseBar } = useDisclosure()
@@ -99,7 +98,7 @@ export default function AdminProductLayout({ children, categories, init, isLoadi
                 <Button
                     leftIcon={<MdOutlineArrowBackIos />}
                     variant="ghost"
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate(`/profile`)}
                     textDecor={'underline'}
                 >
                     Back

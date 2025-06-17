@@ -14,6 +14,8 @@ import "react-phone-input-2/lib/style.css";
 import SelectComponent from "react-select";
 import countryList from "react-select-country-list";
 import Notify from "../../utils/notify";
+import Loader from "../../common/Loader";
+import { useEffect } from "react";
 
 
 function AccountDetailMain ({ initData = {} }: any) {
@@ -52,7 +54,7 @@ function AccountDetailMain ({ initData = {} }: any) {
             <Button
                 leftIcon={<MdOutlineArrowBackIos />}
                 variant="ghost"
-                onClick={() => navigate(-1)}
+                onClick={() => navigate('/profile')}
                 textDecor={'underline'}
             >
                 Back
@@ -191,14 +193,10 @@ function AccountDetailMain ({ initData = {} }: any) {
 
 export default function AccountDetails() {
 
-    // const navigate = useNavigate()
-    const { user } =  useGetAuthState();
-    
-    // useEffect(() => { 
-    //     if(!isAuthenticated) {
-    //         navigate(-1)
-    //     } 
-    // }, [isAuthenticated, user])
+    const navigate = useNavigate()
+    const { isLoading, isAuthenticated, user } = useGetAuthState()
+    useEffect(() => { if(!isLoading && isAuthenticated == false) { navigate('/products/vl') } }, [isLoading, isAuthenticated])
+    if(isLoading) { return (<Loader />) }
 
     return (
         <PageMainContainer title='Account Details' description='Account Details'>

@@ -1,4 +1,4 @@
-import { Box, Button, Heading, HStack, Select, SimpleGrid, Stack, useDisclosure } from "@chakra-ui/react"
+import { Box, Button, Heading, HStack, Input, Select, SimpleGrid, Stack, useDisclosure } from "@chakra-ui/react"
 import AnimateRoute from "../../common/AnimateRoute"
 import PageMainContainer from "../../common/PageMain"
 import MainAppLayout from "../../layouts/MainAppLayout"
@@ -7,8 +7,8 @@ import { MdLockReset, MdOutlineArrowBackIos } from "react-icons/md"
 import { useNavigate } from "react-router"
 import { useGetAllOrders, useGetOrder } from "../../hooks/orders/orders"
 import { Table, TableRow } from "../../common/Table/Table"
-import { allCaps, capCase, moneyFormat } from "../../utils/utils"
-import { useState } from "react"
+import { allCaps, capCase, isSuperUser, moneyFormat } from "../../utils/utils"
+import { useEffect, useState } from "react"
 import Pagination from "../../common/Pagination/Pagination"
 import ModalCenter from "../../common/ModalCenter"
 import { OrderView } from "./MyOrder"
@@ -16,6 +16,9 @@ import { BsFilter, BsSearch } from "react-icons/bs"
 import Drawer from "../../common/Drawer"
 import DataInfo from "../../common/DataInfo"
 import { TbShoppingCartStar } from "react-icons/tb"
+import { useGetAuthState } from "../../hooks/auth/AuthenticationHook"
+import Loader from "../../common/Loader"
+import Notify from "../../utils/notify"
 
 
 const tableHeads = ["S/N", "orderNumber", "Total Amount Paid", "Payment Method", "Payment Status", "Delivery Status", ""]
@@ -25,7 +28,6 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
     const [search, setSearch] = useState<any>({});
 
     const navigate = useNavigate()
-    // const { isAuthenticated } =  useGetAuthState();
 
     const { data: order, isLoading: isLoad } = useGetOrder(selected?._id)
 
@@ -54,12 +56,6 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
         {title: 'Total Failed Orders', value: init?.failedOrders ?? "-", iconColor: 'red', icon: TbShoppingCartStar},
     ]
 
-    // useEffect(() => { 
-    //     if(!isAuthenticated) {
-    //         navigate(-1)
-    //     } 
-    // }, [isAuthenticated])
-
     return (
         <Box py={6}>
         
@@ -68,7 +64,7 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
             <Button
                 leftIcon={<MdOutlineArrowBackIos />}
                 variant="ghost"
-                onClick={() => navigate(-1)}
+                onClick={() => navigate(`/profile`)}
                 mt={4}
                 mb={4}
                 textDecor={'underline'}
@@ -136,7 +132,6 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
                         noIndexPad
                         options={[
                             {name: "View", onUse: () => { selectedInfo(item) }},
-                            // {name: "Delete", color: 'red.700', onUse: () => shouldDelete(item)},
                         ]}
                     />
                 )}
@@ -170,6 +165,7 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
                 body={
                     <Stack w='100%'>
                         <SimpleGrid columns={[1,2,4]} spacing={4} py={4}>
+                            <Input border={'1px solid gray'} placeholder={"Search Order"} onChange={ (e) => setSearch((prev: any) => ({...prev, search: e.target.value })) }/>
                             <Select border={'1px solid gray'} placeholder="Search Delivery Status" onChange={ (e) => setSearch((prev: any) => ({...prev, deliveryStatus: e.target.value })) }>
                                 {["pending", "shipped", "delivered", "out for delivery", "waiting to be shipped", "cancelled"].map((status:any, i) => ( <option key={i} value={status}>{capCase(status)} </option> ))}
                             </Select>
@@ -200,10 +196,17 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
 
 export default function OrderPage() {
     
+    const navigate = useNavigate()
     const [filters, setFilters] = useState({})
 
-    const { data: orderData = {}, isLoading } = useGetAllOrders(filters)
+    const { data: orderData = {}, isLoading: orderLoad } = useGetAllOrders(filters)
     const { data: orders = {} } = orderData
+
+    const { isLoading, isAuthenticated, user } = useGetAuthState()
+    const isAdmin = isSuperUser(user?.role)
+    useEffect(() => { if(!isLoading && isAuthenticated == false) { navigate('/products/vl') } }, [isLoading, isAuthenticated])
+    useEffect(() => { if(!isLoading && isAdmin == false && isAuthenticated == true ) {navigate('/profile'); Notify.error("Not Authorized!!")} }, [isLoading, isAuthenticated])
+    if(isLoading) { return (<Loader />) }
 
     return (
         <PageMainContainer title='Orders' description='Orders'>
@@ -211,7 +214,7 @@ export default function OrderPage() {
                 <Container>
                     <AnimateRoute>
                         <OrdersMain 
-                            isLoading={isLoading}
+                            isLoading={orderLoad}
                             init={orders}
                             orders={orders?.orders ?? []}
                             filters={filters}

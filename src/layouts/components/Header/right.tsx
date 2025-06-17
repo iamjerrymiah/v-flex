@@ -58,7 +58,7 @@ export default function HeaderRight({}: {mobile?:boolean}) {
         <React.Fragment>
             <HStack spacing={4} justify={'flex-end'} ml={'50px'}>
 
-                {!isAuthenticated ? 
+                {isAuthenticated === false ? 
                     <HStack spacing={4}>
                         <Button 
                             bg="green.800" 
@@ -69,7 +69,7 @@ export default function HeaderRight({}: {mobile?:boolean}) {
                             Sign In
                         </Button>
                     </HStack> 
-                    :
+                    : isAuthenticated === true ?
                     <HStack spacing={4}>
                         <IconIndicator
                             count={wishLists?.length ?? 0}
@@ -101,7 +101,7 @@ export default function HeaderRight({}: {mobile?:boolean}) {
                                 cursor={'pointer'}
                             />
                         </Tooltip>
-                    </HStack> 
+                    </HStack> : null
                 }
 
             </HStack>

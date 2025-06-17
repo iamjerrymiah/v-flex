@@ -7,8 +7,8 @@ import { useNavigate } from "react-router";
 import { MdLockReset, MdOutlineArrowBackIos } from "react-icons/md";
 import { Table, TableRow } from "../../common/Table/Table";
 import { useActivateDeactivate, useChangeUserRole, useGetAllUsers } from "../../hooks/user/users";
-import { allCaps, allLower, capCase } from "../../utils/utils";
-import { useState } from "react";
+import { allCaps, allLower, capCase, isSuperUser } from "../../utils/utils";
+import { useEffect, useState } from "react";
 import { BsFilter, BsSearch } from "react-icons/bs";
 import Pagination from "../../common/Pagination/Pagination";
 import Drawer from "../../common/Drawer";
@@ -19,6 +19,8 @@ import ConfirmModal from "../../common/ConfirmModal";
 import { useConfirmAction } from "../../utils/useActions";
 import DataInfo from "../../common/DataInfo";
 import { FaUsers } from "react-icons/fa";
+import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
+import Loader from "../../common/Loader";
 
 const tableHeads = ["S/N", "Salutation", "First Name", "Last Name", "Email", "Phone Number", "Is Email Verified?", "Status", ""]
 function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters }: any) {
@@ -30,7 +32,6 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
     const [selectedRole, setSelectedRole] = useState<string>(changeRole?.role ?? "");
 
     const navigate = useNavigate()
-    // const { isAuthenticated } =  useGetAuthState();
 
     const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure()
     const { isOpen: isOpenRole, onOpen: onOpenRole, onClose: onCloseRole } = useDisclosure()
@@ -97,14 +98,7 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
         {title: 'Total Users', value: init?.totalUsers ?? "-", iconColor: 'black', icon: FaUsers},
         {title: 'Total Active Users', value: init?.activatedUsers ?? "-", iconColor: 'green', icon: FaUsers},
         {title: 'Total Disabled Users', value: init?.deactivatedUsers ?? "-", iconColor: 'red', icon: FaUsers},
-        // {title: 'Total ', value: init?.totalUsers ?? "-", iconColor: 'black', icon: FaUsers},
     ]
-
-    // useEffect(() => { 
-    //     if(!isAuthenticated) {
-    //         navigate(-1)
-    //     } 
-    // }, [isAuthenticated])
 
     return (
         <Box py={6}>
@@ -114,7 +108,7 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
             <Button
                 leftIcon={<MdOutlineArrowBackIos />}
                 variant="ghost"
-                onClick={() => navigate(-1)}
+                onClick={() => navigate(`/profile`)}
                 mt={4}
                 mb={4}
                 textDecor={'underline'}
@@ -347,10 +341,17 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
 
 export default function AdminUserPage() {
 
+    const navigate = useNavigate()
     const [filters, setFilters] = useState<any>({})
 
-    const { data: userData = {}, isLoading } = useGetAllUsers(filters)
+    const { data: userData = {}, isLoading: userLoad } = useGetAllUsers(filters)
     const { data: users = {} } = userData
+
+    const { isLoading, isAuthenticated, user } = useGetAuthState()
+    const isAdmin = isSuperUser(user?.role)
+    useEffect(() => { if(!isLoading && isAuthenticated == false) { navigate('/products/vl') } }, [isLoading, isAuthenticated])
+    useEffect(() => { if(!isLoading && isAdmin == false && isAuthenticated == true ) {navigate('/profile'); Notify.error("Not Authorized!!")} }, [isLoading, isAuthenticated])
+    if(isLoading) { return (<Loader />) }
 
     return (
         <PageMainContainer title='Users' description='Users'>
@@ -358,7 +359,7 @@ export default function AdminUserPage() {
                 <Container>
                     <AnimateRoute>
                         <AdminUserMain 
-                            isLoading={isLoading}
+                            isLoading={userLoad}
                             init={users}
                             users={users?.users ?? []}
                             filters={filters}

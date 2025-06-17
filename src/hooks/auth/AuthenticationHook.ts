@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 const key = 'auth';
 
 export interface AuthState {
-    isAuthenticated: boolean;
+    isAuthenticated: boolean | null;
     authToken: string | null | undefined;
     v_userId: string | null | undefined;
     authState: AuthStateEnum;
@@ -15,6 +15,8 @@ export interface AuthState {
     isLoading: boolean;
     networkFailure: boolean;
 };
+
+// nwfrgodwin@gmail.com
 
 
 export const useLogin = () => {
@@ -34,7 +36,7 @@ export const useLogin = () => {
         },
         onSuccess: (data) => {
             const auth: AuthState = {
-                isAuthenticated: true,
+                isAuthenticated: data?.data?.user?.emailVerified ? true : false,
                 authToken: data?.data?.token,
                 v_userId: data?.data?.user?._id,
                 authState: AuthStateEnum.Authenticated,
@@ -113,7 +115,7 @@ export const useGetAuthState = () => {
     const queryClient = useQueryClient();
     const [auth, setAuth] = useState<AuthState>(() => {
         return queryClient.getQueryData<AuthState>([key]) ?? {
-            isAuthenticated: false,
+            isAuthenticated: null,
             authToken: null,
             v_userId: null,
             authState: AuthStateEnum.Unauthenticated,
@@ -228,6 +230,18 @@ export const useLogout = () => {
     });
 };
 
+export const useGoogleLogin = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return customMutationRequest("SECURITY", `/user/auth/google`, 'POST', data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [`${key}-google`] });
+        },
+    });
+};
+
 export const useUpdateUser = () => {
     const queryClient = useQueryClient();
     return useMutation({
@@ -249,6 +263,18 @@ export const useVerifyEmail = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [`${key}-verify-email`] });
+        },
+    });
+};
+
+export const useResendVerifyCode = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return customMutationRequest("SECURITY", `/user/request/v-code/${data?.email}`, 'POST', data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [`${key}-verify-code`] });
         },
     });
 };

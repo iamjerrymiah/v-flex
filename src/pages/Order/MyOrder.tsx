@@ -1,18 +1,20 @@
-import { Box, Button, Flex, Heading, Icon, SimpleGrid, Spinner, Stack, Text, useDisclosure, VStack } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, HStack, Icon, Input, Select, SimpleGrid, Spinner, Stack, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import AnimateRoute from "../../common/AnimateRoute";
 import PageMainContainer from "../../common/PageMain";
 import MainAppLayout from "../../layouts/MainAppLayout";
 import { Container } from "../../styling/layout";
-import { MdOutlineArrowBackIos } from "react-icons/md";
+import { MdLockReset, MdOutlineArrowBackIos } from "react-icons/md";
 import { useNavigate } from "react-router";
 import { useGetOrder, useGetUserOrders } from "../../hooks/orders/orders";
 import { Table, TableRow } from "../../common/Table/Table";
 import { allCaps, capCase, moneyFormat } from "../../utils/utils";
-import { useState } from "react";
-// import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
+import { useEffect, useState } from "react";
 import ModalCenter from "../../common/ModalCenter";
-import { BsCheck } from "react-icons/bs";
+import { BsCheck, BsFilter, BsSearch } from "react-icons/bs";
 import Pagination from "../../common/Pagination/Pagination";
+import Drawer from "../../common/Drawer";
+import Loader from "../../common/Loader";
+import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 
 const statusHistory = [ "order placed", "pending payment", "payment successful", "waiting to be shipped" ];
 
@@ -178,11 +180,12 @@ const tableHeads = ["S/N", "orderNumber", "Total Amount Paid", "Payment Method",
 function MyOrdersMain ({ init = {}, myOrders = [], isLoading, filters, setFilters}:any) {
 
     const navigate = useNavigate()
-    // const { isAuthenticated } =  useGetAuthState();
 
     const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure()
+    const { isOpen: isOpenFilter, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure()
 
     const [selected, setSelected] = useState<any>({})
+    const [search, setSearch] = useState<any>({});
 
     const { data: order, isLoading: isLoad } = useGetOrder(selected?._id)
 
@@ -191,15 +194,15 @@ function MyOrdersMain ({ init = {}, myOrders = [], isLoading, filters, setFilter
         onOpenEdit()
     }
 
+    const onFilter = () => {
+        setFilters({ ...filters, ...search });
+        onCloseFilter()
+        setSearch((prev: any) => ({...prev, search: "", deliveryStatus: "", paymentStatus: "", deliveryMethod: "", paymentMethod: ""}))
+    }
+
     const changePage = ({ selected = 0 }) => {
         setFilters({ ...filters, page: selected + 1 });
     }
-
-    // useEffect(() => { 
-    //     if(!isAuthenticated) {
-    //         navigate(-1)
-    //     } 
-    // }, [isAuthenticated])
 
     return (
 
@@ -207,16 +210,27 @@ function MyOrdersMain ({ init = {}, myOrders = [], isLoading, filters, setFilter
         
             <Heading textAlign="center" fontSize={["24px", '30px']} fontWeight={400} my={10}> MY ORDER </Heading>
 
-            <Button
-                leftIcon={<MdOutlineArrowBackIos />}
-                variant="ghost"
-                onClick={() => navigate(-1)}
-                mt={4}
-                mb={4}
-                textDecor={'underline'}
-            >
-                Back
-            </Button>
+            <HStack w='100%' justify={'space-between'}>
+                <Button
+                    leftIcon={<MdOutlineArrowBackIos />}
+                    variant="ghost"
+                    onClick={() => navigate('/profile')}
+                    mt={4}
+                    mb={4}
+                    textDecor={'underline'}
+                >
+                    Back
+                </Button>
+
+                <Button
+                    leftIcon={<BsFilter size={20}/>}
+                    onClick={onOpenFilter}
+                    color={'white'}
+                    bgColor={'blackAlpha.800'}
+                >
+                    Filter
+                </Button>
+            </HStack>
 
             <Table
                 headings={tableHeads}
@@ -241,7 +255,6 @@ function MyOrdersMain ({ init = {}, myOrders = [], isLoading, filters, setFilter
                         noIndexPad
                         options={[
                             {name: "View", onUse: () => {selectedInfo(item)}},
-                            // {name: "Delete", color: 'red.700', onUse: () => shouldDelete(item)},
                         ]}
                     />
                 )}
@@ -267,16 +280,54 @@ function MyOrdersMain ({ init = {}, myOrders = [], isLoading, filters, setFilter
                 }
             />
 
+            <Drawer 
+                placement={'top'}
+                isOpen={isOpenFilter}
+                onClose={onCloseFilter}
+                header="Filter: "
+                body={
+                    <Stack w='100%'>
+                        <SimpleGrid columns={[1,2,4]} spacing={4} py={4}>
+                            <Input border={'1px solid gray'} placeholder={"Search Order"} onChange={ (e) => setSearch((prev: any) => ({...prev, search: e.target.value })) }/>
+                            <Select border={'1px solid gray'} placeholder="Search Delivery Status" onChange={ (e) => setSearch((prev: any) => ({...prev, deliveryStatus: e.target.value })) }>
+                                {["pending", "shipped", "delivered", "out for delivery", "waiting to be shipped", "cancelled"].map((status:any, i) => ( <option key={i} value={status}>{capCase(status)} </option> ))}
+                            </Select>
+                            <Select border={'1px solid gray'} placeholder="Search Payment Status" onChange={ (e) => setSearch((prev: any) => ({...prev, paymentStatus: e.target.value })) }>
+                                {["pending", "successful", "failed", "cancelled"].map((status:any, i) => ( <option key={i} value={status}>{capCase(status)} </option> ))}
+                            </Select>
+                            <Select border={'1px solid gray'} placeholder="Search Delivery Method" onChange={ (e) => setSearch((prev: any) => ({...prev, deliveryMethod: e.target.value })) }>
+                                {["door delivery", "pick up"].map((status:any, i) => ( <option key={i} value={status}>{capCase(status)} </option> ))}
+                            </Select>
+                            <Select border={'1px solid gray'} placeholder="Search Payment Method" onChange={ (e) => setSearch((prev: any) => ({...prev, paymentMethod: e.target.value })) }>
+                                {["paypal", "card", "transfer", "ideal"].map((status:any, i) => ( <option key={i} value={status}>{capCase(status)} </option> ))}
+                            </Select>
+                        </SimpleGrid>
+                    </Stack>
+
+                }
+                footer={
+                    <HStack w={'100%'} justify={'flex-end'} spacing={2}>
+                        <Button leftIcon={<MdLockReset />} onClick={ () => { setFilters({}); onCloseFilter();} } />
+                        <Button leftIcon={<BsSearch />} color={'white'} bgColor={'blackAlpha.800'} onClick={onFilter} />
+                    </HStack>
+                }
+            />
+
         </Box>
     )
 }
 
 export default function MyOrderPage() {
 
+    const navigate = useNavigate()
     const [filters, setFilters] = useState({})
 
-    const { data: orderData = {}, isLoading } = useGetUserOrders(filters)
+    const { data: orderData = {}, isLoading: orderLoad } = useGetUserOrders(filters)
     const { data: myOrders = {} } = orderData
+
+    const { isLoading, isAuthenticated } = useGetAuthState()
+    useEffect(() => { if(!isLoading && isAuthenticated == false) { navigate('/products/vl') } }, [isLoading, isAuthenticated])
+    if(isLoading) { return (<Loader />) }
 
 
     return (
@@ -285,7 +336,7 @@ export default function MyOrderPage() {
                 <Container>
                     <AnimateRoute>
                         <MyOrdersMain 
-                            isLoading={isLoading}
+                            isLoading={orderLoad}
                             init={myOrders}
                             myOrders={myOrders?.orders ?? []}
                             filters={filters}

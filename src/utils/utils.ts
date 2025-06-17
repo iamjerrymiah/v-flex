@@ -26,7 +26,26 @@ export const moneyFormat = (amount: string | number, integer?: boolean) => {
     }
 }
 
- export const formatNumberToShortForm = (number:number|any) => {
+export const isSuperUser = (role: any) => {
+    switch (role) {
+        case "admin":
+        case "superAdmin":
+        return true;
+        default:
+        return false;
+    }
+};
+
+export const isJustSuperAdmin = (role: any) => {
+    switch (role) {
+        case "superAdmin":
+        return true;
+        default:
+        return false;
+    }
+}
+
+export const formatNumberToShortForm = (number:number|any) => {
     if (number >= 1_000_000_000_000) {
         return `${(number / 1_000_000_000_000).toFixed(0)}T`; // Trillions
     } else if (number >= 1_000_000_000) {

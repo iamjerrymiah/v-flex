@@ -25,14 +25,12 @@ import { MdOutlineArrowBackIos } from "react-icons/md";
 import { useNavigate } from "react-router";
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 import { BsClipboard2CheckFill, BsClipboardXFill } from "react-icons/bs";
+import Loader from "../../common/Loader";
+import { useEffect } from "react";
 
 
-function CartsMain ({ carts = [], isLoading }:any) {
-    
+function CartsMain ({ carts = [], isLoading, isAuthenticated }:any) {
     const navigate = useNavigate()
-    const { isAuthenticated } =  useGetAuthState();
-
-    // const [cartItems, setCartItems] = useState<any[]>(carts);
 
     const { mutateAsync: updateCartAction, isPending } = useUpdateCartProduct()
     const { mutateAsync: removeCartAction, isPending: removePend } = useDeleteCartProduct()
@@ -87,8 +85,6 @@ function CartsMain ({ carts = [], isLoading }:any) {
     // const tax = subtotal * 0.07; //tax
     const total = subtotal;
 
-    // useEffect(() => { if(!isLoading) { setCartItems(carts) } }, [isLoading])
-
 
     return(
         <Box py={6}>
@@ -127,7 +123,6 @@ function CartsMain ({ carts = [], isLoading }:any) {
                 <Box flex={3} borderRadius="xl">
                         {isLoading ? (
                             <>
-                                {/* <Loader /> */}
                                 <PageSk tiny/>
                             </>
                         ) : 
@@ -175,14 +170,9 @@ function CartsMain ({ carts = [], isLoading }:any) {
                                             <Text color="gray.800">€ {moneyFormat(item?.product?.price)}</Text>
                                             <Text>Color: {capCase(item?.color)}</Text>
                                             <Text color="gray.800">Size: {allCaps(item?.size)}</Text>
-                                            {/* <Text color="gray.800">Available: {item?.product?.availability == true ? "YES" : "NO"}</Text> */}
-                                            <HStack><Text color="gray.500">Available:</Text> <Text>{item?.product?.availability == true ? <BsClipboard2CheckFill color="green" size={20}/> : <BsClipboardXFill color="red" size={20}/>}</Text></HStack>
+                                            <HStack><Text color="gray.500">{item?.product?.availability == true ? "Available" : "Out of Stock"}</Text> <Text>{item?.product?.availability == true ? <BsClipboard2CheckFill color="green" size={20}/> : <BsClipboardXFill color="red" size={20}/>}</Text></HStack>
                                         </Box>
                                     </HStack>
-
-                                    {/* <Box>
-                                        <Text display={[ 'none', 'block' ]} fontWeight={'bold'}>€ {item.price.toFixed(2)}</Text>
-                                    </Box> */}
 
                                     <Flex
                                         direction={{ base: "row", sm: "row" }}
@@ -270,9 +260,14 @@ function CartsMain ({ carts = [], isLoading }:any) {
 }
 
 export default function CartPage() {
-
-    const { data: cartData = {}, isLoading } = useGetUserCarts({})
+    
+    const navigate = useNavigate()
+    const { data: cartData = {}, isLoading: cartLoad } = useGetUserCarts({})
     const { data: carts = {} } = cartData
+
+    const { isLoading, isAuthenticated } = useGetAuthState()
+    useEffect(() => { if(!isLoading && isAuthenticated == false) { navigate('/products/vl') } }, [isLoading, isAuthenticated])
+    if(isLoading) { return (<Loader />) }
 
     return (
         <PageMainContainer title='Carts' description='Carts'>
@@ -281,7 +276,8 @@ export default function CartPage() {
                     <Container>
                         <CartsMain 
                             carts={carts?.cart ?? []} 
-                            isLoading={isLoading} 
+                            isLoading={cartLoad} 
+                            isAuthenticated={isAuthenticated}
                         />
                     </Container>
                 </AnimateRoute>

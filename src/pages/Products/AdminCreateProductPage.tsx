@@ -3,7 +3,7 @@ import AnimateRoute from '../../common/AnimateRoute'
 import PageMainContainer from '../../common/PageMain'
 import MainAppLayout from '../../layouts/MainAppLayout'
 import { Container } from '../../styling/layout'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MdOutlineArrowBackIos } from 'react-icons/md'
 import { useNavigate } from 'react-router'
 import { productSchema } from '../../schema/auth'
@@ -14,7 +14,9 @@ import { useGetProductCollections } from '../../hooks/products/collections'
 import CreatableSelect from 'react-select/creatable';
 import ReactSelect from 'react-select';
 import ImageUploader from '../../common/ImageUploader'
-import { capCase } from '../../utils/utils'
+import { capCase, isSuperUser } from '../../utils/utils'
+import { useGetAuthState } from '../../hooks/auth/AuthenticationHook'
+import Loader from '../../common/Loader'
 
 export interface AdminCreateProductProps {
     steps: { component: React.ComponentType; label: string }[];
@@ -35,12 +37,10 @@ function AdminCreateProductMain ({
 
     // const totalSteps = steps.length;
     const StepComponent:any = steps[currentStep].component;
-
     const [res, setRes] = useState({})
 
     return (
         <Box w='full'>
-
             <StepComponent 
                 res={res}
                 setRes={setRes}
@@ -55,6 +55,7 @@ function AdminCreateProductMain ({
 
 export default function AdminCreateProductPage() {
 
+    const navigate = useNavigate()
     const [currentStep, setCurrentStep] = useState(0);
 
     const steps = [
@@ -63,24 +64,33 @@ export default function AdminCreateProductPage() {
     ];
   
     const goToNextStep = () => { if (currentStep < steps.length - 1) { setCurrentStep(currentStep + 1); } };
-  
     const goToPrevStep = () => { if (currentStep > 0) { setCurrentStep(currentStep - 1); } };
 
+    const { isLoading, isAuthenticated, user } = useGetAuthState()
+    const isAdmin = isSuperUser(user?.role)
+    useEffect(() => { if(!isLoading && isAuthenticated == false) { navigate('/products/vl') } }, [isLoading, isAuthenticated])
+    useEffect(() => { if(!isLoading && isAdmin == false && isAuthenticated == true ) {navigate('/profile'); Notify.error("Not Authorized!!")} }, [isLoading, isAuthenticated])
+    if(isLoading) { return (<Loader />) }
+
     return (
-        <PageMainContainer title='Products' description='Products'>
-            <MainAppLayout noFooter>
-                <Container>
-                    <AnimateRoute>
-                        <AdminCreateProductMain 
-                            steps={steps}
-                            currentStep={currentStep}
-                            goToPrevStep={goToPrevStep}
-                            goToNextStep={goToNextStep}
-                        />
-                    </AnimateRoute>
-                </Container>
-            </MainAppLayout>
-        </PageMainContainer>
+        <>
+            {/* {isAdmin &&  */}
+                <PageMainContainer title='Products' description='Products'>
+                    <MainAppLayout noFooter>
+                        <Container>
+                            <AnimateRoute>
+                                <AdminCreateProductMain 
+                                    steps={steps}
+                                    currentStep={currentStep}
+                                    goToPrevStep={goToPrevStep}
+                                    goToNextStep={goToNextStep}
+                                />
+                            </AnimateRoute>
+                        </Container>
+                    </MainAppLayout>
+                </PageMainContainer>
+            {/* } */}
+        </>
     )
 }
 
@@ -99,46 +109,20 @@ function CreateProduct ({
     const { data: categories = [] } = collectionData
 
     const { mutateAsync, isPending } = useCreateProduct()
-
     const handleProduct = async (data: any) => {
         try {
-
-            const payload: any = await mutateAsync({
-                ...data,
-                image: file
-            })
-
+            const payload: any = await mutateAsync({ ...data, image: file })
             setRes(payload)
             Notify.success("Product Successfully Created!")
-
             goToNextStep()
             return payload;
         } catch (e:any) {
             Notify.error(e?.message ?? "Failed")
             return e
         }
-
     };
 
     const [file, setFile] = useState(null)
-
-    // const flattenSubcategories = (subcategories: any[]): any[] => {
-    //     let result: any[] = [];
-
-    //     subcategories.forEach(sub => {
-    //     result.push({
-    //         _id: sub?._id,
-    //         name: sub?.name,
-    //         parent: sub?.parent
-    //     });
-
-    //     if (sub.subcategories && sub.subcategories.length > 0) {
-    //         result = result.concat(flattenSubcategories(sub.subcategories));
-    //     }
-    //     });
-
-    //     return result;
-    // };
 
     const flattenSubcategories = (subcategories: any[], parentName: string = ""): any[] => {
         let result: any[] = [];
@@ -161,8 +145,6 @@ function CreateProduct ({
 
         return result;
     };
-
-    // const sizeOptions = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL", "Others"];
     
     return (
         <Box w='full' py={6}>
@@ -347,6 +329,7 @@ function CreateProduct ({
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Description</FormLabel>
                                 <Textarea
+                                    height={'150px'}
                                     name="description" 
                                     value={values?.description}
                                     onChange={handleChange}

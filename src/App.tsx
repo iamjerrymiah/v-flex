@@ -8,6 +8,7 @@ import Register from './pages/Auth/Register/Register'
 import VerifyEmail from './pages/Auth/VerifyEmail/VerifyEmail'
 import ForgotPasswordLink from './pages/Auth/ForgotPasswordLink/ForgotPasswordLink'
 import ResetPassword from './pages/Auth/ForgotPasswordLink/ResetPassword'
+import ChangePassword from './pages/Auth/ForgotPasswordLink/ChangePassword'
 
 import HomePage from './pages/Home/Home'
 import AllProducts from './pages/Products/AllProducts'
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
 			{
                 path: '/auth/reset-password/:id/:token',
                 element: <ResetPassword />,
+            },
+			{
+                path: '/profile/change-password',
+                element: <ChangePassword />,
             },
 			{
                 path: '/profile',

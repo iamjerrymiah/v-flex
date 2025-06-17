@@ -9,11 +9,11 @@ import {
   } from "@chakra-ui/react";
 import { FaClipboardList, FaBookmark, FaAddressBook, FaUser, FaUsers } from "react-icons/fa";
 import { AiOutlineProduct } from "react-icons/ai";
-import { TbCategoryFilled, TbShoppingCartStar } from "react-icons/tb";
+import { TbCategoryFilled, TbShoppingCartStar, TbPasswordUser } from "react-icons/tb";
 import React, { useEffect } from "react";
 import { useGetAuthState, useLogout } from "../../hooks/auth/AuthenticationHook";
 import { useNavigate } from "react-router";
-import { allCaps } from "../../utils/utils";
+import { allCaps, isSuperUser } from "../../utils/utils";
 import { Container } from "../../styling/layout";
 import { MdLogout, MdOutlineArrowBackIos } from "react-icons/md";
 import Notify from "../../utils/notify";
@@ -21,112 +21,36 @@ import { BsCart } from "react-icons/bs";
 import { useConfirmAction } from "../../utils/useActions";
 import ConfirmModal from "../../common/ConfirmModal";
 import Loader from "../../common/Loader";
+import { MotionAnimator } from "../../common/MotionAnimator";
 
-// Dashboard Items
-const dashboardItems = [
-    { label: "ACCOUNT DETAILS", link: '/profile/account-details', description: "Update personal info", icon: FaUser },
-    { label: "ADDRESS BOOK", link: '/profile/address-book', description: "Manage addresses", icon: FaAddressBook },
-    { label: "MY WISHLIST", link: '/my-wishlist', description: "View & modify your wishlist", icon: FaBookmark },
-    { label: "MY CART", link: '/my-cart', description: "View cart & proceed to checkout", icon: BsCart },
-    { label: "MY ORDERS", link: '/profile/my-orders', description: "Check order status", icon: FaClipboardList },
-//   { label: "MY RETURNS", link: '/profile/my-returns', description: "Return/exchange items", icon: FaUndo },
-
-    { label: "CATEGORIES", link: '/vl/admin/categories', description: "View, create & delete categories", icon: TbCategoryFilled },
-    { label: "PRODUCTS", link: '/vl/admin/products', description: "View, create, edit & delete products", icon: AiOutlineProduct },
-    { label: "USERS", link: '/vl/admin/users', description: "View all users & disable users", icon: FaUsers },
-    { label: "ORDERS", link: '/vl/admin/orders', description: "View all orders", icon: TbShoppingCartStar },
-];
-
-export function ProfileLayout({children}: {children: React.ReactNode}) {
+export function ProfileLayout({children, user = {}}: {children: React.ReactNode; user:any}) {
     
     const navigate = useNavigate()
-    
-    // const isMobile = useBreakpointValue({ base: true, md: false });
-
-    const { isAuthenticated, user, isLoading } =  useGetAuthState();
-
-    useEffect(() => {
-        if ( !isAuthenticated) { navigate("/") }
-      }, [isAuthenticated]);
-      
-      if (isLoading) {
-        return <Loader />;
-      }
-
-    console.log(user)
 
     return (
-        <Box py={6}>
-  
-            <Text fontSize="2xl" fontWeight="bold" textAlign="center" mt={4} mb={8}>MY ACCOUNT </Text>
+        <MotionAnimator direction="left" delay={0.6}>
+            <Box py={6}>
+    
+                <Text fontSize="2xl" fontWeight="bold" textAlign="center" mt={4} mb={8}>MY ACCOUNT </Text>
 
-            <Text fontSize="md" textAlign="center" fontWeight="semibold" my={4}>
-                WELCOME BACK. {allCaps(`${user?.firstName} ${user?.lastName}`)}
-            </Text>
+                <Text fontSize="md" textAlign="center" fontWeight="semibold" my={4}>
+                    WELCOME BACK. {allCaps(`${user?.firstName} ${user?.lastName}`)}
+                </Text>
 
-            <HStack justify={'space-between'} w={'100%'} my={4}>
-                <Button
-                    leftIcon={<MdOutlineArrowBackIos />}
-                    variant="ghost"
-                    onClick={() => navigate('/')}
-                    textDecor={'underline'}
-                >
-                    Back
-                </Button>
-            </HStack>
-
-            {/* <Flex direction={{ base: "column", md: "row" }} gap={8}>
-
-                {isMobile ? (
-                <Stack direction="row" wrap="wrap" spacing={4} justify="center">
-                    <Text fontWeight="bold" fontSize="sm" cursor="pointer" _hover={{ color: "blue.500" }} onClick={() => navigate('/profile')}>
-                        MY DASHBOARD
-                    </Text>
-
-                    {dashboardItems.map((item, i) => (
-                    <Text 
-                        key={i} 
-                        fontWeight="bold" 
-                        fontSize="sm"
-                        cursor="pointer" 
-                        _hover={{ color: "blue.500" }}
-                        onClick={() => navigate(item?.link)}
+                <HStack justify={'space-between'} w={'100%'} my={4}>
+                    <Button
+                        leftIcon={<MdOutlineArrowBackIos />}
+                        variant="ghost"
+                        onClick={() => navigate('/')}
+                        textDecor={'underline'}
                     >
-                        {item?.label}
-                    </Text>
-                    ))}
-                </Stack>
-                ) : (
-                <VStack align="stretch" spacing={4} w="20%" borderRight="1px solid #ccc" pr={4}>
-                    <Text 
-                        fontWeight="bold" 
-                        cursor="pointer" 
-                        _hover={{ color: "blue.500" }}
-                        onClick={() => navigate("/profile")}
-                    >
-                        MY DASHBOARD
-                    </Text>
-
-                    {dashboardItems.map((item, i) => (
-                    <Text 
-                        key={i} 
-                        fontWeight="bold" 
-                        cursor="pointer" 
-                        _hover={{ color: "blue.500" }}
-                        onClick={() => navigate(item?.link)}
-                    >
-                        {item?.label}
-                    </Text>
-                    ))}
-                </VStack>
-                )}
+                        Back
+                    </Button>
+                </HStack>
 
                 {children}
-
-            </Flex> */}
-
-            {children}
-      </Box>
+            </Box>
+    </MotionAnimator>
     )
 }
 
@@ -136,6 +60,8 @@ function ProfileMain () {
     const navigate = useNavigate()
     const { openConfirm, closeConfirm, isOpenConfirm } = useConfirmAction()
 
+    const { isAuthenticated, user, isLoading } =  useGetAuthState();
+
     const shouldLogout = (data: any) => {
         openConfirm(data)
     }
@@ -143,7 +69,6 @@ function ProfileMain () {
     const { mutateAsync } = useLogout()
     const handleLogout = async (data:any) => {
         try {
-
             const payload: any = await mutateAsync(data);
             navigate('/')
             return payload;
@@ -153,14 +78,34 @@ function ProfileMain () {
         }
     };
 
+    const isAdmin = isSuperUser(user?.role)
+    const dashboardItems = [
+        { label: "ACCOUNT DETAILS", link: '/profile/account-details', description: "Update personal info", icon: FaUser, show: true },
+        { label: "ADDRESS BOOK", link: '/profile/address-book', description: "Manage addresses", icon: FaAddressBook, show: true },
+        { label: "MY WISHLIST", link: '/my-wishlist', description: "View & modify your wishlist", icon: FaBookmark, show: true },
+        { label: "MY CART", link: '/my-cart', description: "View cart & proceed to checkout", icon: BsCart, show: true },
+        { label: "MY ORDERS", link: '/profile/my-orders', description: "Check order status", icon: FaClipboardList, show: true },
+
+        { label: "CATEGORIES", link: '/vl/admin/categories', description: "View, create & delete categories", icon: TbCategoryFilled, show: isAdmin ? true : false },
+        { label: "PRODUCTS", link: '/vl/admin/products', description: "View, create, edit & delete products", icon: AiOutlineProduct, show: isAdmin ? true : false },
+        { label: "USERS", link: '/vl/admin/users', description: "View all users & disable users", icon: FaUsers, show: isAdmin ? true : false },
+        { label: "ORDERS", link: '/vl/admin/orders', description: "View all orders", icon: TbShoppingCartStar, show: isAdmin ? true : false },
+        // { label: "PAYMENTS", link: '/vl/admin/payments', description: "View all payments", icon: MdOutlinePayments, show: isAdmin ? true : false },
+        
+        { label: "CHANGE PASSWORD", link: '/profile/change-password', description: "Change your password", icon: TbPasswordUser, show: true },
+    ];
+
+    useEffect(() => { if(!isLoading && isAuthenticated == false) { navigate('/products/vl') } }, [isLoading, isAuthenticated])
+    if(isLoading) { return (<Loader />) }
+
     return(
-        <ProfileLayout>
+        <ProfileLayout user={user}>
             <Grid 
-                templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)" }} 
+                templateColumns={{ base: "1fr", sm: "repeat(2, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" }} 
                 gap={6} 
                 flex="1"
             >
-            {dashboardItems.map(({ label, link, description, icon }) => (
+            {dashboardItems?.map(({ label, link, description, icon, show }) => (
                 <GridItem 
                     key={label} 
                     textAlign="center" 
@@ -170,6 +115,7 @@ function ProfileMain () {
                     borderRadius="md"
                     _hover={{ bgColor: "#eee" }}
                     onClick={() => navigate(link)}
+                    display={show === true ? 'block' : 'none'}
                 >
                     <Icon as={icon} boxSize={{ base: 6, md: 8 }} mb={2} />
                     <Text fontWeight="bold">{label}</Text>

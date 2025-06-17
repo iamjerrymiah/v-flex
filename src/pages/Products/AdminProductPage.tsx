@@ -6,7 +6,7 @@ import { Container } from "../../styling/layout";
 import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
 import { Table, TableRow } from "../../common/Table/Table";
 import { useDeleteProduct, useGetProducts, useUpdateProduct } from "../../hooks/products/products";
-import { capCase, moneyFormat } from "../../utils/utils";
+import { capCase, isSuperUser, moneyFormat } from "../../utils/utils";
 import Pagination from "../../common/Pagination/Pagination";
 import { useEffect, useState } from "react";
 import { useGetProductCollections } from "../../hooks/products/collections";
@@ -15,6 +15,8 @@ import Notify from "../../utils/notify";
 import { useConfirmAction } from "../../utils/useActions";
 import ConfirmModal from "../../common/ConfirmModal";
 import { useCategoryContext } from "../../providers/CategoryContext";
+import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
+import Loader from "../../common/Loader";
 
 export function withImg (datum:any, img:any) {
     return (
@@ -27,22 +29,14 @@ export function withImg (datum:any, img:any) {
     )
 }
 
-
 const tableHeads = ["S/N", "Product", "Price", "Quantity", "Is Available", "Is Disabled", ""]
 function AdminProductMain ({ products = [], isLoading = false, init, filters, setFilters }:any) {
 
     const navigate = useNavigate()
-    // const { isAuthenticated } =  useGetAuthState();
 
     const { openConfirm, closeConfirm, isOpenConfirm, current } = useConfirmAction()
     const { openConfirm: openConfirmActivate, closeConfirm: closeConfirmActivate, isOpenConfirm: isOpenConfirmActivate, current: currentActivate } = useConfirmAction()
     const { openConfirm: openConfirmDeactivate, closeConfirm: closeConfirmDeactivate, isOpenConfirm: isOpenConfirmDeactivate, current: currentDeactivate } = useConfirmAction()
-
-    // useEffect(() => { 
-    //     if(!isAuthenticated) {
-    //         navigate(-1)
-    //     } 
-    // }, [isAuthenticated])
 
     const changePage = ({ selected = 0 }) => {
         setFilters({ ...filters, page: selected + 1 });
@@ -144,6 +138,7 @@ function AdminProductMain ({ products = [], isLoading = false, init, filters, se
 
 export default function AdminProductPage() {
 
+    const navigate = useNavigate()
     const { topCategory, subCategory, linkCategory } = useCategoryContext();
 
     const { data: collectionData = {} } = useGetProductCollections({})
@@ -153,7 +148,7 @@ export default function AdminProductPage() {
     
     const [filters, setFilters] = useState({ disabled: "all"})
     
-    const { data: productData = {}, isLoading } = useGetProducts(filters)
+    const { data: productData = {}, isLoading: productLoad} = useGetProducts(filters)
     const { data: products = {} } = productData
 
     useEffect(() => {
@@ -168,34 +163,44 @@ export default function AdminProductPage() {
         if (topCategory?._id) { setFilters(prev => ({ ...prev, categoryId: topCategory._id })) }
     }, [topCategory]);
 
+    const { isLoading, isAuthenticated, user } = useGetAuthState()
+    const isAdmin = isSuperUser(user?.role)
+    useEffect(() => { if(!isLoading && isAuthenticated == false) { navigate('/products/vl') } }, [isLoading, isAuthenticated])
+    useEffect(() => { if(!isLoading && isAdmin == false && isAuthenticated == true ) {navigate('/profile'); Notify.error("Not Authorized!!")} }, [isLoading, isAuthenticated])
+    if(isLoading) { return (<Loader />) }
+
     return (
-        <PageMainContainer title='Products' description='Products'>
-            <MainAppLayout noFooter>
-                <Container>
-                    <AnimateRoute>
-                        <AdminProductLayout 
-                            isLoading={isLoading} 
-                            init={products} 
-                            categories={categories}
-                            filters={filters}
-                            search={search}
-                            setFilters={setFilters}
-                            setSearch={setSearch}
-                        >
-                        <AdminProductMain 
-                            isLoading={isLoading}
-                            products={products?.products}
-                            init={products}
-                            filters={filters}
-                            search={search}
-                            setFilters={setFilters}
-                            setSearch={setSearch}
-                            categories={categories}
-                        />
-                        </AdminProductLayout>
-                    </AnimateRoute>
-                </Container>
-            </MainAppLayout>
-        </PageMainContainer>
+        <>
+            {/* {isAdmin &&  */}
+                <PageMainContainer title='Products' description='Products'>
+                    <MainAppLayout noFooter>
+                        <Container>
+                            <AnimateRoute>
+                                <AdminProductLayout 
+                                    isLoading={productLoad} 
+                                    init={products} 
+                                    categories={categories}
+                                    filters={filters}
+                                    search={search}
+                                    setFilters={setFilters}
+                                    setSearch={setSearch}
+                                >
+                                <AdminProductMain 
+                                    isLoading={productLoad}
+                                    products={products?.products}
+                                    init={products}
+                                    filters={filters}
+                                    search={search}
+                                    setFilters={setFilters}
+                                    setSearch={setSearch}
+                                    categories={categories}
+                                />
+                                </AdminProductLayout>
+                            </AnimateRoute>
+                        </Container>
+                    </MainAppLayout>
+                </PageMainContainer>
+            {/* } */}
+        </>
     )
 }

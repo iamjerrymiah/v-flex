@@ -4,32 +4,30 @@ import PageMainContainer from '../../../common/PageMain';
 import MainAppLayout from '../../../layouts/MainAppLayout';
 import { Container } from '../../../styling/layout';
 import AnimateRoute from '../../../common/AnimateRoute';
-import { useGetAuthState, useVerifyEmail } from '../../../hooks/auth/AuthenticationHook';
+import { useGetAuthState, useResendVerifyCode, useVerifyEmail } from '../../../hooks/auth/AuthenticationHook';
 import Notify from '../../../utils/notify';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 
 function VerifyEmailMain() {
 
     const navigate = useNavigate()
+    const [searchParams] = useSearchParams();
+    const isFromLogin = searchParams.get("login");
 
     const [code, setCode] = useState("");
-    const [countdown, setCountdown] = useState(60);
+    const [countdown, setCountdown] = useState(0);
 
     const { user } =  useGetAuthState();
 
     const { mutateAsync, isPending } = useVerifyEmail();
-
     const handleSubmit = async (data: any) => {
         const transform = Number(data)
-
         try {
-
             const payload: any = await mutateAsync({ 
                 email: user?.email, 
                 code: transform 
             });
             Notify.success("Acccount Verified Successfully! Please log In")
-
             navigate('/login')
             return payload;
         } catch (e:any) {
@@ -38,19 +36,35 @@ function VerifyEmailMain() {
         }
     };
 
+    const { mutateAsync: resendCodeAction } = useResendVerifyCode()
+    const handleResendCode = async () => {
+        try {
+            const res:any = await resendCodeAction({email: user?.email})
+            if (countdown === 0) {
+                setCountdown(60); // Start countdown from 60
+            }
+            return res;
+        } catch { Notify.error("Something went wrong! Please try again.") }
+    };
 
     useEffect(() => {
+        let timer: NodeJS.Timeout;
+
         if (countdown > 0) {
-            const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-            return () => clearTimeout(timer);
+        timer = setInterval(() => {
+            setCountdown(prev => {
+            if (prev <= 1) {
+                clearInterval(timer);
+                return 0;
+            }
+            return prev - 1;
+            });
+        }, 1000);
         }
+
+        return () => clearInterval(timer);
     }, [countdown]);
 
-    useEffect(() => { 
-        if(!user || user?.emailVerified) {
-            navigate('/')
-        } 
-    }, [user])
 
     return (
         <Flex 
@@ -78,8 +92,8 @@ function VerifyEmailMain() {
                     {[...Array(6)].map((_, index) => (
                         <PinInputField
                             key={index}
-                            w={["40px", "85px"]}
-                            h={["40px", "70px"]}
+                            w={["50px", "85px"]}
+                            h={["50px", "70px"]}
                             fontSize={["xl", "2xl"]}
                             textAlign="center"
                             borderRadius="17px"
@@ -91,14 +105,27 @@ function VerifyEmailMain() {
                 </HStack>
 
 
-                {/* <Flex justify="flex-end" mt={2} mb={4}>
-                    <Text fontSize={["12px"]} color="gray.500" cursor={'pointer'}>
-                        Resend code in{" "}
-                        <Text as="span" fontWeight="bold" color="blue.300">
+                <Flex justify="flex-end" mt={3} mb={4} color="blue.300">
+                    <Text color={'black'} fontSize={["12px"]} mr={1}>{isFromLogin ? "Click to get Code:" : "Didn't receive code?"}</Text>
+                    <Text
+                        fontSize={["12px"]}
+                        color={countdown === 0 ? "blue.500" : "gray.500"}
+                        cursor={countdown === 0 ? "pointer" : "not-allowed"}
+                        onClick={() => handleResendCode()}
+                    >
+                        {countdown === 0 ? (
+                        isFromLogin  ? "Send Code" : "Resend code"
+                        ) : (
+                        <>
+                            Resend code in{" "}
+                            <Text as="span" fontWeight="bold" display="inline">
                             {countdown}
-                        </Text>s
+                            </Text>
+                            s
+                        </>
+                        )}
                     </Text>
-                </Flex> */}
+                </Flex>
 
                 <Button 
                     mt={6}
@@ -122,7 +149,7 @@ function VerifyEmailMain() {
 export default function VerifyEmail() {
     return (
         <PageMainContainer title='Verify Email' description='Verify Email'>
-            <MainAppLayout noFooter>
+            <MainAppLayout noFooter justLogo>
                 <Container>
                     <AnimateRoute>
                         <VerifyEmailMain />

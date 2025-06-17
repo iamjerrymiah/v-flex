@@ -97,14 +97,25 @@ export const usePaymentWithMollie = () => {
     });
 };
 
-export const useMollieConfirmPayment = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (data :any) => {
-            return customMutationRequest("SECURITY", `/payment/mollie`, 'PATCH', data).then((res:any) => res)
+// export const useMollieConfirmPayment = () => {
+//     const queryClient = useQueryClient();
+//     return useMutation({
+//         mutationFn: (data :any) => {
+//             return customMutationRequest("SECURITY", `/payment/mollie`, 'PATCH', data).then((res:any) => res)
+//         },
+//         onSuccess: () => {
+//             queryClient.invalidateQueries({ queryKey: [`payment-mollie`] });
+//         },
+//     });
+// };
+
+export const useMollieConfirmPayment = (id: any) => {
+    return useQuery({
+        queryKey: [`payment-mollie`, id],
+        queryFn: async () => {
+            const res: any = await fetcher('SECURITY', `/payment/mollie/${id}`);
+            return res;
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [`payment-mollie`] });
-        },
+        enabled: !!id,
     });
 };

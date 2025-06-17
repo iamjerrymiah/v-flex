@@ -10,7 +10,7 @@ import { Table, TableRow } from "../../common/Table/Table";
 import { allCaps, capCase } from "../../utils/utils";
 import ModalCenter from "../../common/ModalCenter";
 import { Field, Form, Formik } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { addressSchema } from "../../schema/auth";
 import Notify from "../../utils/notify";
 import PhoneInput from "react-phone-input-2";
@@ -19,7 +19,8 @@ import SelectComponent from "react-select";
 import countryList from "react-select-country-list";
 import { useConfirmAction } from "../../utils/useActions";
 import ConfirmModal from "../../common/ConfirmModal";
-// import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
+import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
+import Loader from "../../common/Loader";
 
 
 function AddressBookForm ({ initData = {}, edit, onClose }: any) {
@@ -262,14 +263,6 @@ function MyAddressBookMain ({ addressBooks = [], isLoading = false }: any) {
             return e
         }
     }
-
-    // const { isAuthenticated } =  useGetAuthState();
-
-    // useEffect(() => { 
-    //     if(!isAuthenticated) {
-    //         navigate(-1)
-    //     } 
-    // }, [isAuthenticated])
     
 
     return (
@@ -281,7 +274,7 @@ function MyAddressBookMain ({ addressBooks = [], isLoading = false }: any) {
                 <Button
                     leftIcon={<MdOutlineArrowBackIos />}
                     variant="ghost"
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate(`/profile`)}
                     textDecor={'underline'}
                 >
                     Back
@@ -369,8 +362,14 @@ function MyAddressBookMain ({ addressBooks = [], isLoading = false }: any) {
 
 export default function MyAddressBook() {
 
-    const { data: addressBookData = {}, isLoading } = useGetUserAddresses({})
+    const navigate = useNavigate()
+
+    const { data: addressBookData = {}, isLoading: addressLoad } = useGetUserAddresses({})
     const { data: addressBooks = [] } = addressBookData
+
+    const { isLoading, isAuthenticated } = useGetAuthState()
+    useEffect(() => { if(!isLoading && isAuthenticated == false) { navigate('/products/vl') } }, [isLoading, isAuthenticated])
+    if(isLoading) { return (<Loader />) }
 
     return (
         <PageMainContainer title='Address Book' description='Address Book'>
@@ -378,7 +377,7 @@ export default function MyAddressBook() {
                 <Container>
                     <AnimateRoute>
                         <MyAddressBookMain 
-                            isLoading={isLoading}
+                            isLoading={addressLoad}
                             addressBooks={addressBooks}
                         />
                     </AnimateRoute>

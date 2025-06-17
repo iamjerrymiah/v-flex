@@ -1,36 +1,31 @@
 import { Box, Button, Flex, FormControl, FormLabel, Heading, Input, InputGroup, InputRightElement, Stack, Text } from '@chakra-ui/react'
-import PageMainContainer from '../../../common/PageMain'
-import MainAppLayout from '../../../layouts/MainAppLayout'
-import { Container } from '../../../styling/layout'
-import AnimateRoute from '../../../common/AnimateRoute'
-import { Form, Formik } from 'formik'
-import { resetPasswordSchema } from '../../../schema/auth'
-import { useState } from 'react'
-import { FaEye, FaEyeSlash } from 'react-icons/fa'
-import { useParams } from "react-router-dom";
+import { Form, Formik } from 'formik';
+import { changePasswordSchema } from '../../../schema/auth';
+import Notify from '../../../utils/notify';
+import { useChangePassword, useGetAuthState } from '../../../hooks/auth/AuthenticationHook';
 import { useNavigate } from 'react-router';
-import Notify from '../../../utils/notify'
-import { useResetPassword } from '../../../hooks/auth/AuthenticationHook'
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+import PageMainContainer from '../../../common/PageMain';
+import MainAppLayout from '../../../layouts/MainAppLayout';
+import { Container } from '../../../styling/layout';
+import AnimateRoute from '../../../common/AnimateRoute';
+import Loader from '../../../common/Loader';
+import { MdOutlineArrowBackIos } from 'react-icons/md';
 
-function ResetPasswordMain() {
-    
+function ChangePasswordMain () {
+
     const navigate = useNavigate()
 
-    const { id, token } = useParams<{ id: string; token: string }>();
+    const [showOldPassword, setShowOldPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
 
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-    const { mutateAsync, isPending } = useResetPassword()
+    const { mutateAsync, isPending } = useChangePassword()
     const handleSubmit = async (data: any) => {
         try {
-            const payload: any = await mutateAsync({
-                userId: id,
-                password: data?.password,
-                token: token
-            });
-            Notify.success("Success")
-            navigate('/login')
+            const payload: any = await mutateAsync({...data});
+            Notify.success("Password changed successfully")
+            navigate('/profile')
             return payload;
         } catch (e:any) {
             Notify.error(e?.message ?? "Failed")
@@ -48,20 +43,29 @@ function ResetPasswordMain() {
             pb={'50px'}
         >
             <Box w={'full'}>
-                <Flex direction="column" textAlign={'center'} mt={['80px']} mb={'40px'}>
-                    <Heading textAlign="center" fontSize={["30px", '40px']} fontWeight={400} mb={6}>RESET YOUR PASSWORD </Heading>
-                    <Text fontSize={["16px", '20px']} color="gray.500" fontWeight="bold">
-                        Please enter your new password <br />
-                        {/* <Text fontSize={["14px", '16px']} as="span"></Text>  */}
-                    </Text>
+                <Flex direction="column" textAlign={'center'} mt={['80px']} mb={4}>
+                    <Heading textAlign="center" fontSize={["30px", '40px']} fontWeight={400} mb={6}>CHANGE PASSWORD </Heading>
+                    {/* <Text fontSize={["16px", '20px']} color="gray.500" fontWeight="bold">
+                        Please enter your new password
+                    </Text> */}
                 </Flex>
+
+                <Button
+                    mb={'40px'}
+                    leftIcon={<MdOutlineArrowBackIos />}
+                    variant="ghost"
+                    onClick={() => navigate(`/profile`)}
+                    textDecor={'underline'}
+                >
+                    Back
+                </Button>
 
                 <Formik
                     initialValues={{
-                        password: "",
-                        confirmPassword: "",
+                        oldPassword: "",
+                        newPassword: "",
                     }}
-                    validationSchema={resetPasswordSchema}
+                    validationSchema={changePasswordSchema}
                     onSubmit={(values, actions) => {
                         handleSubmit(values)
                         actions.setSubmitting(false); 
@@ -76,13 +80,13 @@ function ResetPasswordMain() {
 
                     <Form onSubmit={handleSubmit}>
                         <FormControl mb={4}>
-                            <FormLabel fontWeight={700}>* Password</FormLabel>
+                            <FormLabel fontWeight={700}>* Old Password</FormLabel>
                             <InputGroup>
                                 <Input 
-                                    name="password" 
-                                    value={values?.password}
+                                    name="oldPassword" 
+                                    value={values?.oldPassword}
                                     onChange={handleChange} 
-                                    type={showPassword ? "text" : "password"} 
+                                    type={showOldPassword ? "text" : "password"} 
                                     placeholder='********'
                                     required
                                 />
@@ -90,13 +94,13 @@ function ResetPasswordMain() {
                                     <Button
                                         size="sm"
                                         variant="ghost"
-                                        onClick={() => setShowPassword(!showPassword)}
+                                        onClick={() => setShowOldPassword(!showOldPassword)}
                                     >
-                                        {showPassword ? <FaEye /> : <FaEyeSlash />}
+                                        {showOldPassword ? <FaEye /> : <FaEyeSlash />}
                                     </Button>
                                     </InputRightElement>
                             </InputGroup>
-                            {errors.password && <Text fontSize={'12px'} color={'red.400'}>{errors.password}</Text>}
+                            {errors.oldPassword && <Text fontSize={'12px'} color={'red.400'}>{errors.oldPassword}</Text>}
                             <Text fontSize="xs">8 - 255 characters</Text>
                         </FormControl>
             
@@ -104,10 +108,10 @@ function ResetPasswordMain() {
                             <FormLabel fontWeight={700}>* Confirm Password</FormLabel>
                             <InputGroup>
                                 <Input 
-                                    name="confirmPassword"  
-                                    value={values?.confirmPassword}
+                                    name="newPassword"  
+                                    value={values?.newPassword}
                                     onChange={handleChange}
-                                    type={showConfirmPassword ? "text" : "password"} 
+                                    type={showNewPassword ? "text" : "password"} 
                                     placeholder='********'
                                     required
                                 />
@@ -115,13 +119,13 @@ function ResetPasswordMain() {
                                     <Button
                                         size="sm"
                                         variant="ghost"
-                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        onClick={() => setShowNewPassword(!showNewPassword)}
                                     >
-                                        {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
+                                        {showNewPassword ? <FaEye /> : <FaEyeSlash />}
                                     </Button>
                                 </InputRightElement>
                             </InputGroup>
-                            {errors.confirmPassword && <Text fontSize={'12px'} color={'red.400'}>{errors.confirmPassword}</Text>}
+                            {errors.newPassword && <Text fontSize={'12px'} color={'red.400'}>{errors.newPassword}</Text>}
                         </FormControl>
 
                         <Stack mt={6} direction={'row'}>
@@ -134,7 +138,7 @@ function ResetPasswordMain() {
                                 isLoading={isSubmitting || isPending}
                                 isDisabled={isSubmitting || isPending}
                             >
-                                CONTINUE
+                                SUBMIT
                             </Button>
 
                         </Stack>
@@ -146,13 +150,19 @@ function ResetPasswordMain() {
     )
 }
 
-export default function ResetPassword() {
+export default function ChangePassword() {
+
+    const navigate = useNavigate()
+    const { isLoading, isAuthenticated } = useGetAuthState()
+    useEffect(() => { if(!isLoading && isAuthenticated == false) { navigate('/products/vl') } }, [isLoading, isAuthenticated])
+    if(isLoading) { return (<Loader />) }
+
     return (
-        <PageMainContainer title='Reset Password' description='Reset Password'>
-            <MainAppLayout noFooter justLogo>
+        <PageMainContainer title='Change Password' description='Change Password'>
+            <MainAppLayout noFooter>
                 <Container>
                     <AnimateRoute>
-                        <ResetPasswordMain />
+                        <ChangePasswordMain />
                     </AnimateRoute>
                 </Container>
             </MainAppLayout>

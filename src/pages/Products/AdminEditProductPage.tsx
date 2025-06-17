@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AdminCreateProductProps } from "./AdminCreateProductPage"
 import { Box, Button, Checkbox, Divider, FormControl, FormLabel, Grid, Heading, HStack, Image, Input, SimpleGrid, Stack, Text, Textarea } from "@chakra-ui/react";
 import PageMainContainer from "../../common/PageMain";
@@ -11,7 +11,7 @@ import { useAddProductImages, useDeleteProductImage, useGetProduct, useUpdatePro
 import noProductImg from '../../assets/icons/noproduct.png'
 import { MdOutlineArrowBackIos } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
-import { capCase, moneyFormat } from "../../utils/utils";
+import { capCase, isSuperUser, moneyFormat } from "../../utils/utils";
 import PageSk from "../../common/PageSk";
 import { useGetProductCollections } from "../../hooks/products/collections";
 import { Field, Form, Formik } from "formik";
@@ -20,6 +20,8 @@ import CreatableSelect from 'react-select/creatable';
 import ReactSelect from 'react-select';
 import EditImageUploader from "../../common/EditImageUploader";
 import Notify from "../../utils/notify";
+import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
+import Loader from "../../common/Loader";
 
 const emptyProduct = {
     name: "-",
@@ -41,15 +43,12 @@ function AdminEditProductMain({
     goToPrevStep,
     goToNextStep,
 }: AdminCreateProductProps) {
-
     // const totalSteps = steps.length;
     const StepComponent:any = steps[currentStep].component;
-
     const [res, setRes] = useState({})
 
     return (
         <Box w='full'>
-
             <StepComponent 
                 res={res}
                 setRes={setRes}
@@ -67,8 +66,8 @@ function AdminEditProductMain({
 export default function AdminEditProductPage() {
 
     const { id } = useParams<{ id: string }>()
-    
-    const { data: productData = {}, isLoading } = useGetProduct(id)
+    const navigate = useNavigate()
+    const { data: productData = {}, isLoading: productLoad } = useGetProduct(id)
     const product = productData?.data
 
     const [currentStep, setCurrentStep] = useState(0);
@@ -81,23 +80,33 @@ export default function AdminEditProductPage() {
     const goToNextStep = () => { if (currentStep < steps.length - 1) { setCurrentStep(currentStep + 1); } };
     const goToPrevStep = () => { if (currentStep > 0) { setCurrentStep(currentStep - 1); } };
 
+    const { isLoading, isAuthenticated, user } = useGetAuthState()
+    const isAdmin = isSuperUser(user?.role)
+    useEffect(() => { if(!isLoading && isAuthenticated == false) { navigate('/products/vl') } }, [isLoading, isAuthenticated])
+    useEffect(() => { if(!isLoading && isAdmin == false && isAuthenticated == true ) {navigate('/profile'); Notify.error("Not Authorized!!")} }, [isLoading, isAuthenticated])
+    if(isLoading) { return (<Loader />) }
+
     return (
-        <PageMainContainer title='Products' description='Products'>
-            <MainAppLayout noFooter>
-                <Container>
-                    <AnimateRoute>
-                        <AdminEditProductMain 
-                            steps={steps}
-                            isLoading={isLoading}
-                            product={product ?? emptyProduct}
-                            currentStep={currentStep}
-                            goToPrevStep={goToPrevStep}
-                            goToNextStep={goToNextStep}
-                        />
-                    </AnimateRoute>
-                </Container>
-            </MainAppLayout>
-        </PageMainContainer>
+        <>
+            {/* {isAdmin && */}
+                <PageMainContainer title='Products' description='Products'>
+                    <MainAppLayout noFooter>
+                        <Container>
+                            <AnimateRoute>
+                                <AdminEditProductMain 
+                                    steps={steps}
+                                    isLoading={productLoad}
+                                    product={product ?? emptyProduct}
+                                    currentStep={currentStep}
+                                    goToPrevStep={goToPrevStep}
+                                    goToNextStep={goToNextStep}
+                                />
+                            </AnimateRoute>
+                        </Container>
+                    </MainAppLayout>
+                </PageMainContainer>
+            {/* } */}
+        </>
     )
 }
 
@@ -126,16 +135,18 @@ function ViewProduct({
                     Back
                 </Button>
 
-                <HStack>
-                    <Button
-                        leftIcon={<FaRegEdit />}
-                        onClick={() => goToNextStep()}
-                        color={'white'}
-                        bgColor={'blue.700'}
-                    >
-                        Edit
-                    </Button>
-                </HStack>
+                {product?.mainImage && product?.name &&
+                    <HStack>
+                        <Button
+                            leftIcon={<FaRegEdit />}
+                            onClick={() => goToNextStep()}
+                            color={'white'}
+                            bgColor={'blue.700'}
+                        >
+                            Edit
+                        </Button>
+                    </HStack>
+                }
             </HStack>
 
             <Grid templateColumns={{ base: "1fr", md: "1fr", lg: "1.5fr 1fr" }} gap={10}>
@@ -225,7 +236,6 @@ function EditProduct({
 
         return result;
     };
-
 
     const [mainImage, setMainImage] = useState<{ file: File | null, preview: string } | null>({file:null, preview: product?.mainImage});
     const [imageUrlArray, setImageUrlArray] = useState<any[]>(product?.images ?? []);
@@ -468,6 +478,7 @@ function EditProduct({
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Description</FormLabel>
                                 <Textarea
+                                    height={'150px'}
                                     name="description" 
                                     value={values?.description}
                                     onChange={handleChange}

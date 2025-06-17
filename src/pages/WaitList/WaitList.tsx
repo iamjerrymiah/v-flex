@@ -19,8 +19,7 @@ import {
     Input,
     Spinner,
   } from "@chakra-ui/react";
-  import { useState } from "react";
-// import Loader from "../../common/Loader";
+  import { useEffect, useState } from "react";
 import PageSk from "../../common/PageSk";
 import EmptyListHero from "../../common/EmptyListHero";
 import { capCase, moneyFormat } from "../../utils/utils";
@@ -31,12 +30,12 @@ import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 import Notify from "../../utils/notify";
 import ModalCenter from "../../common/ModalCenter";
 import { BsClipboard2CheckFill, BsClipboardXFill } from "react-icons/bs";
+import Loader from "../../common/Loader";
 
 
-function WaitlistMain ({ wishLists = [], carts = {}, isLoading }: any) {
+function WaitlistMain ({ wishLists = [], carts = {}, user = {}, isLoading, isAuthenticated }: any) {
 
     const navigate = useNavigate()
-    const { isAuthenticated } =  useGetAuthState();
 
     // const [wishListItems, setWishlistItems] = useState<any[]>(wishLists);
     const [selected, setSelected] = useState<any>({})
@@ -85,10 +84,6 @@ function WaitlistMain ({ wishLists = [], carts = {}, isLoading }: any) {
         } catch(e:any) {return e}
     };
 
-    // useEffect(() => { if(!isLoading) { setWishlistItems(wishLists) }}, [isLoading])
-
-    // const link = `/products/${product?.slug}?componentsVfproduct=${product?._id}`;
-
     return (
         <Box py={6}>
 
@@ -124,7 +119,6 @@ function WaitlistMain ({ wishLists = [], carts = {}, isLoading }: any) {
                 <Box flex={3} borderRadius="xl">
                         {isLoading ? (
                             <>
-                                {/* <Loader /> */}
                                 <PageSk tiny/>
                             </>
                         ) :
@@ -169,9 +163,7 @@ function WaitlistMain ({ wishLists = [], carts = {}, isLoading }: any) {
                                             >
                                                 {capCase(item?.name)}
                                             </Text>
-                                            {/* <Text color="gray.800">€ {moneyFormat(item.price)}</Text> */}
-                                            <HStack><Text color="gray.500">Available:</Text> <Text>{item?.availability == true ? <BsClipboard2CheckFill color="green" size={20}/> : <BsClipboardXFill color="red" size={20}/>}</Text></HStack>
-                                            {/* <Text color="gray.500">Available Quantity: {item?.quantity}</Text> */}
+                                            <HStack><Text color="gray.500">{item?.availability == true ? "Available" : "Out of Stock"}</Text> <Text>{item?.availability == true ? <BsClipboard2CheckFill color="green" size={20}/> : <BsClipboardXFill color="red" size={20}/>}</Text></HStack>
                                         </Box>
                                     </HStack>
 
@@ -190,16 +182,15 @@ function WaitlistMain ({ wishLists = [], carts = {}, isLoading }: any) {
                                         <Tooltip 
                                             bgColor={'red.500'}
                                             label={!isAuthenticated 
-                                            ? "Please log in to add to cart." 
+                                            ? "Please log in to add to cart." : !user?.emailVerified ? "Please verify your account"
                                             : carts?.cart?.length >= 1000 ? "You've reached the limit amount in cart." : ""}
                                         >
                                             <Button 
                                                 bg="black" 
                                                 color="white" 
                                                 _hover={{ bg: "gray.700" }} 
-                                                isDisabled={!isAuthenticated || carts?.cart?.length >= 1000}
+                                                isDisabled={!isAuthenticated || !user?.emailVerified || carts?.cart?.length >= 1000}
                                                 isLoading={cartPend}
-                                                // onClick={() => { handleAddCart(item) }}
                                                 onClick={() => { onSelected(item) }}
                                             >
                                                 ADD TO CART
@@ -281,12 +272,16 @@ function WaitlistMain ({ wishLists = [], carts = {}, isLoading }: any) {
 
 export default function WaitListPage() {
 
-    const { data: wishListData = {}, isLoading } = useGetUserWishlists({})
+    const navigate = useNavigate()
+    const { data: wishListData = {}, isLoading: wishLoad } = useGetUserWishlists({})
     const { data: wishLists = [] } = wishListData
-
 
     const { data: cartData = {} } = useGetUserCarts({})
     const { data: carts = {} } = cartData
+
+    const { isLoading, isAuthenticated, user } = useGetAuthState()
+    useEffect(() => { if(!isLoading && isAuthenticated == false) { navigate('/products/vl') } }, [isLoading, isAuthenticated])
+    if(isLoading) { return (<Loader />) }
 
     return (
         <PageMainContainer title='Wishlist' description='Wishlist'>
@@ -294,9 +289,11 @@ export default function WaitListPage() {
                 <AnimateRoute>
                     <Container>
                         <WaitlistMain 
-                            isLoading={isLoading}
+                            isLoading={wishLoad}
                             wishLists={wishLists ?? []}
+                            user={user}
                             carts={carts}
+                            isAuthenticated={isAuthenticated}
                         />
                     </Container>
                 </AnimateRoute>
