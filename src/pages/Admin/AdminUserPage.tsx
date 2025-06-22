@@ -1,4 +1,4 @@
-import { Box, Button, Heading, HStack, Input, Select, SimpleGrid, Stack, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, Heading, HStack, Input, Select, SimpleGrid, Spinner, Stack, Text, useDisclosure } from "@chakra-ui/react";
 import AnimateRoute from "../../common/AnimateRoute";
 import PageMainContainer from "../../common/PageMain";
 import MainAppLayout from "../../layouts/MainAppLayout";
@@ -6,8 +6,8 @@ import { Container } from "../../styling/layout";
 import { useNavigate } from "react-router";
 import { MdLockReset, MdOutlineArrowBackIos } from "react-icons/md";
 import { Table, TableRow } from "../../common/Table/Table";
-import { useActivateDeactivate, useChangeUserRole, useGetAllUsers } from "../../hooks/user/users";
-import { allCaps, allLower, capCase, isSuperUser } from "../../utils/utils";
+import { useActivateDeactivate, useChangeUserRole, useGetAllUsers, useGetOneUserByEmail } from "../../hooks/user/users";
+import { allCaps, allLower, capCase, isJustSuperAdmin, isSuperUser } from "../../utils/utils";
 import { useEffect, useState } from "react";
 import { BsFilter, BsSearch } from "react-icons/bs";
 import Pagination from "../../common/Pagination/Pagination";
@@ -23,11 +23,14 @@ import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 import Loader from "../../common/Loader";
 
 const tableHeads = ["S/N", "Salutation", "First Name", "Last Name", "Email", "Phone Number", "Is Email Verified?", "Status", ""]
-function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters }: any) {
+function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters, isSuperAdmin }: any) {
     
-    const [selected, setSelected] = useState<any>({})
+    const [one, setOne] = useState<any>({})
     const [changeRole, setChangeRole] = useState<any>({})
     const [search, setSearch] = useState<any>({});
+
+    const { data: selectedData = {}, isLoading: isLoad } = useGetOneUserByEmail(one?.email)
+    const { data: selected = {} } = selectedData;
 
     const [selectedRole, setSelectedRole] = useState<string>(changeRole?.role ?? "");
 
@@ -41,7 +44,7 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
     const { openConfirm: openConfirmDeactivate, closeConfirm: closeConfirmDeactivate, isOpenConfirm: isOpenConfirmDeactivate, current: currentDeactivate } = useConfirmAction()
 
     const selectedInfo = (d: any) => {
-        setSelected(d)
+        setOne(d)
         onOpenEdit()
     }
 
@@ -177,21 +180,22 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
                         ]}
                         options={[
                             {name: "View", onUse: () => { selectedInfo(item) }},
-                            {name: "Change Role", onUse: () => { changeRoleInfo(item) }},
+                            isSuperAdmin && {name: "Change Role", onUse: () => { changeRoleInfo(item) }},
                             {
                                 name: `${allLower(item?.status) === "activated" ? "Deactivate" : "Activate"}`, 
                                 color: `${allLower(item?.status) === "activated" ? "red.700" : "green.700"}`, 
                                 onUse: allLower(item?.status) === "activated" ? () => { shouldDeactivate(item) } : () => { shouldActivate(item) } 
                             },
-                        ]}
+                        ].filter(Boolean)}
                         noIndexPad
                     />
                 )}
             </Table>
 
             <Pagination
-                pageCount={init?.totalPages}
                 onPageChange={changePage}
+                currentPage={init?.currentPage}
+                pageCount={init?.totalPages}
             />
 
             <ConfirmModal
@@ -278,58 +282,95 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters 
                 body={
                     <Stack spacing={6}>
 
-                        <Box borderBottom={'1px solid #ccc'} py={3}>
+                        {isLoad ?
+                            <Box
+                                position="fixed"
+                                top={0}
+                                left={0}
+                                width="100vw"
+                                height="100vh"
+                                bg="rgba(255, 255, 255, 0.5)"
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="center"
+                                zIndex={9999}
+                            >
+                                <Spinner size="xl" color="blue.500" thickness="4px" />
+                            </Box> : null
+                        }
+
+                        <Box borderBottom={'1px solid'} py={3}>
                             <Text fontSize={'18px'} fontWeight={500}>User Details</Text>
-                            <SimpleGrid columns={[2, 3]} spacing={4} my={3}>
-                                <TextDetails title="Salutation" name={allCaps(selected?.salutation)} />
-                                <TextDetails title="First Name" name={`${capCase(selected?.firstName)}`} />
-                                <TextDetails title="Last Name" name={`${capCase(selected?.lastName)}`} />
-                                <TextDetails title="Email" name={selected?.email} />
-                                <TextDetails title="Phone Number" name={`+${selected?.phoneNumber}`} />
-                                <TextDetails title="Country" name={`${capCase(selected?.country)}`} />
-                                <TextDetails title="Role" name={capCase(selected?.role)} />
-                                <TextDetails title="Is Email Verified?" name={capCase(selected?.emailVerified === true ? "Yes" : "No")} />
-                                <TextDetails title="Status" name={capCase(selected?.status)} />
+                            <SimpleGrid columns={[2, 4]} spacing={4} my={3}>
+                                <TextDetails title="Salutation" name={allCaps(selected?.salutation) ?? ""} />
+                                <TextDetails title="First Name" name={`${capCase(selected?.firstName) ?? ""}`} />
+                                <TextDetails title="Last Name" name={`${capCase(selected?.lastName) ?? ""}`} />
+                                <TextDetails title="Email" name={selected?.email ?? ""} />
+                                <TextDetails title="Phone Number" name={`+${selected?.phoneNumber ?? ""}`} />
+                                <TextDetails title="Country" name={`${capCase(selected?.country) ?? ""}`} />
+                                <TextDetails title="Role" name={capCase(selected?.role) ?? ""} />
+                                <TextDetails title="Is Email Verified?" name={capCase(selected?.emailVerified === true ? "Yes" : "No") ?? ""} />
+                                <TextDetails title="Status" name={capCase(selected?.status) ?? ""} />
                             </SimpleGrid>
                         </Box>
 
                         {selected?.address1 &&
-                            <Box borderBottom={'1px solid #ccc'} py={3}>
+                            <Box borderBottom={'1px solid'} py={3}>
                                 <Text fontSize={'18px'} fontWeight={500}>User Address 1</Text>
-                                <SimpleGrid columns={[2, 3]} spacing={4} my={3}>
-                                    <TextDetails title="Salutation" name={allCaps(selected?.address1?.salutation)} />
-                                    <TextDetails title="First Name" name={`${capCase(selected?.address1?.firstName)}`} />
-                                    <TextDetails title="Last Name" name={`${capCase(selected?.address1?.lastName)}`} />
-                                    <TextDetails title="Email" name={selected?.address1?.email} />
-                                    <TextDetails title="Phone Number" name={`+${selected?.address1?.phoneNumber}`} />
-                                    <TextDetails title="Phone Number 2" name={`+${selected?.address1?.phoneNumber2}`} />
-                                    <TextDetails title="Address" name={`${capCase(selected?.address1?.address)}`} />
-                                    <TextDetails title="City" name={`${capCase(selected?.address1?.city)}`} />
-                                    <TextDetails title="Country" name={`${capCase(selected?.address1?.country)}`} />
-                                    <TextDetails title="Postal Code" name={`${capCase(selected?.address1?.postalCode)}`} />
-                                    <TextDetails title="Other Data" name={`${capCase(selected?.address1?.optionalData)}`} />
+                                <SimpleGrid columns={[2, 4]} spacing={4} my={3}>
+                                    <TextDetails title="Salutation" name={allCaps(selected?.address1?.salutation) ?? ""} />
+                                    <TextDetails title="First Name" name={`${capCase(selected?.address1?.firstName) ?? ""}`} />
+                                    <TextDetails title="Last Name" name={`${capCase(selected?.address1?.lastName) ?? ""}`} />
+                                    {/* <TextDetails title="Email" name={selected?.address1?.email ?? ""} /> */}
+                                    <TextDetails title="Phone Number" name={`+${selected?.address1?.phoneNumber ?? ""}`} />
+                                    <TextDetails title="Phone Number 2" name={`${selected?.address1?.phoneNumber2 ?? ""}`} />
+                                    <TextDetails title="Address" name={`${capCase(selected?.address1?.address) ?? ""}`} />
+                                    <TextDetails title="City" name={`${capCase(selected?.address1?.city) ?? ""}`} />
+                                    <TextDetails title="Country" name={`${capCase(selected?.address1?.country) ?? ""}`} />
+                                    <TextDetails title="Postal Code" name={`${capCase(selected?.address1?.postalCode) ?? ""}`} />
                                 </SimpleGrid>
+                                <TextDetails title="Other Data" name={`${capCase(selected?.address1?.optionalData) ?? ""}`} />
                             </Box>
                         }
                 
                         {selected?.address2 &&
-                            <Box borderBottom={'1px solid #ccc'} py={3}>
+                            <Box borderBottom={'1px solid'} py={3}>
                                 <Text fontSize={'18px'} fontWeight={500}>User Address 2</Text>
-                                <SimpleGrid columns={[2, 3]} spacing={4} my={3}>
-                                    <TextDetails title="Salutation" name={allCaps(selected?.address2?.salutation)} />
-                                    <TextDetails title="First Name" name={`${capCase(selected?.address2?.firstName)}`} />
-                                    <TextDetails title="Last Name" name={`${capCase(selected?.address2?.lastName)}`} />
-                                    <TextDetails title="Email" name={selected?.address2?.email} />
-                                    <TextDetails title="Phone Number" name={`+${selected?.address2?.phoneNumber}`} />
-                                    <TextDetails title="Phone Number 2" name={`+${selected?.address2?.phoneNumber2}`} />
-                                    <TextDetails title="Address" name={`${capCase(selected?.address2?.address)}`} />
-                                    <TextDetails title="City" name={`${capCase(selected?.address2?.city)}`} />
-                                    <TextDetails title="Country" name={`${capCase(selected?.address2?.country)}`} />
-                                    <TextDetails title="Postal Code" name={`${capCase(selected?.address2?.postalCode)}`} />
-                                    <TextDetails title="Other Data" name={`${capCase(selected?.address2?.optionalData)}`} />
+                                <SimpleGrid columns={[2, 4]} spacing={4} my={3}>
+                                    <TextDetails title="Salutation" name={allCaps(selected?.address2?.salutation) ?? ""} />
+                                    <TextDetails title="First Name" name={`${capCase(selected?.address2?.firstName) ?? ""}`} />
+                                    <TextDetails title="Last Name" name={`${capCase(selected?.address2?.lastName) ?? ""}`} />
+                                    {/* <TextDetails title="Email" name={selected?.address2?.email ?? ""} /> */}
+                                    <TextDetails title="Phone Number" name={`+${selected?.address2?.phoneNumber ?? ""}`} />
+                                    <TextDetails title="Phone Number 2" name={`${selected?.address2?.phoneNumber2 ?? ""}`} />
+                                    <TextDetails title="Address" name={`${capCase(selected?.address2?.address) ?? ""}`} />
+                                    <TextDetails title="City" name={`${capCase(selected?.address2?.city) ?? ""}`} />
+                                    <TextDetails title="Country" name={`${capCase(selected?.address2?.country) ?? ""}`} />
+                                    <TextDetails title="Postal Code" name={`${capCase(selected?.address2?.postalCode) ?? ""}`} />
                                 </SimpleGrid>
+                                <TextDetails title="Other Data" name={`${capCase(selected?.address2?.optionalData) ?? ""}`} />
                             </Box>
                         }
+
+                        {/* <Box py={3}>
+                            <Text fontSize={'18px'} fontWeight={500}>Order's Made ({formatNumberToShortForm(selected?.orders?.length ?? 0) ?? 0}) </Text>
+                            <Box>
+                                {selected?.orders?.length <=0 ? <Box mt={1}>No Order Yet!</Box> :
+                                selected?.orders?.map((order:any, i:any) => (
+                                    <SimpleGrid key={i} columns={[2, 4]} spacing={4} mt={3} py={3} borderBottom={'1px solid #ccc'}>
+                                        <TextDetails title="Date" name={`${prettyDateFormat(order?.createdAt) ?? ""}`} />
+                                        <TextDetails title="Order Number" name={order?.orderNumber ?? ""} />
+                                        <TextDetails title="Total Amount" name={`€ ${moneyFormat(order?.totalPaid) ?? 0.0}`} />
+                                        <TextDetails title="Products Amount" name={`€ ${moneyFormat(order?.productsAmount) ?? 0.0}`} />
+                                        <TextDetails title="Delivery Fee" name={`€ ${moneyFormat(order?.deliveryFee) ?? 0.0}`} />
+                                        <TextDetails title="Payment Method" name={`${allCaps(order?.paymentMethod) ?? ""}`} />
+                                        <TextDetails title="Delivery Method" name={capCase(order?.deliveryMethod) ?? ""} />
+                                        <TextDetails title="Payment Status" name={capCase(order?.paymentStatus) ?? ""} />
+                                        <TextDetails title="Delivery Status" name={capCase(order?.deliveryStatus) ?? ""} />
+                                    </SimpleGrid>
+                                ))}
+                            </Box>
+                        </Box> */}
 
                     </Stack>
                 }
@@ -349,6 +390,7 @@ export default function AdminUserPage() {
 
     const { isLoading, isAuthenticated, user } = useGetAuthState()
     const isAdmin = isSuperUser(user?.role)
+    const isSuperAdmin = isJustSuperAdmin(user?.role)
     useEffect(() => { if(!isLoading && isAuthenticated == false) { navigate('/products/vl') } }, [isLoading, isAuthenticated])
     useEffect(() => { if(!isLoading && isAdmin == false && isAuthenticated == true ) {navigate('/profile'); Notify.error("Not Authorized!!")} }, [isLoading, isAuthenticated])
     if(isLoading) { return (<Loader />) }
@@ -364,6 +406,7 @@ export default function AdminUserPage() {
                             users={users?.users ?? []}
                             filters={filters}
                             setFilters={setFilters}
+                            isSuperAdmin={isSuperAdmin}
                         />
                     </AnimateRoute>
                 </Container>

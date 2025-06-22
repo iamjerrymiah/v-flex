@@ -31,7 +31,7 @@ export const useGetProduct = (id: string | null | any) => {
 export const useCreateProduct = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (data :any) => {
+        mutationFn: (data:any) => {
             return customFormdataMutationRequest("SECURITY", `/product`, 'POST', data).then((res:any) => res)
         },
         onSuccess: () => {
@@ -43,7 +43,7 @@ export const useCreateProduct = () => {
 export const useUpdateProduct = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (data :any) => {
+        mutationFn: (data:any) => {
             return customMutationRequest("SECURITY", `/product`, 'PATCH', data).then((res:any) => res)
         },
         onSuccess: () => {
@@ -55,7 +55,7 @@ export const useUpdateProduct = () => {
 export const useUpdateProductMainImage = (productId:string) => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (data :any) => {
+        mutationFn: (data:any) => {
             return customFormdataMutationRequest("SECURITY", `/product/image/${productId}`, 'PATCH', data).then((res:any) => res)
         },
         onSuccess: () => {
@@ -69,7 +69,7 @@ export const useAddProductImages = (query: any) => {
 
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (data :any) => {
+        mutationFn: (data:any) => {
             return customFormdataMutationRequest("SECURITY", `/product/image/${productId}`, 'POST', data).then((res:any) => res)
         },
         onSuccess: () => {

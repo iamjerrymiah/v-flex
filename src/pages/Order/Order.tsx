@@ -7,7 +7,7 @@ import { MdLockReset, MdOutlineArrowBackIos } from "react-icons/md"
 import { useNavigate } from "react-router"
 import { useGetAllOrders, useGetOrder } from "../../hooks/orders/orders"
 import { Table, TableRow } from "../../common/Table/Table"
-import { allCaps, capCase, isSuperUser, moneyFormat } from "../../utils/utils"
+import { allCaps, capCase, isSuperUser, moneyFormat, prettyDateFormat } from "../../utils/utils"
 import { useEffect, useState } from "react"
 import Pagination from "../../common/Pagination/Pagination"
 import ModalCenter from "../../common/ModalCenter"
@@ -21,7 +21,7 @@ import Loader from "../../common/Loader"
 import Notify from "../../utils/notify"
 
 
-const tableHeads = ["S/N", "orderNumber", "Total Amount Paid", "Payment Method", "Payment Status", "Delivery Status", ""]
+const tableHeads = ["S/N", "Date", "orderNumber", "Total Amount Paid", "Payment Method", "Payment Status", "Delivery Status", ""]
 function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }: any) {
     
     const [selected, setSelected] = useState<any>({})
@@ -42,7 +42,14 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
     const onFilter = () => {
         setFilters({ ...filters, ...search });
         onCloseFilter()
-        setSearch((prev: any) => ({...prev, deliveryStatus: "", paymentStatus: "", deliveryMethod: "", paymentMethod: ""}))
+        setSearch((prev: any) => ({
+            ...prev, 
+            search: "",
+            deliveryStatus: "", 
+            paymentStatus: "", 
+            deliveryMethod: "", 
+            paymentMethod: ""
+        }))
     }
 
     const changePage = ({ selected = 0 }) => {
@@ -122,6 +129,7 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
                         key={index}
                         data={[
                             (index + 1 ),
+                            prettyDateFormat(item?.createdAt),
                             item?.orderNumber,
                             `€ ${moneyFormat(item?.totalPaid ?? 0)}`,
                             allCaps(item?.paymentMethod ?? "-"),
@@ -136,10 +144,11 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
                     />
                 )}
             </Table>
-
+            
             <Pagination
-                pageCount={init?.totalPages}
                 onPageChange={changePage}
+                currentPage={init?.currentPage}
+                pageCount={init?.totalPages}
             />
 
             <ModalCenter 

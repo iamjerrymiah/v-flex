@@ -16,8 +16,6 @@ export interface AuthState {
     networkFailure: boolean;
 };
 
-// nwfrgodwin@gmail.com
-
 
 export const useLogin = () => {
     const queryClient = useQueryClient();

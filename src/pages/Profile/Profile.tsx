@@ -5,7 +5,6 @@ import {
     Box, Grid, GridItem, Text, Icon,
     Button,
     HStack,
-    // Flex,  VStack, Stack, useBreakpointValue 
   } from "@chakra-ui/react";
 import { FaClipboardList, FaBookmark, FaAddressBook, FaUser, FaUsers } from "react-icons/fa";
 import { AiOutlineProduct } from "react-icons/ai";
@@ -15,7 +14,7 @@ import { useGetAuthState, useLogout } from "../../hooks/auth/AuthenticationHook"
 import { useNavigate } from "react-router";
 import { allCaps, isSuperUser } from "../../utils/utils";
 import { Container } from "../../styling/layout";
-import { MdLogout, MdOutlineArrowBackIos } from "react-icons/md";
+import { MdLogout, MdOutlineArrowBackIos, MdOutlinePayments } from "react-icons/md";
 import Notify from "../../utils/notify";
 import { BsCart } from "react-icons/bs";
 import { useConfirmAction } from "../../utils/useActions";
@@ -70,10 +69,11 @@ function ProfileMain () {
     const handleLogout = async (data:any) => {
         try {
             const payload: any = await mutateAsync(data);
-            navigate('/')
+            navigate('/products/vl')
             return payload;
         } catch (e:any) {
             Notify.error("Logged Out!")
+            navigate('/products/vl')
             return e
         }
     };
@@ -90,7 +90,7 @@ function ProfileMain () {
         { label: "PRODUCTS", link: '/vl/admin/products', description: "View, create, edit & delete products", icon: AiOutlineProduct, show: isAdmin ? true : false },
         { label: "USERS", link: '/vl/admin/users', description: "View all users & disable users", icon: FaUsers, show: isAdmin ? true : false },
         { label: "ORDERS", link: '/vl/admin/orders', description: "View all orders", icon: TbShoppingCartStar, show: isAdmin ? true : false },
-        // { label: "PAYMENTS", link: '/vl/admin/payments', description: "View all payments", icon: MdOutlinePayments, show: isAdmin ? true : false },
+        { label: "PAYMENTS", link: '/vl/admin/payments', description: "View all payments", icon: MdOutlinePayments, show: isAdmin ? true : false },
         
         { label: "CHANGE PASSWORD", link: '/profile/change-password', description: "Change your password", icon: TbPasswordUser, show: true },
     ];

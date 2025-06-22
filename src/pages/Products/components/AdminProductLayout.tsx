@@ -54,9 +54,9 @@ export default function AdminProductLayout({ children, categories, init, isLoadi
 
     const dataInformationArray = [
         {title: 'Total Products', value: init?.totalProducts ?? "-", iconColor: 'black', icon: MdOutlineProductionQuantityLimits},
+        {title: 'Total Product Sales', value: init?.totalSales ?? "-", iconColor: 'brown', icon: MdOutlineProductionQuantityLimits},
         {title: 'Total Available Products', value: init?.availableProducts ?? "-", iconColor: 'green', icon: MdOutlineProductionQuantityLimits},
         {title: 'Total Disabled Products', value: init?.deactivatedProducts ?? "-", iconColor: 'red', icon: MdOutlineProductionQuantityLimits},
-        {title: 'Total Product Sales', value: init?.totalSales ?? "-", iconColor: 'brown', icon: MdOutlineProductionQuantityLimits},
     ]
 
     const { subCategory } = useCategoryContext();

@@ -1,14 +1,26 @@
-import ReactPaginate from 'react-paginate'
-import { memo } from 'react'
+import ReactPaginate from 'react-paginate';
 import './pagination.css'
 
 
-const Pagination =({ className, onPageChange, pageCount = 0}: any) => {
+interface PaginationProps {
+    onPageChange: (event: { selected: number }) => void;
+    pageCount: number;
+    currentPage?: number
+    className?: string;
+}
+
+function Pagination({
+    className,
+    onPageChange,
+    currentPage = 1,
+    pageCount = 0,
+}: PaginationProps) {
     return (
         <ReactPaginate
             breakLabel="..."
-            nextLabel=">"
-            previousLabel="<"
+            nextLabel="Next >"
+            previousLabel="< Previous"
+            forcePage={currentPage - 1}
             onPageChange={onPageChange}
             pageRangeDisplayed={5}
             className={className}
@@ -28,4 +40,4 @@ const Pagination =({ className, onPageChange, pageCount = 0}: any) => {
     )
 }
 
-export default memo(Pagination);
+export default Pagination

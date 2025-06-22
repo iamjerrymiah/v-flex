@@ -4,7 +4,7 @@ import { Container } from '../../../styling/layout'
 import AnimateRoute from '../../../common/AnimateRoute'
 import { Select as ChakraSelect, Box, Button, Checkbox, Flex, FormControl, FormLabel, Grid, Heading, Input, InputGroup, InputRightElement, Stack, Text } from "@chakra-ui/react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css"; 
 import SelectComponent from "react-select";
@@ -14,12 +14,13 @@ import { Link, useNavigate } from 'react-router';
 import { Formik, Field, Form } from "formik";
 import { registerSchema } from '../../../schema/auth';
 import Notify from '../../../utils/notify';
-import { useCreateUser } from '../../../hooks/auth/AuthenticationHook';
+import { useCreateUser, useGetAuthState } from '../../../hooks/auth/AuthenticationHook';
 
 
 function RegisterMain () {
 
     const navigate = useNavigate()
+    const { isLoading, isAuthenticated } = useGetAuthState()
 
     const countryOptions = countryList().getData();
     const [showPassword, setShowPassword] = useState(false);
@@ -48,6 +49,8 @@ function RegisterMain () {
             return e
         }
     };
+
+    useEffect(() => { if(!isLoading && isAuthenticated === true) { Notify.info('You are logged in!'); navigate('/products/vl'); } }, [isLoading, isAuthenticated])
 
     return (
         <Flex 

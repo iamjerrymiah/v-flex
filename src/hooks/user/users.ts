@@ -99,6 +99,17 @@ export const useGetAllUsers = (params:any) => {
     });
 };
 
+export const useGetOneUserByEmail = (email:any) => {
+    return useQuery({
+        queryKey: [`${key}`, email],
+        queryFn: async () => {
+            const res: any = await fetcher('SECURITY', `/user/email/${email}`);
+            return res;
+        },
+        enabled: !!email,
+    });
+};
+
 export const useChangeUserRole = () => {
     const queryClient = useQueryClient();
     return useMutation({

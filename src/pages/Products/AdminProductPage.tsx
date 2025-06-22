@@ -3,7 +3,7 @@ import AnimateRoute from "../../common/AnimateRoute";
 import PageMainContainer from "../../common/PageMain";
 import MainAppLayout from "../../layouts/MainAppLayout";
 import { Container } from "../../styling/layout";
-import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
+import { Avatar, Box, Flex } from "@chakra-ui/react";
 import { Table, TableRow } from "../../common/Table/Table";
 import { useDeleteProduct, useGetProducts, useUpdateProduct } from "../../hooks/products/products";
 import { capCase, isSuperUser, moneyFormat } from "../../utils/utils";
@@ -18,12 +18,12 @@ import { useCategoryContext } from "../../providers/CategoryContext";
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 import Loader from "../../common/Loader";
 
-export function withImg (datum:any, img:any) {
+export function withImg (datum:any, img?:any) {
     return (
         <Flex align="center" mt="auto">
             <Avatar src={img} name={datum} size="md" />
                 <Box ml={2}>
-                    <Text fontWeight={500} color='#101828'>{capCase(datum)}</Text>
+                    <Box fontWeight={500} color='#101828'>{capCase(datum)}</Box>
                 </Box>
         </Flex>
     )
@@ -110,8 +110,9 @@ function AdminProductMain ({ products = [], isLoading = false, init, filters, se
             </Table>
 
             <Pagination
-                pageCount={init?.totalPages}
                 onPageChange={changePage}
+                currentPage={init?.currentPage}
+                pageCount={init?.totalPages}
             />
 
             <ConfirmModal

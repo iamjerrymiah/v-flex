@@ -49,7 +49,7 @@ export const fetcher = async (resourceType: string, url: string) => {
 export const customMutationRequest = async (
     resourceType: ResourceType,
     url: string,
-    method: 'POST' | 'PUT' | 'PATCH' ,
+    method: 'POST' | 'PUT' | 'PATCH',
     arg?: {},
     headers?: {},
 ) => {

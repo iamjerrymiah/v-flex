@@ -47,8 +47,9 @@ const ProductGrid = ({
             )}
 
             <Pagination
-                pageCount={init?.totalPages}
                 onPageChange={changePage}
+                currentPage={init?.currentPage}
+                pageCount={init?.totalPages}
             />
         </>
     );

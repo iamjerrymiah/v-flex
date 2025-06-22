@@ -7,7 +7,7 @@ import { MdLockReset, MdOutlineArrowBackIos } from "react-icons/md";
 import { useNavigate } from "react-router";
 import { useGetOrder, useGetUserOrders } from "../../hooks/orders/orders";
 import { Table, TableRow } from "../../common/Table/Table";
-import { allCaps, capCase, moneyFormat } from "../../utils/utils";
+import { allCaps, capCase, moneyFormat, prettyDateFormat } from "../../utils/utils";
 import { useEffect, useState } from "react";
 import ModalCenter from "../../common/ModalCenter";
 import { BsCheck, BsFilter, BsSearch } from "react-icons/bs";
@@ -15,6 +15,7 @@ import Pagination from "../../common/Pagination/Pagination";
 import Drawer from "../../common/Drawer";
 import Loader from "../../common/Loader";
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
+import { withImg } from "../Products/AdminProductPage";
 
 const statusHistory = [ "order placed", "pending payment", "payment successful", "waiting to be shipped" ];
 
@@ -128,27 +129,46 @@ export function OrderView ({
 
             <Stack spacing={6}>
 
-            {admin && 
-                <Box borderBottom={'1px solid #ccc'} py={3}>
-                    <Text fontSize={'18px'} fontWeight={500}>User Details</Text>
-                    <SimpleGrid columns={2} spacing={4} my={3}>
-                        <TextDetails title="First Name" name={capCase(initData?.user?.firstName)} />
-                        <TextDetails title="Last Name" name={capCase(initData?.user?.lastName)} />
-                        <TextDetails title="Email" name={initData?.user?.email} />
-                        <TextDetails title="Phone Number" name={`+${initData?.user?.phoneNumber ?? ""}`} />
-                    </SimpleGrid>
-                </Box>
-            }
+                {admin && 
+                    <Box borderBottom={'1px solid #ccc'} py={3}>
+                        <Text fontSize={'18px'} fontWeight={500}>User Details</Text>
+                        <SimpleGrid columns={2} spacing={4} my={3}>
+                            <TextDetails title="First Name" name={capCase(initData?.user?.firstName)} />
+                            <TextDetails title="Last Name" name={capCase(initData?.user?.lastName)} />
+                            <TextDetails title="Email" name={initData?.user?.email} />
+                            <TextDetails title="Phone Number" name={`+${initData?.user?.phoneNumber ?? ""}`} />
+                        </SimpleGrid>
+                    </Box>
+                }
+
+                {admin && 
+                    <Box borderBottom={'1px solid #ccc'} py={3}>
+                        <Text fontSize={'18px'} fontWeight={500}>User Address Info</Text>
+                        <SimpleGrid columns={3} spacing={4} my={3}>
+                            <TextDetails title="Salutation" name={allCaps(initData?.address?.salutation)} />
+                            <TextDetails title="First Name" name={capCase(initData?.address?.firstName)} />
+                            <TextDetails title="Last Name" name={capCase(initData?.address?.lastName)} />
+                            <TextDetails title="Phone Number" name={`+${initData?.address?.phoneNumber ?? ""}`} />
+                            <TextDetails title="Phone Number 2" name={`${initData?.address?.phoneNumber2 ?? ""}`} />
+                            <TextDetails title="Address" name={capCase(initData?.address?.address)} />
+                            <TextDetails title="City" name={capCase(initData?.address?.city)} />
+                            <TextDetails title="Country" name={capCase(initData?.address?.country)} />
+                            <TextDetails title="Postal Code" name={initData?.address?.postalCode} />
+                        </SimpleGrid>
+                        <TextDetails title="Additional Info" name={capCase(initData?.address?.optionalData)} />
+                    </Box>
+                }
 
                 <Box borderBottom={'1px solid #ccc'} py={3}>
                     <Text fontSize={'18px'} fontWeight={500}>Order Details</Text>
                     <SimpleGrid columns={[2, 3]} spacing={4} my={3}>
+                        <TextDetails title="Date" name={prettyDateFormat(initData?.createdAt)} />
                         <TextDetails title="Order Number" name={initData?.orderNumber} />
                         <TextDetails title="Total Amount Paid" name={`€ ${moneyFormat(initData?.totalPaid ?? 0)}`} />
                         <TextDetails title="Products Amount" name={`€ ${moneyFormat(initData?.productsAmount ?? 0)}`} />
+                        <TextDetails title="Delivery Fee" name={`€ ${moneyFormat(initData?.deliveryFee ?? 0)}`} />
                         <TextDetails title="Payment Method" name={capCase(initData?.paymentMethod)} />
                         <TextDetails title="Payment Status" name={capCase(initData?.paymentStatus)} />
-                        <TextDetails title="Delivery Fee" name={`€ ${moneyFormat(initData?.deliveryFee ?? 0)}`} />
                         <TextDetails title="Delivery Method" name={capCase(initData?.deliveryMethod)} />
                         <TextDetails title="Delivery Status" name={capCase(initData?.deliveryStatus)} />
                         <TextDetails title="Delivery Date" name={initData?.deliveryDate} />
@@ -159,12 +179,12 @@ export function OrderView ({
                     <Text fontSize={'18px'} mb={3} fontWeight={500}>Selected Product's</Text>
                     {initData?.selectedProducts?.map((p:any, i:number) => (
                         <Box key={i} borderBottom={'1px solid #eee'}>
-                            <SimpleGrid columns={[2, 3]} spacing={4} py={3}>
-                                <TextDetails title="Product Name" name={capCase(p?.product?.name)} />
+                            <Box mt={3}>{withImg(capCase(p?.product?.name), p?.product?.mainImage)}</Box>
+                            <SimpleGrid columns={[2, 4]} spacing={4} py={3}>
                                 <TextDetails title="Product Price" name={`€ ${moneyFormat(p?.product?.price ?? 0)}`} />
                                 <TextDetails title="Product Size" name={p?.size} />
                                 <TextDetails title="Product Color" name={p?.color} />
-                                <TextDetails title="Product Size" name={p?.quantity} />
+                                <TextDetails title="Product Quantity" name={p?.quantity} />
                             </SimpleGrid>
                         </Box>
                     ))}
@@ -176,7 +196,7 @@ export function OrderView ({
     )
 }
 
-const tableHeads = ["S/N", "orderNumber", "Total Amount Paid", "Payment Method", "Payment Status", "Delivery Status", ""]
+const tableHeads = ["S/N", "Date", "orderNumber", "Total Amount Paid", "Payment Method", "Payment Status", "Delivery Status", ""]
 function MyOrdersMain ({ init = {}, myOrders = [], isLoading, filters, setFilters}:any) {
 
     const navigate = useNavigate()
@@ -197,7 +217,14 @@ function MyOrdersMain ({ init = {}, myOrders = [], isLoading, filters, setFilter
     const onFilter = () => {
         setFilters({ ...filters, ...search });
         onCloseFilter()
-        setSearch((prev: any) => ({...prev, search: "", deliveryStatus: "", paymentStatus: "", deliveryMethod: "", paymentMethod: ""}))
+        setSearch((prev: any) => ({
+            ...prev, 
+            search: "", 
+            deliveryStatus: "", 
+            paymentStatus: "", 
+            deliveryMethod: "", 
+            paymentMethod: ""
+        }))
     }
 
     const changePage = ({ selected = 0 }) => {
@@ -245,6 +272,7 @@ function MyOrdersMain ({ init = {}, myOrders = [], isLoading, filters, setFilter
                         key={index}
                         data={[
                             (index + 1 ),
+                            prettyDateFormat(item?.createdAt),
                             item?.orderNumber,
                             `€ ${moneyFormat(item?.totalPaid ?? 0)}`,
                             allCaps(item?.paymentMethod ?? "-"),
@@ -261,8 +289,9 @@ function MyOrdersMain ({ init = {}, myOrders = [], isLoading, filters, setFilter
             </Table>
 
             <Pagination
-                pageCount={init?.totalPages}
                 onPageChange={changePage}
+                currentPage={init?.currentPage}
+                pageCount={init?.totalPages}
             />
 
             <ModalCenter 

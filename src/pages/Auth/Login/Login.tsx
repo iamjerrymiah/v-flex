@@ -122,7 +122,7 @@ function LoginMain() {
         }
     };
 
-    useEffect(() => { if(!isLoading && isAuthenticated === true) { navigate('/products/vl') } }, [isLoading, isAuthenticated])
+    useEffect(() => { if(!isLoading && isAuthenticated === true) { Notify.info('You are logged in!'); navigate('/products/vl'); } }, [isLoading, isAuthenticated])
 
     return (
         <Flex 

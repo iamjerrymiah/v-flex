@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from 'react-router'
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router'
 
 import './App.scss'
 import FullScreenLayout from './layouts/FullScreenLayout'
@@ -18,23 +18,33 @@ import WaitListPage from './pages/WaitList/WaitList'
 
 import ProfilePage from './pages/Profile/Profile'
 import MyOrderPage from './pages/Order/MyOrder'
-
-import OrderPage from './pages/Order/Order'
 import ContactPage from './pages/Contact/Contact'
-import AdminProductPage from './pages/Products/AdminProductPage'
-import AdminUserPage from './pages/Admin/AdminUserPage'
 import MyAddressBook from './pages/Profile/MyAddressBook'
 import AccountDetails from './pages/Profile/AccountDetails'
+import CheckoutPage from './pages/Cart/CheckoutPage'
+import MollieConfirmPage from './pages/Order/MollieConfirmPage'
+
+
+import OrderPage from './pages/Order/Order'
+import AdminProductPage from './pages/Products/AdminProductPage'
+import AdminUserPage from './pages/Admin/AdminUserPage'
 import AdminCreateProductPage from './pages/Products/AdminCreateProductPage'
 import AdminCategoryPage from './pages/Admin/AdminCategoryPage'
 import AdminEditProductPage from './pages/Products/AdminEditProductPage'
-import CheckoutPage from './pages/Cart/CheckoutPage'
-import MollieConfirmPage from './pages/Order/MollieConfirmPage'
+import AdminPaymentPage from './pages/Admin/AdminPaymentPage'
+
+
+import { Suspense } from 'react'
+import Loader from './common/Loader'
+
+const RouteWrapper = (children: React.ReactNode | null) => (
+    <Suspense fallback={<Loader />}>{children}</Suspense>
+);
 
 const router = createBrowserRouter([
 	{
 		path: '/',
-		element: <FullScreenLayout />,
+		element: RouteWrapper(<FullScreenLayout />),
 		errorElement: <></>,
 		children: [
 			{
@@ -149,6 +159,14 @@ const router = createBrowserRouter([
             {
                 path: '/vl/admin/users',
                 element: <AdminUserPage />,
+            },
+            {
+                path: '/vl/admin/payments',
+                element: <AdminPaymentPage />,
+            },
+            {
+                path: '*',
+                element: <Navigate replace to="/products/vl" />,
             },
 		]
 	}

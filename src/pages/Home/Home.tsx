@@ -3,7 +3,6 @@ import PageMainContainer from "../../common/PageMain";
 import MainAppLayout from "../../layouts/MainAppLayout";
 import AnimateRoute from "../../common/AnimateRoute";
 import HeroSection from "./components/HeroSection";
-// import ProductsSection from "./components/ProductsSection";
 import PromotionalSection from "./components/PromotionalSection";
 import TestimonialSection from "./components/TestimonialSection";
 import FashionSection from "./components/FashionSection";
@@ -26,9 +25,6 @@ function HomeMain() {
         <Container>
             <WomenFashionSection />
         </Container>
-        {/* <Container>
-            <ProductsSection />
-        </Container> */}
         <SneakerCollection />
         <Container>
             <TestimonialSection />
