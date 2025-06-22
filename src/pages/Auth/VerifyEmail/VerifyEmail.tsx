@@ -23,10 +23,7 @@ function VerifyEmailMain() {
     const handleSubmit = async (data: any) => {
         const transform = Number(data)
         try {
-            const payload: any = await mutateAsync({ 
-                email: user?.email, 
-                code: transform 
-            });
+            const payload: any = await mutateAsync({ email: user?.email, code: transform });
             Notify.success("Acccount Verified Successfully! Please log In")
             navigate('/login')
             return payload;
