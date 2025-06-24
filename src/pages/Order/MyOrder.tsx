@@ -165,8 +165,8 @@ export function OrderView ({
                         <TextDetails title="Date" name={prettyDateFormat(initData?.createdAt)} />
                         <TextDetails title="Order Number" name={initData?.orderNumber} />
                         <TextDetails title="Total Amount Paid" name={`€ ${moneyFormat(initData?.totalPaid ?? 0)}`} />
-                        <TextDetails title="Products Amount" name={`€ ${moneyFormat(initData?.productsAmount ?? 0)}`} />
-                        <TextDetails title="Delivery Fee" name={`€ ${moneyFormat(initData?.deliveryFee ?? 0)}`} />
+                        {/* <TextDetails title="Products Amount" name={`€ ${moneyFormat(initData?.productsAmount ?? 0)}`} /> */}
+                        {/* <TextDetails title="Delivery Fee" name={`€ ${moneyFormat(initData?.deliveryFee ?? 0)}`} /> */}
                         <TextDetails title="Payment Method" name={capCase(initData?.paymentMethod)} />
                         <TextDetails title="Payment Status" name={capCase(initData?.paymentStatus)} />
                         <TextDetails title="Delivery Method" name={capCase(initData?.deliveryMethod)} />

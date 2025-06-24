@@ -41,10 +41,10 @@ function AdminPaymentMain ({ init = {}, payments = [], isLoading, filters, setFi
 
     const dataInformationArray = [
         // {title: 'Total Payments', value: init?.totalPayments ?? "-", iconColor: 'black', icon: MdOutlinePayment},
-        {title: 'Total Amount', value: init?.totalAmount ?? "-", iconColor: 'black', icon: MdOutlinePayment},
-        {title: 'Success Payments', value: init?.successPayments ?? "-", iconColor: 'green', icon: MdOutlinePayment},
-        {title: 'Pending Payments', value: init?.pendingPayments ?? "-", iconColor: 'purple', icon: MdOutlinePayment},
-        {title: 'Failed Payments', value: init?.failedPayments ?? "-", iconColor: 'red', icon: MdOutlinePayment},
+        {title: 'Total Amount', value: init?.totalAmount ?? "-", iconColor: 'black', icon: MdOutlinePayment, isshortFormat: true},
+        {title: 'Success Payments', value: init?.successPayments ?? "-", iconColor: 'green', icon: MdOutlinePayment, isshortFormat: false},
+        {title: 'Pending Payments', value: init?.pendingPayments ?? "-", iconColor: 'purple', icon: MdOutlinePayment, isshortFormat: false},
+        {title: 'Failed Payments', value: init?.failedPayments ?? "-", iconColor: 'red', icon: MdOutlinePayment, isshortFormat: false},
     ]
 
     return(
@@ -82,6 +82,7 @@ function AdminPaymentMain ({ init = {}, payments = [], isLoading, filters, setFi
                             title={info.title}
                             value={info.value}
                             iconColor={info.iconColor}
+                            isshortFormat={info?.isshortFormat}
                         />
                     ))}
                 </HStack>

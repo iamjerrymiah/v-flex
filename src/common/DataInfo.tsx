@@ -1,6 +1,7 @@
 import { Box, Card, CardBody, CardHeader, Heading, HStack, Skeleton, Text, VStack } from "@chakra-ui/react";
 import { ReactNode } from "react";
 import { IconType } from "react-icons";
+import { formatNumberToShortForm } from "../utils/utils";
 
 export function CardSection({
     title = "",
@@ -33,8 +34,9 @@ export default function DataInfo({
     title,
     value,
     iconColor,
+    isshortFormat,
     isLoading
-}:{Icon: string | IconType, value: string | Number | ReactNode | any, title: string, iconColor?:string, isLoading: boolean}){
+}:{Icon: string | IconType, value: string | Number | ReactNode | any, title: string, iconColor?:string, isLoading: boolean, isshortFormat?:boolean}){
     return(
 
         <CardSection showHeader={false} containerProps={{ border: `1.5px solid gray.900`, width: ['200px', '280px', '380px'] }}>
@@ -53,7 +55,7 @@ export default function DataInfo({
                     </Box>
                     ) :
                     <VStack>
-                        <Text fontWeight={800} fontSize='26px'>{value}</Text>
+                        <Text fontWeight={800} fontSize='26px'>{isshortFormat ? formatNumberToShortForm(Number(value)) : value}</Text>
                     </VStack>
                 }
             </VStack>

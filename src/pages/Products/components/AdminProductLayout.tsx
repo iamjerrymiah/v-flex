@@ -73,7 +73,7 @@ export default function AdminProductLayout({ children, categories, init, isLoadi
     }
 
     const resetFilter = () => {
-        setFilters({disabled: "all"})
+        setFilters({disabled: "all", sortBy: 'recent'})
     }
 
     // const categoryByName = useCallback((slug:any) => categories?.find((e:any) => e?.slug === slug) ?? false, [categories])

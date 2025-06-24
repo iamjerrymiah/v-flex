@@ -147,7 +147,7 @@ export default function AdminProductPage() {
 
     const [search, setSearch] = useState<any>({});
     
-    const [filters, setFilters] = useState({ disabled: "all"})
+    const [filters, setFilters] = useState({ disabled: "all", sortBy: 'recent'})
     
     const { data: productData = {}, isLoading: productLoad} = useGetProducts(filters)
     const { data: products = {} } = productData
