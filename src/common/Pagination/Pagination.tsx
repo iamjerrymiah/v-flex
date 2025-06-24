@@ -1,11 +1,11 @@
 import ReactPaginate from 'react-paginate';
-import './pagination.css'
-
+import './pagination.css';
+import { useEffect, useState } from 'react';
 
 interface PaginationProps {
     onPageChange: (event: { selected: number }) => void;
     pageCount: number;
-    currentPage?: number
+    currentPage?: number;
     className?: string;
 }
 
@@ -15,14 +15,30 @@ function Pagination({
     currentPage = 1,
     pageCount = 0,
 }: PaginationProps) {
+    const [pageRange, setPageRange] = useState(5);
+
+    useEffect(() => {
+        const updateRange = () => {
+            const width = window.innerWidth;
+            if (width < 480) setPageRange(1); // Mobile
+            else if (width < 768) setPageRange(3); // Tablet
+            else setPageRange(5); // Desktop
+        };
+
+        updateRange(); // initial run
+        window.addEventListener('resize', updateRange);
+        return () => window.removeEventListener('resize', updateRange);
+    }, []);
+
     return (
         <ReactPaginate
             breakLabel="..."
-            nextLabel="Next >"
-            previousLabel="< Previous"
+            nextLabel=">>>"
+            previousLabel="<<<"
             forcePage={currentPage - 1}
             onPageChange={onPageChange}
-            pageRangeDisplayed={5}
+            pageRangeDisplayed={pageRange}
+            marginPagesDisplayed={1}
             className={className}
             pageCount={Math.ceil(pageCount)}
             renderOnZeroPageCount={null}
@@ -37,7 +53,7 @@ function Pagination({
             containerClassName={"pagination"}
             activeClassName={"active"}
         />
-    )
+    );
 }
 
-export default Pagination
+export default Pagination;
