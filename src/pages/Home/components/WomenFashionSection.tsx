@@ -33,7 +33,7 @@ export default function WomenFashionSection() {
                     textAlign={{ base: "center", md: "left" }} 
                     size="md"
                 >
-                    <Link to="#">Women's Clothing →</Link>
+                    <Link to="/products/vl">Women's Clothing →</Link>
                 </Heading>
             </Box>
 

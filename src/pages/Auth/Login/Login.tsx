@@ -1,5 +1,5 @@
-import { Box, Button, Divider, Flex, FormControl, Grid, Heading, Input, InputGroup, InputRightElement, Stack, Text, VStack } from "@chakra-ui/react";
-import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
+import { Box, Button, Flex, FormControl, Heading, Input, InputGroup, InputRightElement, SimpleGrid, Stack, Text, VStack } from "@chakra-ui/react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import PageMainContainer from "../../../common/PageMain";
 import { Container } from "../../../styling/layout";
@@ -9,11 +9,16 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { loginSchema } from "../../../schema/auth";
 import { Form, Formik } from "formik";
 import Notify from "../../../utils/notify";
-import { AuthState, useGetAuthState, useGoogleLogin, useLogin } from "../../../hooks/auth/AuthenticationHook";
-import { queryClient } from "../../../providers/QueryClientProvider";
-import { SECHTTP } from "../../../utils/api";
-import { storeToken } from "../../../constants/constants";
-import { AuthStateEnum } from "../../../utils/types";
+import { 
+    // AuthState, 
+    useGetAuthState, 
+    // useGoogleLogin, 
+    useLogin 
+} from "../../../hooks/auth/AuthenticationHook";
+// import { queryClient } from "../../../providers/QueryClientProvider";
+// import { SECHTTP } from "../../../utils/api";
+// import { storeToken } from "../../../constants/constants";
+// import { AuthStateEnum } from "../../../utils/types";
 
 function LoginMain() {
 
@@ -66,61 +71,61 @@ function LoginMain() {
         }
     };
 
-    const { mutateAsync: googleLoginAction, isPending: googlePend } = useGoogleLogin()
-    const handleGoogleAuth = async () => {
-        try {
-            const res: any = await googleLoginAction({})
-            console.log('res', res)
-            if (res) {
-                localStorage.setItem('v_userId', res?.data?.user?._id);
-                localStorage.setItem(storeToken, res?.data?.token);
-                [SECHTTP].forEach(instance => {
-                    instance.defaults.headers.common['Authorization'] = `Bearer ${res?.data?.token}`;
-                });
+    // const { mutateAsync: googleLoginAction, isPending: googlePend } = useGoogleLogin()
+    // const handleGoogleAuth = async () => {
+    //     try {
+    //         const res: any = await googleLoginAction({})
+    //         // console.log('res', res)
+    //         if (res) {
+    //             localStorage.setItem('v_userId', res?.data?.user?._id);
+    //             localStorage.setItem(storeToken, res?.data?.token);
+    //             [SECHTTP].forEach(instance => {
+    //                 instance.defaults.headers.common['Authorization'] = `Bearer ${res?.data?.token}`;
+    //             });
 
-                const auth: AuthState = {
-                    isAuthenticated: true,
-                    authToken: res?.data?.token,
-                    v_userId: res?.data?.user?._id,
-                    authState: AuthStateEnum.Authenticated,
-                    user: {
-                        ...res?.data?.user,
-                        fullName: `${res?.data?.user?.firstName} ${res?.data?.user?.lastName}`
-                    },
-                    isLoading: false,
-                    networkFailure: false,
-                };
+    //             const auth: AuthState = {
+    //                 isAuthenticated: true,
+    //                 authToken: res?.data?.token,
+    //                 v_userId: res?.data?.user?._id,
+    //                 authState: AuthStateEnum.Authenticated,
+    //                 user: {
+    //                     ...res?.data?.user,
+    //                     fullName: `${res?.data?.user?.firstName} ${res?.data?.user?.lastName}`
+    //                 },
+    //                 isLoading: false,
+    //                 networkFailure: false,
+    //             };
 
-                queryClient.setQueryData<AuthState>(['auth'], (prevAuth) =>
-                    prevAuth ? { ...prevAuth, ...auth } : auth
-                );
+    //             queryClient.setQueryData<AuthState>(['auth'], (prevAuth) =>
+    //                 prevAuth ? { ...prevAuth, ...auth } : auth
+    //             );
 
-                Notify.success("Success");
-            }
-            return res;
-        } catch (err) {
-            console.error('error', err);
-            localStorage.removeItem('v_userId');
-            localStorage.removeItem(storeToken);
-            [SECHTTP].forEach(instance => {
-                instance.defaults.headers.common['Authorization'] = '';
-            });
+    //             Notify.success("Success");
+    //         }
+    //         return res;
+    //     } catch (err) {
+    //         console.error('error', err);
+    //         localStorage.removeItem('v_userId');
+    //         localStorage.removeItem(storeToken);
+    //         [SECHTTP].forEach(instance => {
+    //             instance.defaults.headers.common['Authorization'] = '';
+    //         });
 
-            const auth: Partial<AuthState> = {
-                isAuthenticated: false,
-                authToken: null,
-                v_userId: null,
-                authState: AuthStateEnum.Unauthenticated,
-                user: null,
-            };
+    //         const auth: Partial<AuthState> = {
+    //             isAuthenticated: false,
+    //             authToken: null,
+    //             v_userId: null,
+    //             authState: AuthStateEnum.Unauthenticated,
+    //             user: null,
+    //         };
 
-            queryClient.setQueryData<AuthState>(['auth'], (prevAuth) =>
-                prevAuth ? { ...prevAuth, ...auth } : auth as AuthState
-            );
+    //         queryClient.setQueryData<AuthState>(['auth'], (prevAuth) =>
+    //             prevAuth ? { ...prevAuth, ...auth } : auth as AuthState
+    //         );
 
-            Notify.error("Something went wrong! Please try again.");
-        }
-    };
+    //         Notify.error("Something went wrong! Please try again.");
+    //     }
+    // };
 
     useEffect(() => { if(!isLoading && isAuthenticated === true) { Notify.info('You are logged in!'); navigate('/products/vl'); } }, [isLoading, isAuthenticated])
 
@@ -139,11 +144,7 @@ function LoginMain() {
                     REGISTER OR SIGN IN
                 </Heading>
     
-                <Grid
-                    templateColumns={["1fr", "1fr", "1fr", "1fr auto 1fr auto 1fr"]}
-                    alignItems="center"
-                    gap={14}
-                >
+                <SimpleGrid columns={[1,1,1,2]} spacing={14}>
 
                     <VStack color={'black'} align="start" spacing={4} >
                         <Text fontWeight={650} fontSize={'18px'}>NEW CUSTOMER?</Text>
@@ -164,15 +165,15 @@ function LoginMain() {
                         </Button>
                     </VStack>
         
-                    <Divider orientation="vertical" borderLeft={'1px solid gray'} display={{ base: "none", md: "block" }} />
+                    {/* <Divider orientation="vertical" borderLeft={'1px solid gray'} display={{ base: "none", md: "block" }} /> */}
         
-                    <VStack color={'black'} align="start" spacing={2} mt={['0px', '0px', '0px', '-50px']}>
+                    {/* <VStack color={'black'} align="start" spacing={2} mt={['0px', '0px', '0px', '-50px']}>
                         <Text fontWeight={650} fontSize={'18px'}>SAVE YOUR TIME</Text>
                         <Text textAlign="center">
                             Connect with your existing social network account
                         </Text>
                         <Stack spacing={3} w="full" mt={4}>
-                            {/* <Button 
+                            <Button 
                                 leftIcon={<FaFacebook size={24}/>} 
                                 bg="black" 
                                 color="white" 
@@ -180,7 +181,7 @@ function LoginMain() {
                                 w="full"
                             >
                                 FACEBOOK
-                            </Button> */}
+                            </Button>
                             <Button 
                                 leftIcon={<FaGoogle size={24}/>} 
                                 bg="black" 
@@ -194,9 +195,9 @@ function LoginMain() {
                                 GOOGLE
                             </Button>
                         </Stack>
-                    </VStack>
+                    </VStack> */}
         
-                    <Divider orientation="vertical" borderLeft={'1px solid gray'} display={{ base: "none", md: "block" }} />
+                    {/* <Divider orientation="vertical" borderLeft={'1px solid gray'} display={{ base: "none", md: "block" }} /> */}
         
                     <Formik
                         initialValues={{
@@ -284,8 +285,8 @@ function LoginMain() {
                         </Form>
                     )}
                     </Formik>
-                    
-                </Grid>
+                </SimpleGrid>
+
             </Box>
       </Flex>
     )

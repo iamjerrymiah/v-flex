@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, FormControl, FormLabel, Heading, HStack, Input, SimpleGrid, Stack, Text, Textarea } from '@chakra-ui/react'
+import { Box, Button, Checkbox, FormControl, FormLabel, Heading, HStack, Input, Select, SimpleGrid, Stack, Text, Textarea } from '@chakra-ui/react'
 import AnimateRoute from '../../common/AnimateRoute'
 import PageMainContainer from '../../common/PageMain'
 import MainAppLayout from '../../layouts/MainAppLayout'
@@ -145,6 +145,8 @@ function CreateProduct ({
 
         return result;
     };
+
+    const numberHundredArray = Array(100).fill(1).map((n, i) => n + i)
     
     return (
         <Box w='full' py={6}>
@@ -173,6 +175,7 @@ function CreateProduct ({
                     availability: true,
                     category: "",
                     subCategories: "",
+                    discount: "",
                     description: ""
                 }}
                 validationSchema={productSchema}
@@ -327,6 +330,14 @@ function CreateProduct ({
                             </FormControl>
 
                             <FormControl>
+                                <FormLabel fontWeight={700}>Discount</FormLabel>
+                                <Select name="discount" value={values?.discount} onChange={handleChange}>
+                                    {numberHundredArray?.map((status:any, i) => ( <option key={i} value={status}>{capCase(status)} </option> ))}
+                                </Select>
+                                {errors?.discount && <Text fontSize={'12px'} color={'red.400'}>{`${errors?.discount}`}</Text>}
+                            </FormControl>
+
+                            <FormControl>
                                 <FormLabel fontWeight={700}>* Description</FormLabel>
                                 <Textarea
                                     height={'150px'}
@@ -369,10 +380,11 @@ function CreateProduct ({
 
                         <HStack w={'full'} justify={'flex-end'} mt={12}>
                             <Button 
-                                bg="black" 
+                                // bg="black" 
+                                colorScheme='facebook'
                                 type='submit'
                                 color="white" 
-                                _hover={{ bg: "gray" }}
+                                // _hover={{ bg: "gray" }}
                                 w={['100%', '20%']}
                                 isDisabled={ isSubmitting  || isPending || file === null}
                                 isLoading={isSubmitting || isPending}
@@ -455,9 +467,10 @@ export function ProductImages({
 
             <HStack w={'full'} justify={'flex-end'} mt={12}>
                 <Button 
-                    bg="black" 
+                    // bg="black" 
+                    colorScheme='facebook'
                     color="white" 
-                    _hover={{ bg: "gray" }}
+                    // _hover={{ bg: "gray" }}
                     w={['100%', '20%']}
                     isDisabled={ isPending}
                     isLoading={ isPending}

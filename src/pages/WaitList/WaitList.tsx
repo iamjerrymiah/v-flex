@@ -251,7 +251,8 @@ function WaitlistMain ({ wishLists = [], carts = {}, user = {}, isLoading, isAut
                                 </Button>
                                 <Button 
                                     w={'100%'}
-                                    bg="blue.700" 
+                                    // bg="blue.700" 
+                                    colorScheme="facebook"
                                     type='submit'
                                     color="white" 
                                     isDisabled={cartPend || selectedColor == "" || selectedSize == ""}

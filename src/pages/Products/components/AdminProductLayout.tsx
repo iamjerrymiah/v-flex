@@ -167,7 +167,8 @@ export default function AdminProductLayout({ children, categories, init, isLoadi
                         leftIcon={<MdAddToPhotos />}
                         onClick={() => navigate(`/vl/admin/products/create`)}
                         color={'white'}
-                        bgColor={'blue.700'}
+                        // bgColor={'blue.700'}
+                        colorScheme="facebook"
                     >
                         Add
                     </Button>

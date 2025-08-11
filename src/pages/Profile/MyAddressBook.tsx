@@ -213,7 +213,8 @@ function AddressBookForm ({ initData = {}, edit, onClose }: any) {
                             </Button>
                             <Button 
                                 w={'100%'}
-                                bg="blue.700" 
+                                // bg="blue.700" 
+                                colorScheme="facebook"
                                 type='submit'
                                 color="white" 
                                 isDisabled={ isSubmitting  || edit ? updatePending : isPending}
@@ -285,7 +286,8 @@ function MyAddressBookMain ({ addressBooks = [], isLoading = false }: any) {
                         leftIcon={<MdAddToPhotos />}
                         onClick={onOpen}
                         color={'white'}
-                        bgColor={'blue.700'}
+                        // bgColor={'blue.700'}
+                        colorScheme="facebook"
                     >
                         Add
                     </Button>

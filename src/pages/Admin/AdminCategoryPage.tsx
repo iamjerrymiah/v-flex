@@ -188,7 +188,7 @@ const CategoryManager = ({categories, isLoading}:any) => {
                     leftIcon={<MdAddToPhotos />}
                     onClick={() => openAdd(-1)}
                     color={'white'}
-                    bgColor={'blue.700'}
+                    colorScheme={'facebook'}
                 >
                     Add
                 </Button>
@@ -250,7 +250,7 @@ const CategoryManager = ({categories, isLoading}:any) => {
                                 </Button>
                                 <Button 
                                     w={'100%'}
-                                    bg="blue.700" 
+                                    colorScheme="facebook" 
                                     type='submit'
                                     color="white" 
                                     isDisabled={isPending || isPendingSub}
@@ -294,7 +294,7 @@ const CategoryManager = ({categories, isLoading}:any) => {
                                 </Button>
                                 <Button 
                                     w={'100%'}
-                                    bg="blue.700" 
+                                    colorScheme="facebook" 
                                     type='submit'
                                     color="white" 
                                     isDisabled={isPendingEdit || isPendingSubEdit}

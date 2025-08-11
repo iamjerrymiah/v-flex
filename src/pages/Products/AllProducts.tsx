@@ -11,6 +11,7 @@ import ProductGrid from "./components/ProductGrid"
 import { useGetProductCollections } from "../../hooks/products/collections"
 import ProductLayout from "./components/ProductLayout"
 import { useCategoryContext } from "../../providers/CategoryContext"
+import { useSearchParams } from "react-router";
 
 
 function ProductsMain() {
@@ -19,14 +20,15 @@ function ProductsMain() {
     // const { queryParams } = useQueryParams()
     // const { category } = useParams<{ category: string }>();
 
-    // const [searchParams] = useSearchParams();
-    // const categoryId = searchParams.get("componentsVfcategory");
+    const [searchParams] = useSearchParams();
+    const discount = searchParams.get("deals");
     
     const { topCategory, subCategory, linkCategory } = useCategoryContext();
 
     const [search, setSearch] = useState<any>({})
     const [filter, setFilter] = useState({
         sortBy: 'recent',
+        discount: discount ? true : null
         // categoryId: categoryId ?? ""
     })
     const [isOpen, setIsOpen] = useState(true);
@@ -51,32 +53,6 @@ function ProductsMain() {
 
     return (
         <>
-            {/* <Flex
-                h="50vh"
-                w="full"
-                justify="center"
-                align="center"
-                direction="column"
-                textAlign="center"
-                bgImage={heroImg}
-                bgSize={['auto', 'cover']}
-                objectFit={'contain'}
-                bgRepeat="no-repeat"
-                bgPosition="top"
-                backgroundAttachment="fixed"
-            >
-                <MotionAnimator direction='left' delay={0.4}>
-                    <Heading 
-                        color={'white'} 
-                        fontSize={["3xl", "3xl", '5xl']} 
-                        fontWeight="bold"
-                        px={4}
-                    >
-                        Exclusive Fashion for {capCase(category ?? "Everyone")}
-                    </Heading>
-                </MotionAnimator>
-            </Flex> */}
-
             <Container>
                 <Box px={['20px', '20px', '30px', '50px']}>
                     <Box mt={[14]}>

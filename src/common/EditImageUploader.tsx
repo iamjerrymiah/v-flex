@@ -208,7 +208,7 @@ export default function EditImageUploader({
                         {renderImageBox(mainImage, 0, true)}
                         <Button
                             mt={2}
-                            colorScheme="blue"
+                            colorScheme="facebook"
                             size="sm"
                             onClick={onSaveMainImage}
                         >
@@ -263,7 +263,7 @@ export default function EditImageUploader({
                 {imageUrlArray.length > 0 && (
                     <Button
                         mt={4}
-                        colorScheme="blue"
+                        colorScheme="facebook"
                         size="sm"
                         onClick={onSaveImageArray}
                     >

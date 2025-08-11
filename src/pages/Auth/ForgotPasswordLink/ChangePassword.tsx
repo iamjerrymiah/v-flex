@@ -130,10 +130,10 @@ function ChangePasswordMain () {
 
                         <Stack mt={6} direction={'row'}>
                             <Button 
-                                bg="black" 
+                                colorScheme='facebook'
                                 type="submit"
                                 color="white" 
-                                _hover={{ bg: "gray" }}
+                                // _hover={{ bg: "gray" }}
                                 w={'100%'}
                                 isLoading={isSubmitting || isPending}
                                 isDisabled={isSubmitting || isPending}

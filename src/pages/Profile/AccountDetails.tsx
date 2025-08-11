@@ -168,10 +168,11 @@ function AccountDetailMain ({ initData = {} }: any) {
 
                             <HStack w={'full'} justify={'flex-end'} mt={12}>
                                 <Button 
-                                    bg="black" 
+                                    // bg="black" 
+                                    colorScheme="facebook"
                                     type='submit'
                                     color="white" 
-                                    _hover={{ bg: "gray" }}
+                                    // _hover={{ bg: "gray" }}
                                     w={['100%', '20%']}
                                     isDisabled={ isSubmitting  || isPending}
                                     isLoading={isSubmitting || isPending}

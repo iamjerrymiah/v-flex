@@ -244,9 +244,10 @@ function CartsMain ({ carts = [], isLoading, isAuthenticated }:any) {
                     <Button 
                         mt={6}
                         w="full" 
-                        bg="black" 
+                        // bg="black" 
+                        colorScheme="facebook"
                         color="white" 
-                        _hover={{ bg: "gray.700" }} 
+                        // _hover={{ bg: "gray.700" }} 
                         isDisabled={carts?.length === 0}
                         onClick={() => navigate(`/order/checkout`)}
                     >

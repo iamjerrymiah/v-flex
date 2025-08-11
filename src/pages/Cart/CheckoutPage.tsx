@@ -41,13 +41,15 @@ const Load = () => {
 function CheckoutMain ({carts = [], addressBooks = [], cartLoad, addressLoad}: any) {
 
     // const { user, isLoading: userLoad } =  useGetAuthState();
+    const delM = localStorage.getItem("vflex-deliveryMethod");
+    const payM = localStorage.getItem("vflex-paymentMethod");
 
     const navigate = useNavigate()
     const [selectedAddressId, setSelectedAddressId] = useState<number>(
         addressBooks?.find((addr:any) => addr.defaultAddress)?._id ?? addressBooks[0]?._id
     );
-    const [deliveryMethod, setDeliveryMethod] = useState<'door delivery' | 'pick up'>('door delivery');
-    const [paymentMethod, setPaymentMethod] = useState<'creditcard' | 'banktransfer' | 'paypal' | 'ideal'>('creditcard');
+    const [deliveryMethod, setDeliveryMethod] = useState<'door delivery' | 'pick up' | any>(delM ?? 'door delivery');
+    const [paymentMethod, setPaymentMethod] = useState<'creditcard' | 'banktransfer' | 'paypal' | 'ideal' | any>(payM ?? 'creditcard');
 
     // const selectedAddress = addressBooks?.find((addr:any) => addr._id === selectedAddressId);
 
@@ -93,6 +95,8 @@ function CheckoutMain ({carts = [], addressBooks = [], cartLoad, addressLoad}: a
                 deliveryMethod: deliveryMethod,
                 // coupon 
             })
+            localStorage.setItem("vflex-deliveryMethod", deliveryMethod);
+            localStorage.setItem("vflex-paymentMethod", paymentMethod);
             if(res) { setPay(res) }
             return res;
         } catch(e:any) {
@@ -282,9 +286,10 @@ function CheckoutMain ({carts = [], addressBooks = [], cartLoad, addressLoad}: a
                         <Button 
                             mt={6}
                             w="full" 
-                            bg="black" 
+                            // bg="black" 
+                            colorScheme='facebook'
                             color="white" 
-                            _hover={{ bg: "gray.700" }} 
+                            // _hover={{ bg: "gray.700" }} 
                             isDisabled={carts?.length === 0}
                             isLoading={isPending || mollieLoad}
                             onClick={() => handleValidateOrder()}

@@ -259,7 +259,7 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters,
                                 </Button>
                                 <Button 
                                     w={'100%'}
-                                    bg="blue.700" 
+                                    colorScheme="facebook"
                                     type='submit'
                                     color="white" 
                                     isDisabled={rolePend || selectedRole == ""}

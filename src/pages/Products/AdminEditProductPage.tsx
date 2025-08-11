@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AdminCreateProductProps } from "./AdminCreateProductPage"
-import { Box, Button, Checkbox, Divider, FormControl, FormLabel, Grid, Heading, HStack, Image, Input, SimpleGrid, Stack, Text, Textarea } from "@chakra-ui/react";
+import { Box, Button, Checkbox, Divider, FormControl, FormLabel, Grid, Heading, HStack, Image, Input, Select, SimpleGrid, Stack, Text, Textarea } from "@chakra-ui/react";
 import PageMainContainer from "../../common/PageMain";
 import MainAppLayout from "../../layouts/MainAppLayout";
 import { Container } from "../../styling/layout";
@@ -141,7 +141,8 @@ function ViewProduct({
                             leftIcon={<FaRegEdit />}
                             onClick={() => goToNextStep()}
                             color={'white'}
-                            bgColor={'blue.700'}
+                            // bgColor={'blue.700'}
+                            colorScheme="facebook"
                         >
                             Edit
                         </Button>
@@ -204,6 +205,8 @@ function EditProduct({
     goToPrevStep
 }: any) {
 
+    const navigate = useNavigate()
+
     const { data: collectionData = {} } = useGetProductCollections({})
     const { data: categories = [] } = collectionData
 
@@ -212,6 +215,7 @@ function EditProduct({
         try {
             const payload: any = await mutateAsync({...data, productId: product?._id})
             Notify.success("Success!")
+            navigate(`/vl/admin/products`)
             return payload;
         } catch (e:any) {
             Notify.error(e?.message ?? "Failed")
@@ -296,6 +300,8 @@ function EditProduct({
         }
     }
 
+    const numberHundredArray = Array(100).fill(1).map((n, i) => n + i)
+
     return (
         <Box w='full' py={6}>
             <Heading textAlign="center" fontSize={["24px", '30px']} fontWeight={400} mb={10}> EDIT PRODUCT </Heading>
@@ -322,6 +328,7 @@ function EditProduct({
                     availability: product?.availability ?? true,
                     category: product?.categoryId ?? "",
                     subCategories: product?.subCategories ?? "",
+                    discount: product?.discount ?? "",
                     description: product?.description ?? ""
                 }}
                 validationSchema={productSchema}
@@ -476,6 +483,14 @@ function EditProduct({
                             </FormControl>
 
                             <FormControl>
+                                <FormLabel fontWeight={700}>Discount</FormLabel>
+                                <Select name="discount" value={values?.discount} onChange={handleChange}>
+                                    {numberHundredArray?.map((status:any, i) => ( <option key={i} value={status}>{capCase(status)} </option> ))}
+                                </Select>
+                                {errors?.discount && <Text fontSize={'12px'} color={'red.400'}>{`${errors?.discount}`}</Text>}
+                            </FormControl>
+
+                            <FormControl>
                                 <FormLabel fontWeight={700}>* Description</FormLabel>
                                 <Textarea
                                     height={'150px'}
@@ -510,10 +525,11 @@ function EditProduct({
 
                         <HStack w={'full'} justify={'flex-end'} mt={12}>
                             <Button 
-                                bg="black" 
+                                // bg="black" 
+                                colorScheme="facebook"
                                 type='submit'
                                 color="white" 
-                                _hover={{ bg: "gray" }}
+                                // _hover={{ bg: "gray" }}
                                 w={['100%', '20%']}
                                 isDisabled={ isSubmitting  || isPending}
                                 isLoading={isSubmitting || isPending}

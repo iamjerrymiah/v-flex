@@ -1,8 +1,12 @@
 import { Box, Button, Image, Text } from "@chakra-ui/react";
 
 import imgg from '../../../assets/images/image3.webp'
+import { useNavigate } from "react-router";
 
 const SneakerCollection = () => {
+
+    const navigate = useNavigate()
+
     return (
         <Box 
             position="relative" 
@@ -27,6 +31,7 @@ const SneakerCollection = () => {
                 transform="translate(-50%, -50%)" 
                 textAlign="center"
                 color="white"
+                onClick={()=> navigate("/products/vl")}
             >
                 <Text 
                     fontSize={{ base: "3xl", md: "5xl" }} 
@@ -41,6 +46,7 @@ const SneakerCollection = () => {
                         variant="outline" 
                         colorScheme="whiteAlpha" 
                         size="lg"
+                        onClick={()=> navigate("/products/vl")}
                     >
                         Discover Men
                     </Button>

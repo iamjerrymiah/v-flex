@@ -1,4 +1,4 @@
-import { Box, Button, GridItem, Icon, Image, Stack, Text } from "@chakra-ui/react";
+import { Box, Button, GridItem, HStack, Icon, Image, Stack, Text } from "@chakra-ui/react";
 import { FaCheckToSlot } from "react-icons/fa6";
 import { FcCancel } from "react-icons/fc";
 import { useNavigate, useParams } from "react-router";
@@ -13,14 +13,14 @@ const ProductCard = ({ product }:any) => {
     const { category, subCategory } = useParams<{ category: string; subCategory: string }>();
     const link = `/products${category ? `/${category}` : ""}${subCategory ? `/${subCategory}` : ""}/${product?.slug}?componentsVfproduct=${product?._id}`;
 
+    const oldPrice = product?.price / (1 - product?.discount / 100);
+
     return (
       <GridItem 
         borderRadius="md" 
         position="relative" 
         onClick={() => navigate(link)}
     >
-
-        {/* <Icon as={FaStar} position="absolute" top="10px" left="10px" color="gray" /> */}
   
         <Box position="relative" _hover={{ "& .quick-view": { opacity: 1 } }}>
             <Image 
@@ -54,7 +54,11 @@ const ProductCard = ({ product }:any) => {
                 <Text fontSize="xs" color="gray.500">WE ACCEPT CRYPTO</Text>
             )} */}
             <Text fontWeight={500}>{capCase(product?.name)}</Text>
-            <Text fontSize="lg" fontWeight="bold">€ {moneyFormat(product?.price)}</Text>
+            <HStack>
+                {product?.discount > 0 && <Text color="red.200" as="s" fontSize="md">{moneyFormat(oldPrice ?? 0) ?? 0}</Text>}
+                <Text fontSize="lg" fontWeight="bold">€{moneyFormat(product?.price) ?? "0.0"}</Text>
+                {/* {product?.discount > 0 && <Badge p={1} bgColor={'#EA4B481A'} borderRadius={'30px'} color="#EA4B48">{product?.discount ?? "0"}% Off</Badge>} */}
+            </HStack>
         </Stack>
         
       </GridItem>

@@ -7,6 +7,8 @@ import {
     Heading,
     Input,
     Tooltip,
+    Badge,
+    Divider,
 } from "@chakra-ui/react";
 import { FaChevronLeft, FaChevronRight, FaShoppingCart, FaStar } from "react-icons/fa";
 import { useEffect, useState } from "react";
@@ -121,6 +123,8 @@ function SingleProductMain({
         setSelectedSize(product?.sizes[0]) 
     }, [product?.colors[0], product?.sizes[0]])
 
+    const oldPrice = product?.price / (1 - product?.discount / 100);
+
     return (
         <Box>
             <HStack justify={'space-between'} w={'100%'} my={4}>
@@ -140,10 +144,10 @@ function SingleProductMain({
                 </>
             ) :
             <Grid 
-                templateColumns={{ base: "1fr", md: "1.5fr 1fr" }} 
+                templateColumns={["1fr","1fr","1fr","1.5fr 1fr"]} 
                 gap={10} 
             >
-                {/* Left Side: Product Image Gallery */}
+
                 <GridItem>
                     <VStack spacing={4} align="start">
                         {/* Thumbnails */}
@@ -178,13 +182,10 @@ function SingleProductMain({
                                 alt={product.name} 
                                 borderRadius="md"
                                 objectFit={'contain'}
-                                w={["100%", '700px']}
-                                h={["auto", '500px']}
-                                // w={'100%'}
-                                // h={'auto'}
+                                w={["100%","100%","100%",'700px']}
+                                h={["auto","auto","auto",'500px']}
                             />
                             
-                            {/* Navigation Arrows */}
                             <Button 
                                 position="absolute" 
                                 top="50%" left="5%" 
@@ -212,13 +213,30 @@ function SingleProductMain({
                     </VStack>
                 </GridItem>
     
-                {/* Right Side: Product Details */}
                 <GridItem>
                     <Stack spacing={4}>
                         <Stack spacing={'-1'}>
                             <Text fontSize="2xl" fontWeight="bold">{capCase(product?.name)}</Text>
-                            <Text color="gray.500">{capCase(product?.category)}</Text>
-                            <Text fontSize="xl" fontWeight="bold">€ {moneyFormat(product?.price)}</Text>
+                            <Badge 
+                                px={2} py={1} 
+                                color={'white'} 
+                                w={product?.availability ? ['23%','15%'] : ['28%','20%']} 
+                                bgColor={product?.availability ? 'green.300' : 'red.400'} 
+                                borderRadius={'4px'}
+                            >
+                                {product?.availability ? "Available" : "Out of Stock" }
+                            </Badge>
+
+                            <HStack spacing={4} mt={'6px'}>
+                                <HStack>
+                                    {product?.discount > 0 && <Text color="#D0D5DD" as="s" fontSize="lg">{moneyFormat(oldPrice ?? 0) ?? 0}</Text>}
+                                    <Text fontSize="2xl" fontWeight="bold">€{moneyFormat(product?.price) ?? "0.0"}</Text>
+                                </HStack>
+
+                                {product?.discount > 0 && <Badge px={2} py={1} bgColor={'#EA4B481A'} borderRadius={'30px'} color="#EA4B48">{product?.discount ?? "0"}% Off</Badge>}
+                            </HStack>
+                            <Divider mt={3}/>
+
                         </Stack>
             
                         {/* Description */}
@@ -245,7 +263,6 @@ function SingleProductMain({
                             <HStack>
                                 <Text w={'13%'}>Size:</Text>
                                 <Select mb={4} value={selectedSize} onChange={(e) => setSelectedSize(e.target.value)}>
-                                    {/* <option value={""}>{"Select Size"}</option> */}
                                     {product?.sizes?.map((size:any, index:any) => (
                                         <option key={index} value={size}>{size}</option>
                                     ))}
@@ -267,9 +284,10 @@ function SingleProductMain({
                         >
                             <Button 
                                 w="full" 
-                                bg="black" 
+                                // bg="black" 
+                                colorScheme="facebook"
                                 color="white" 
-                                _hover={{ bg: "gray.700" }} 
+                                // _hover={{ bg: "gray.700" }} 
                                 leftIcon={<FaShoppingCart />}
                                 isDisabled={!isAuthenticated || !user?.emailVerified || carts?.cart?.length >= 1000}
                                 isLoading={cartPend}

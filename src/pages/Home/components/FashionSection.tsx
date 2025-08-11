@@ -23,7 +23,7 @@ const FashionSection = () => {
                     textAlign={{ base: "center", md: "left" }} 
                     size="md"
                 >
-                    <Link to="#">Men's Clothing →</Link>
+                    <Link to="/products/vl">Men's Clothing →</Link>
                 </Heading>
             </Box>
             <Box flex="1">
