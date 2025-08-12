@@ -25,6 +25,7 @@ import ProductsSection from "./components/ProductsSection";
 import { useAddProductToCart, useAddProductToWishlist, useGetUserCarts, useGetUserWishlists } from "../../hooks/user/users";
 import Notify from "../../utils/notify";
 import { MdOutlineArrowBackIos } from "react-icons/md";
+import StatusChanger from "../../common/StatusChanger";
   
 const emptyProduct = {
     name: "-",
@@ -217,7 +218,7 @@ function SingleProductMain({
                     <Stack spacing={4}>
                         <Stack spacing={'-1'}>
                             <Text fontSize="2xl" fontWeight="bold">{capCase(product?.name)}</Text>
-                            <Badge 
+                            {/* <Badge 
                                 px={2} py={1} 
                                 color={'white'} 
                                 w={product?.availability ? ['23%','15%'] : ['28%','20%']} 
@@ -225,7 +226,9 @@ function SingleProductMain({
                                 borderRadius={'4px'}
                             >
                                 {product?.availability ? "Available" : "Out of Stock" }
-                            </Badge>
+                            </Badge> */}
+
+                            <StatusChanger datum={product?.availability ? "Available" : "Out of Stock" }/>
 
                             <HStack spacing={4} mt={'6px'}>
                                 <HStack>
@@ -289,7 +292,7 @@ function SingleProductMain({
                                 color="white" 
                                 // _hover={{ bg: "gray.700" }} 
                                 leftIcon={<FaShoppingCart />}
-                                isDisabled={!isAuthenticated || !user?.emailVerified || carts?.cart?.length >= 1000}
+                                isDisabled={!isAuthenticated || !user?.emailVerified || !product?.availability || carts?.cart?.length >= 1000}
                                 isLoading={cartPend}
                                 onClick={() => { handleAddCart() }}
                             >
