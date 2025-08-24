@@ -20,7 +20,7 @@ const ProductGrid = ({
     return (
         <>
             {isLoading ? ( <ProductPageSk />) :
-            products?.length <= 0 ? 
+            products?.length <= 0 || !products?.length ? 
             (
                 <Center mt={10}>
                     <EmptyListHero

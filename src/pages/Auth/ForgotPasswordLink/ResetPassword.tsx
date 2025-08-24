@@ -1,4 +1,4 @@
-import { Box, Button, Flex, FormControl, FormLabel, Heading, Input, InputGroup, InputRightElement, Stack, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, FormControl, FormLabel, Heading, InputGroup, InputRightElement, Stack, Text } from '@chakra-ui/react'
 import PageMainContainer from '../../../common/PageMain'
 import MainAppLayout from '../../../layouts/MainAppLayout'
 import { Container } from '../../../styling/layout'
@@ -11,6 +11,7 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from 'react-router';
 import Notify from '../../../utils/notify'
 import { useResetPassword } from '../../../hooks/auth/AuthenticationHook'
+import { SecureFormikInput } from '../../../common/SecureFormikInput'
 
 function ResetPasswordMain() {
     
@@ -78,7 +79,7 @@ function ResetPasswordMain() {
                         <FormControl mb={4}>
                             <FormLabel fontWeight={700}>* Password</FormLabel>
                             <InputGroup>
-                                <Input 
+                                <SecureFormikInput 
                                     name="password" 
                                     value={values?.password}
                                     onChange={handleChange} 
@@ -103,7 +104,7 @@ function ResetPasswordMain() {
                         <FormControl>
                             <FormLabel fontWeight={700}>* Confirm Password</FormLabel>
                             <InputGroup>
-                                <Input 
+                                <SecureFormikInput 
                                     name="confirmPassword"  
                                     value={values?.confirmPassword}
                                     onChange={handleChange}

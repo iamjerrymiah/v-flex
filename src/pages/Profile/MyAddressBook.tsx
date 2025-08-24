@@ -1,4 +1,4 @@
-import { Select as ChakraSelect, Box, Button, FormControl, FormLabel, Heading, HStack, useDisclosure, Text, Input, Stack, Checkbox } from "@chakra-ui/react";
+import { Select as ChakraSelect, Box, Button, FormControl, FormLabel, Heading, HStack, useDisclosure, Text, Stack, Checkbox } from "@chakra-ui/react";
 import AnimateRoute from "../../common/AnimateRoute";
 import PageMainContainer from "../../common/PageMain";
 import MainAppLayout from "../../layouts/MainAppLayout";
@@ -21,6 +21,7 @@ import { useConfirmAction } from "../../utils/useActions";
 import ConfirmModal from "../../common/ConfirmModal";
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 import Loader from "../../common/Loader";
+import { SecureFormikInput } from "../../common/SecureFormikInput";
 
 
 function AddressBookForm ({ initData = {}, edit, onClose }: any) {
@@ -96,7 +97,7 @@ function AddressBookForm ({ initData = {}, edit, onClose }: any) {
 
                             <FormControl>
                                 <FormLabel>* First Name</FormLabel>
-                                <Input
+                                <SecureFormikInput
                                     name="firstName" 
                                     value={values?.firstName}
                                     onChange={handleChange}
@@ -107,7 +108,7 @@ function AddressBookForm ({ initData = {}, edit, onClose }: any) {
 
                             <FormControl>
                                 <FormLabel>* Last Name</FormLabel>
-                                <Input
+                                <SecureFormikInput
                                     name="lastName" 
                                     value={values?.lastName}
                                     onChange={handleChange}
@@ -139,7 +140,7 @@ function AddressBookForm ({ initData = {}, edit, onClose }: any) {
 
                             <FormControl>
                                 <FormLabel>* Address</FormLabel>
-                                <Input
+                                <SecureFormikInput
                                     name="address" 
                                     value={values?.address}
                                     onChange={handleChange}
@@ -150,7 +151,7 @@ function AddressBookForm ({ initData = {}, edit, onClose }: any) {
 
                             <FormControl>
                                 <FormLabel>* City</FormLabel>
-                                <Input
+                                <SecureFormikInput
                                     name="city" 
                                     value={values?.city}
                                     onChange={handleChange}
@@ -173,7 +174,7 @@ function AddressBookForm ({ initData = {}, edit, onClose }: any) {
 
                             <FormControl>
                                 <FormLabel>* Postal Code</FormLabel>
-                                <Input
+                                <SecureFormikInput
                                     name="postalCode" 
                                     value={values?.postalCode}
                                     onChange={handleChange}
@@ -184,7 +185,7 @@ function AddressBookForm ({ initData = {}, edit, onClose }: any) {
 
                             <FormControl>
                                 <FormLabel>Additional Info</FormLabel>
-                                <Input
+                                <SecureFormikInput
                                     name="optionalData" 
                                     value={values?.optionalData}
                                     onChange={handleChange}

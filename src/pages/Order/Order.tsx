@@ -1,4 +1,4 @@
-import { Box, Button, Heading, HStack, Input, Select, SimpleGrid, Stack, useDisclosure } from "@chakra-ui/react"
+import { Box, Button, Heading, HStack, Select, SimpleGrid, Stack, useDisclosure } from "@chakra-ui/react"
 import AnimateRoute from "../../common/AnimateRoute"
 import PageMainContainer from "../../common/PageMain"
 import MainAppLayout from "../../layouts/MainAppLayout"
@@ -19,6 +19,7 @@ import { TbShoppingCartStar } from "react-icons/tb"
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook"
 import Loader from "../../common/Loader"
 import Notify from "../../utils/notify"
+import { SecureInput } from "../../common/SecureInput"
 
 
 const tableHeads = ["S/N", "Date", "orderNumber", "Total Amount Paid", "Payment Method", "Payment Status", "Delivery Status", ""]
@@ -174,7 +175,7 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
                 body={
                     <Stack w='100%'>
                         <SimpleGrid columns={[1,2,4]} spacing={4} py={4}>
-                            <Input border={'1px solid gray'} placeholder={"Search Order"} onChange={ (e) => setSearch((prev: any) => ({...prev, search: e.target.value })) }/>
+                            <SecureInput name="search" value={search?.search} border={'1px solid gray'} placeholder={"Search Order"} onChange={ (e) => setSearch((prev: any) => ({...prev, search: e.target.value })) }/>
                             <Select border={'1px solid gray'} placeholder="Search Delivery Status" onChange={ (e) => setSearch((prev: any) => ({...prev, deliveryStatus: e.target.value })) }>
                                 {["pending", "shipped", "delivered", "out for delivery", "waiting to be shipped", "cancelled"].map((status:any, i) => ( <option key={i} value={status}>{capCase(status)} </option> ))}
                             </Select>

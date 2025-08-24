@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading, HStack, Input, SimpleGrid, Stack, Tooltip, useBreakpointValue, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, HStack, SimpleGrid, Stack, Tooltip, useBreakpointValue, useDisclosure } from "@chakra-ui/react";
 import { useCategoryContext } from "../../../providers/CategoryContext";
 import { useState } from "react";
 import TopNav from "./TopNav";
@@ -13,6 +13,7 @@ import { PiEyeClosedFill, PiSlideshowFill } from "react-icons/pi";
 import { IoMdMenu } from "react-icons/io";
 import Sidebar from "../../../layouts/components/Header/sidebar";
 import { IoReloadCircle } from "react-icons/io5";
+import { SecureInput } from "../../../common/SecureInput";
 
 function AdminSubNav () {
 
@@ -214,9 +215,29 @@ export default function AdminProductLayout({ children, categories, init, isLoadi
                 body={
                     <Stack w='100%'>
                         <SimpleGrid columns={[1,2,4]} spacing={4} py={4}>
-                            <Input border={'1px solid gray'} placeholder={"Search Product"} onChange={ (e) => setSearch((prev: any) => ({...prev, search: e.target.value })) }/>
-                            <Input border={'1px solid gray'} type="number" placeholder={"Search Min. Price"} onChange={ (e) => setSearch((prev: any) => ({...prev, minPrice: e.target.value })) }/>
-                            <Input border={'1px solid gray'} type="number" placeholder={"Search Max. Price"} onChange={ (e) => setSearch((prev: any) => ({...prev, maxPrice: e.target.value })) }/>
+                            <SecureInput 
+                                name="search" 
+                                value={search?.search} 
+                                border={'1px solid gray'} 
+                                placeholder={"Search Product"} 
+                                onChange={ (e) => setSearch((prev: any) => ({...prev, search: e.target.value })) }
+                            />
+                            <SecureInput 
+                                type="number" 
+                                name="minPrice" 
+                                value={search?.minPrice} 
+                                border={'1px solid gray'} 
+                                placeholder={"Search Min. Price"} 
+                                onChange={ (e) => setSearch((prev: any) => ({...prev, minPrice: e.target.value })) }
+                            />
+                            <SecureInput 
+                                type="number" 
+                                name="maxPrice"
+                                value={search?.maxPrice} 
+                                border={'1px solid gray'} 
+                                placeholder={"Search Max. Price"} 
+                                onChange={ (e) => setSearch((prev: any) => ({...prev, maxPrice: e.target.value })) }
+                            />
                         </SimpleGrid>
                     </Stack>
 

@@ -5,7 +5,7 @@ import { useGetAuthState, useUpdateUser } from "../../hooks/auth/AuthenticationH
 import MainAppLayout from "../../layouts/MainAppLayout";
 import { Container } from "../../styling/layout";
 import { useNavigate } from "react-router";
-import { Select as ChakraSelect, Box, Button, FormControl, FormLabel, Heading, HStack, Text, Input, SimpleGrid } from "@chakra-ui/react";
+import { Select as ChakraSelect, Box, Button, FormControl, FormLabel, Heading, HStack, Text, SimpleGrid } from "@chakra-ui/react";
 import { MdOutlineArrowBackIos } from "react-icons/md";
 import { Form, Formik } from "formik";
 import { accountDetailsSchema } from "../../schema/auth";
@@ -16,6 +16,7 @@ import countryList from "react-select-country-list";
 import Notify from "../../utils/notify";
 import Loader from "../../common/Loader";
 import { useEffect } from "react";
+import { SecureFormikInput } from "../../common/SecureFormikInput";
 
 
 function AccountDetailMain ({ initData = {} }: any) {
@@ -108,7 +109,7 @@ function AccountDetailMain ({ initData = {} }: any) {
 
                                 <FormControl>
                                     <FormLabel fontWeight={700}>* First Name</FormLabel>
-                                    <Input
+                                    <SecureFormikInput
                                         name="firstName" 
                                         value={values?.firstName}
                                         onChange={handleChange}
@@ -119,7 +120,7 @@ function AccountDetailMain ({ initData = {} }: any) {
 
                                 <FormControl>
                                     <FormLabel fontWeight={700}>* Last Name</FormLabel>
-                                    <Input
+                                    <SecureFormikInput
                                         name="lastName" 
                                         value={values?.lastName}
                                         onChange={handleChange}
@@ -130,7 +131,7 @@ function AccountDetailMain ({ initData = {} }: any) {
 
                                 <FormControl>
                                     <FormLabel fontWeight={700}>* Email</FormLabel>
-                                    <Input 
+                                    <SecureFormikInput 
                                         name="email" 
                                         value={values?.email}
                                         onChange={handleChange}

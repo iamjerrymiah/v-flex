@@ -1,4 +1,4 @@
-import { Box, Button, Heading, HStack, Input, Select, SimpleGrid, Stack, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, Heading, HStack, Select, SimpleGrid, Stack, useDisclosure } from "@chakra-ui/react";
 import AnimateRoute from "../../common/AnimateRoute";
 import PageMainContainer from "../../common/PageMain";
 import MainAppLayout from "../../layouts/MainAppLayout";
@@ -16,6 +16,7 @@ import { BsFilter, BsSearch } from "react-icons/bs";
 import { Table, TableRow } from "../../common/Table/Table";
 import Pagination from "../../common/Pagination/Pagination";
 import Drawer from "../../common/Drawer";
+import { SecureInput } from "../../common/SecureInput";
 
 const tableHeads = ["S/N", "Date", "Payment Reference Id", "Order Number", "Amount", "Payment Method", "Payment Status", "Customer Name", "Customer Email", "Customer Phone",]
 function AdminPaymentMain ({ init = {}, payments = [], isLoading, filters, setFilters }:any) {
@@ -142,7 +143,7 @@ function AdminPaymentMain ({ init = {}, payments = [], isLoading, filters, setFi
                 body={
                     <Stack w='100%'>
                         <SimpleGrid columns={[1,2]} spacing={4} py={4}>
-                            <Input border={'1px solid gray'} placeholder={"Search Payment"} onChange={ (e) => setSearch((prev: any) => ({...prev, search: e.target.value })) }/>
+                            <SecureInput name="search" value={search?.search} border={'1px solid gray'} placeholder={"Search Payment"} onChange={ (e) => setSearch((prev: any) => ({...prev, search: e.target.value })) }/>
                             <Select border={'1px solid gray'} placeholder="Search Payment Status" onChange={ (e) => setSearch((prev: any) => ({...prev, paymentStatus: e.target.value })) }>
                                 {["pending", "successful", "failed", "cancelled"].map((status:any, i) => ( <option key={i} value={status}>{capCase(status)} </option> ))}
                             </Select>

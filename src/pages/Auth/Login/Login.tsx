@@ -1,4 +1,4 @@
-import { Box, Button, Flex, FormControl, Heading, Input, InputGroup, InputRightElement, SimpleGrid, Stack, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, Heading, InputGroup, InputRightElement, SimpleGrid, Stack, Text, VStack } from "@chakra-ui/react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import PageMainContainer from "../../../common/PageMain";
@@ -15,6 +15,7 @@ import {
     // useGoogleLogin, 
     useLogin 
 } from "../../../hooks/auth/AuthenticationHook";
+import { SecureFormikInput } from "../../../common/SecureFormikInput";
 // import { queryClient } from "../../../providers/QueryClientProvider";
 // import { SECHTTP } from "../../../utils/api";
 // import { storeToken } from "../../../constants/constants";
@@ -225,7 +226,7 @@ function LoginMain() {
                                 
                                 <Stack spacing={4} w="full">
                                     <FormControl>
-                                        <Input 
+                                        <SecureFormikInput 
                                             name="email" 
                                             value={values?.email}
                                             onChange={handleChange}
@@ -237,7 +238,7 @@ function LoginMain() {
 
                                     <FormControl>
                                         <InputGroup>
-                                            <Input
+                                            <SecureFormikInput
                                                 name="password" 
                                                 value={values?.password}
                                                 onChange={handleChange} 

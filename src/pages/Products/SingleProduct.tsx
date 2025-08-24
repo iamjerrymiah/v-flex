@@ -26,6 +26,7 @@ import { useAddProductToCart, useAddProductToWishlist, useGetUserCarts, useGetUs
 import Notify from "../../utils/notify";
 import { MdOutlineArrowBackIos } from "react-icons/md";
 import StatusChanger from "../../common/StatusChanger";
+import DOMPurify from "dompurify";
   
 const emptyProduct = {
     name: "-",
@@ -218,15 +219,6 @@ function SingleProductMain({
                     <Stack spacing={4}>
                         <Stack spacing={'-1'}>
                             <Text fontSize="2xl" fontWeight="bold">{capCase(product?.name)}</Text>
-                            {/* <Badge 
-                                px={2} py={1} 
-                                color={'white'} 
-                                w={product?.availability ? ['23%','15%'] : ['28%','20%']} 
-                                bgColor={product?.availability ? 'green.300' : 'red.400'} 
-                                borderRadius={'4px'}
-                            >
-                                {product?.availability ? "Available" : "Out of Stock" }
-                            </Badge> */}
 
                             <StatusChanger datum={product?.availability ? "Available" : "Out of Stock" }/>
 
@@ -238,6 +230,7 @@ function SingleProductMain({
 
                                 {product?.discount > 0 && <Badge px={2} py={1} bgColor={'#EA4B481A'} borderRadius={'30px'} color="#EA4B48">{product?.discount ?? "0"}% Off</Badge>}
                             </HStack>
+                            <Text fontSize={'sm'}>Availble Quantity: {moneyFormat(product?.quantity, true)}</Text>
                             <Divider mt={3}/>
 
                         </Stack>
@@ -274,7 +267,21 @@ function SingleProductMain({
 
                             <HStack>
                                 <Text>Quantity:</Text>
-                                <Input type="number" value={quantity} placeholder={"Quantity"} onChange={ (e) => setQuantity(e.target.value) }/>
+                                {/* <Input type="number" value={quantity} placeholder={"Quantity"} onChange={ (e) => setQuantity(e.target.value) }/> */}
+                                <Input 
+                                    type="number" 
+                                    value={quantity} 
+                                    placeholder="Quantity" 
+                                    required
+                                    onChange={(e) => {
+                                        const clean = DOMPurify.sanitize(e.target.value, {
+                                        ALLOWED_TAGS: [],
+                                        ALLOWED_ATTR: [],
+                                        });
+                                        const numericOnly = clean.replace(/[^0-9.-]/g, "");
+                                        setQuantity(numericOnly);
+                                    }} 
+                                />
                             </HStack>
 
                         </Stack>

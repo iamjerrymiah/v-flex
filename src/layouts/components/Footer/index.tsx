@@ -1,11 +1,16 @@
 // import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { MotionAnimator } from "../../../common/MotionAnimator";
 import { Link } from "react-router";
-import { Box, Image, SimpleGrid, Stack, Text } from "@chakra-ui/react";
+import { Box, Image, SimpleGrid, Stack, Text, useDisclosure } from "@chakra-ui/react";
 import { Container } from "../../../styling/layout";
 import vEditionLogo from "../../../assets/icons/v-edition-logo.png"
+import ModalCenter from "../../../common/ModalCenter";
+import Terms from "../../../common/Terms";
 
 export default function Footer ({}) {
+
+    const { isOpen, onOpen, onClose } = useDisclosure()
+
     return (
         <Container>
             <Box 
@@ -58,8 +63,8 @@ export default function Footer ({}) {
                             <Stack color={'#000'} fontSize={'14px'} spacing={2}>
                                 {/* <li><Link to="#" className="hover:text-white">Imprint</Link></li> */}
                                 <li><Link to="/contact-us" className="hover:text-white">Contact Us</Link></li>
-                                <li><Link to="#" className="hover:text-white">Privacy Policy</Link></li>
-                                <li><Link to="#" className="hover:text-white">Terms and Conditions</Link></li>
+                                {/* <li><Link to="#" className="hover:text-white">Privacy Policy</Link></li> */}
+                                <li><Box as='span' cursor={'pointer'} onClick={onOpen} className="hover:text-white">Terms and Conditions</Box></li>
                             </Stack>
                             {/* <HStack mt={['30px', '30px', '30px', '70px' ]} spacing={4}>
                                 <Link to="#"><FaInstagram color="#000" size={18} /></Link>
@@ -70,6 +75,13 @@ export default function Footer ({}) {
                         </div>
                     </SimpleGrid>
                 </MotionAnimator>
+
+                <ModalCenter 
+                    size='6xl'
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    body={(<Terms />)}
+                />
 
             </Box>
         </Container>

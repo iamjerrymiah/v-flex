@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, FormControl, FormLabel, Heading, HStack, Input, Select, SimpleGrid, Stack, Text, Textarea } from '@chakra-ui/react'
+import { Box, Button, Checkbox, FormControl, FormLabel, Heading, HStack, Select, SimpleGrid, Stack, Text, Textarea } from '@chakra-ui/react'
 import AnimateRoute from '../../common/AnimateRoute'
 import PageMainContainer from '../../common/PageMain'
 import MainAppLayout from '../../layouts/MainAppLayout'
@@ -17,6 +17,7 @@ import ImageUploader from '../../common/ImageUploader'
 import { capCase, isSuperUser } from '../../utils/utils'
 import { useGetAuthState } from '../../hooks/auth/AuthenticationHook'
 import Loader from '../../common/Loader'
+import { SecureFormikInput } from '../../common/SecureFormikInput'
 
 export interface AdminCreateProductProps {
     steps: { component: React.ComponentType; label: string }[];
@@ -204,7 +205,7 @@ function CreateProduct ({
 
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Product Name</FormLabel>
-                                <Input
+                                <SecureFormikInput
                                     name="name" 
                                     value={values?.name}
                                     onChange={handleChange}
@@ -215,7 +216,7 @@ function CreateProduct ({
 
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Price</FormLabel>
-                                <Input
+                                <SecureFormikInput
                                     name="price" 
                                     value={values?.price}
                                     onChange={handleChange}
@@ -227,7 +228,7 @@ function CreateProduct ({
 
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Quantity</FormLabel>
-                                <Input
+                                <SecureFormikInput
                                     name="quantity" 
                                     value={values?.quantity}
                                     onChange={handleChange}

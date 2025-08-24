@@ -3,7 +3,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ProductFilterProvider } from "./ProductFilterProvider";
 import { CategoryProvider } from "./CategoryContext";
 
@@ -32,7 +32,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
               {children}
           </CategoryProvider>
           </ProductFilterProvider>
-          <ReactQueryDevtools initialIsOpen={false} />
+          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </ChakraProvider>
       </CacheProvider>
     </QueryClientProvider>

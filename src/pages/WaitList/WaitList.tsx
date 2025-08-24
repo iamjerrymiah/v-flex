@@ -238,7 +238,13 @@ function WaitlistMain ({ wishLists = [], carts = {}, user = {}, isLoading, isAut
 
                             <HStack>
                                 <Text>Quantity:</Text>
-                                <Input type="number" value={quantity} placeholder={"Quantity"} onChange={ (e) => setQuantity(e.target.value) } required/>
+                                <Input 
+                                    type="number" 
+                                    value={quantity} 
+                                    placeholder={"Quantity"} 
+                                    onChange={ (e) => setQuantity(e.target.value) } 
+                                    required
+                                />
                             </HStack>
 
                             <HStack w={'full'} justify={'space-between'} spacing={3} mt={6}>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AdminCreateProductProps } from "./AdminCreateProductPage"
-import { Box, Button, Checkbox, Divider, FormControl, FormLabel, Grid, Heading, HStack, Image, Input, Select, SimpleGrid, Stack, Text, Textarea } from "@chakra-ui/react";
+import { Box, Button, Checkbox, Divider, FormControl, FormLabel, Grid, Heading, HStack, Image, Select, SimpleGrid, Stack, Text, Textarea } from "@chakra-ui/react";
 import PageMainContainer from "../../common/PageMain";
 import MainAppLayout from "../../layouts/MainAppLayout";
 import { Container } from "../../styling/layout";
@@ -22,6 +22,7 @@ import EditImageUploader from "../../common/EditImageUploader";
 import Notify from "../../utils/notify";
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 import Loader from "../../common/Loader";
+import { SecureFormikInput } from "../../common/SecureFormikInput";
 
 const emptyProduct = {
     name: "-",
@@ -357,7 +358,7 @@ function EditProduct({
 
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Product Name</FormLabel>
-                                <Input
+                                <SecureFormikInput
                                     name="name" 
                                     value={values?.name}
                                     onChange={handleChange}
@@ -368,7 +369,7 @@ function EditProduct({
 
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Price</FormLabel>
-                                <Input
+                                <SecureFormikInput
                                     name="price" 
                                     value={values?.price}
                                     onChange={handleChange}
@@ -380,7 +381,7 @@ function EditProduct({
 
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Quantity</FormLabel>
-                                <Input
+                                <SecureFormikInput
                                     name="quantity" 
                                     value={values?.quantity}
                                     onChange={handleChange}

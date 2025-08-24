@@ -1,9 +1,29 @@
-import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Box, Button, FormControl, FormLabel, Heading, HStack, IconButton, Input, Skeleton, Stack, Text, Tooltip, useDisclosure, VStack } from "@chakra-ui/react"
+import { 
+    Accordion, 
+    AccordionButton, 
+    AccordionItem, 
+    AccordionPanel, 
+    Box, 
+    Button, 
+    FormControl, 
+    FormLabel, 
+    Heading, 
+    HStack, 
+    IconButton, 
+    Skeleton, Stack, Text, Tooltip, useDisclosure, VStack } from "@chakra-ui/react"
 import PageMainContainer from "../../common/PageMain"
 import MainAppLayout from "../../layouts/MainAppLayout"
 import { Container } from "../../styling/layout"
 import AnimateRoute from "../../common/AnimateRoute"
-import { useAddCollectionCategory, useAddCollectionSubCategory, useDeleteCollection, useDeleteSubCollection, useEditCollectionCategory, useEditCollectionSubCategory, useGetProductCollections } from "../../hooks/products/collections"
+import { 
+    useAddCollectionCategory, 
+    useAddCollectionSubCategory, 
+    useDeleteCollection, 
+    useDeleteSubCollection, 
+    useEditCollectionCategory, 
+    useEditCollectionSubCategory, 
+    useGetProductCollections 
+} from "../../hooks/products/collections"
 import { MdAddToPhotos, MdOutlineArrowBackIos } from "react-icons/md"
 import { useNavigate } from "react-router"
 import { useEffect, useState } from "react"
@@ -18,6 +38,7 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 import EmptyListHero from "../../common/EmptyListHero"
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook"
 import Loader from "../../common/Loader"
+import { SecureInput } from "../../common/SecureInput"
 
 
 const CategoryManager = ({categories, isLoading}:any) => {
@@ -224,13 +245,13 @@ const CategoryManager = ({categories, isLoading}:any) => {
                             <FormControl>
                                 <FormLabel>* Category Name</FormLabel>
                                 {l == -1 ?
-                                    <Input
+                                    <SecureInput
                                         name="categoryName" 
                                         value={data?.categoryName}
                                         onChange={ (e) => setData((prev: any) => ({...prev, categoryName: e.target.value })) }
                                         required
                                     /> :
-                                    <Input
+                                    <SecureInput
                                         name="subCategoryName" 
                                         value={data?.subCategoryName}
                                         onChange={ (e) => setData((prev: any) => ({...prev, subCategoryName: e.target.value })) }
@@ -275,7 +296,7 @@ const CategoryManager = ({categories, isLoading}:any) => {
                         <Stack spacing={4}>
                             <FormControl>
                                 <FormLabel>* Category Name</FormLabel>
-                                    <Input
+                                    <SecureInput
                                         name="name" 
                                         value={data2?.name}
                                         onChange={ (e) => setData2((prev: any) => ({...prev, name: e.target.value })) }

@@ -1,4 +1,4 @@
-import { Box, Button, Flex, FormControl, FormLabel, Heading, Input, Stack, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, FormControl, FormLabel, Heading, Stack, Text } from '@chakra-ui/react'
 import { forgotPasswordSchema } from '../../../schema/auth';
 import { Form, Formik } from 'formik';
 import PageMainContainer from '../../../common/PageMain';
@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router';
 import { useEffect } from 'react';
 import { useGetAuthState, useResetPasswordLink } from '../../../hooks/auth/AuthenticationHook';
 import Notify from '../../../utils/notify';
+import { SecureFormikInput } from '../../../common/SecureFormikInput';
 
 function ForgotPasswordLinkMain() {
 
@@ -78,7 +79,7 @@ function ForgotPasswordLinkMain() {
                     <Form onSubmit={handleSubmit}>
                         <FormControl>
                             <FormLabel fontWeight={700}>* Email</FormLabel>
-                            <Input 
+                            <SecureFormikInput 
                                 name="email" 
                                 value={values?.email}
                                 onChange={handleChange}

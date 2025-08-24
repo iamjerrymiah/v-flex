@@ -1,4 +1,4 @@
-import { HStack, Box, Input, Stack, Button, SimpleGrid, useDisclosure, Select, useBreakpointValue, Tooltip } from '@chakra-ui/react';
+import { HStack, Box, Stack, Button, SimpleGrid, useDisclosure, Select, useBreakpointValue, Tooltip } from '@chakra-ui/react';
 import { useCategoryContext } from '../../../providers/CategoryContext';
 import { capCase } from '../../../utils/utils';
 import { IoReloadCircle } from "react-icons/io5";
@@ -8,6 +8,7 @@ import Drawer from '../../../common/Drawer';
 import { MdLockReset } from 'react-icons/md';
 import { IoMdMenu } from 'react-icons/io';
 import Sidebar from '../../../layouts/components/Header/sidebar';
+import { SecureInput } from '../../../common/SecureInput';
 
 interface TopNavProps {
   categories: any[];
@@ -110,7 +111,13 @@ const TopNav: React.FC<TopNavProps> = ({ categories, admin, filter, setFilter, s
                     </Button>
 
                     <HStack>
-                        <Input border={'1px solid gray'} placeholder={"Search any product"} onChange={ (e) => setSearch((prev: any) => ({...prev, search: e.target.value })) }/>
+                        <SecureInput 
+                            name='search'
+                            value={search?.search}
+                            border={'1px solid gray'} 
+                            placeholder={"Search any product"} 
+                            onChange={ (e) => setSearch((prev: any) => ({...prev, search: e.target.value })) }
+                        />
                         <Button leftIcon={<BsSearch />} color={'white'} bgColor={'blackAlpha.800'} onClick={onSearch} />
                     </HStack>
 
@@ -139,8 +146,22 @@ const TopNav: React.FC<TopNavProps> = ({ categories, admin, filter, setFilter, s
                 body={
                     <Stack w='100%'>
                         <SimpleGrid columns={[1,2,4]} spacing={4} py={4}>
-                            <Input border={'1px solid gray'} type="number" placeholder={"Search Min. Price"} onChange={ (e) => setSearch((prev: any) => ({...prev, minPrice: e.target.value })) }/>
-                            <Input border={'1px solid gray'} type="number" placeholder={"Search Max. Price"} onChange={ (e) => setSearch((prev: any) => ({...prev, maxPrice: e.target.value })) }/>
+                            <SecureInput 
+                                type="number" 
+                                name='minPrice'
+                                value={search?.minPrice} 
+                                border={'1px solid gray'} 
+                                placeholder={"Search Min. Price"} 
+                                onChange={ (e) => setSearch((prev: any) => ({...prev, minPrice: e.target.value })) }
+                            />
+                            <SecureInput
+                                type="number" 
+                                name='maxPrice'
+                                value={search?.maxPrice} 
+                                border={'1px solid gray'} 
+                                placeholder={"Search Max. Price"} 
+                                onChange={ (e) => setSearch((prev: any) => ({...prev, maxPrice: e.target.value })) }
+                            />
                             <Select border={'1px solid gray'} placeholder="Sort By" onChange={ (e) => setSearch((prev: any) => ({...prev, sortBy: e.target.value })) }>
                                 {["recent", "name", "most_used", "price"].map((status:any, i) => ( <option key={i} value={status}>{status == 'most_used' ? 'Most Used' : capCase(status)} </option> ))}
                             </Select>

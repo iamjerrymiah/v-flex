@@ -2,19 +2,22 @@ import PageMainContainer from '../../../common/PageMain'
 import MainAppLayout from '../../../layouts/MainAppLayout'
 import { Container } from '../../../styling/layout'
 import AnimateRoute from '../../../common/AnimateRoute'
-import { Select as ChakraSelect, Box, Button, Checkbox, Flex, FormControl, FormLabel, Grid, Heading, Input, InputGroup, InputRightElement, Stack, Text } from "@chakra-ui/react";
+import { Select as ChakraSelect, Box, Button, Checkbox, Flex, FormControl, FormLabel, Grid, Heading, InputGroup, InputRightElement, Stack, Text, useDisclosure } from "@chakra-ui/react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css"; 
 import SelectComponent from "react-select";
 import countryList from "react-select-country-list";
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 // import ReCAPTCHA from "react-google-recaptcha";
 import { Formik, Field, Form } from "formik";
 import { registerSchema } from '../../../schema/auth';
 import Notify from '../../../utils/notify';
 import { useCreateUser, useGetAuthState } from '../../../hooks/auth/AuthenticationHook';
+import ModalCenter from '../../../common/ModalCenter';
+import Terms from '../../../common/Terms';
+import { SecureFormikInput } from '../../../common/SecureFormikInput';
 
 
 function RegisterMain () {
@@ -25,6 +28,8 @@ function RegisterMain () {
     const countryOptions = countryList().getData();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
     const { mutateAsync, isPending } = useCreateUser()
 
@@ -110,7 +115,7 @@ function RegisterMain () {
                     
                                 <FormControl>
                                     <FormLabel fontWeight={700}>* First Name</FormLabel>
-                                    <Input
+                                    <SecureFormikInput
                                         name="firstName" 
                                         value={values?.firstName}
                                         onChange={handleChange}
@@ -123,7 +128,7 @@ function RegisterMain () {
                 
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Last Name</FormLabel>
-                                <Input 
+                                <SecureFormikInput 
                                     name="lastName" 
                                     value={values?.lastName}
                                     onChange={handleChange} 
@@ -158,7 +163,7 @@ function RegisterMain () {
                 
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Email</FormLabel>
-                                <Input 
+                                <SecureFormikInput 
                                     name="email" 
                                     value={values?.email}
                                     onChange={handleChange}
@@ -170,7 +175,7 @@ function RegisterMain () {
                 
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Confirm Email</FormLabel>
-                                <Input 
+                                <SecureFormikInput 
                                     name="confirmEmail" 
                                     value={values?.confirmEmail}
                                     onChange={handleChange}
@@ -183,7 +188,7 @@ function RegisterMain () {
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Password</FormLabel>
                                 <InputGroup>
-                                    <Input 
+                                    <SecureFormikInput 
                                         name="password" 
                                         value={values?.password}
                                         onChange={handleChange} 
@@ -208,7 +213,7 @@ function RegisterMain () {
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Confirm Password</FormLabel>
                                 <InputGroup>
-                                    <Input 
+                                    <SecureFormikInput 
                                         name="confirmPassword"  
                                         value={values?.confirmPassword}
                                         onChange={handleChange}
@@ -239,7 +244,7 @@ function RegisterMain () {
                             
                             <Text fontSize="15px" color={'gray'}>
                                 By clicking "Create Account", I consent to commercial promotion activities related to V-Edition Group Brands <br />
-                                by e-mail and/or text messages according to the <Link to={'#'}><Box as='span' textDecor={'underline'}>Privacy Policy. </Box></Link>   
+                                by e-mail and/or text messages according to the <Box as='span' textDecor={'underline'} onClick={onOpen}>Terms & Conditions. </Box>   
                             </Text>
                         </Stack>
 
@@ -262,6 +267,13 @@ function RegisterMain () {
                     </Form>
                 )}
                 </Formik>
+
+                <ModalCenter 
+                    size='6xl'
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    body={(<Terms />)}
+                />
             </Box>
       </Flex>
     )

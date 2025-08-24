@@ -1,4 +1,4 @@
-import { Box, Button, Flex, FormControl, FormLabel, Heading, Input, InputGroup, InputRightElement, Stack, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, FormControl, FormLabel, Heading, InputGroup, InputRightElement, Stack, Text } from '@chakra-ui/react'
 import { Form, Formik } from 'formik';
 import { changePasswordSchema } from '../../../schema/auth';
 import Notify from '../../../utils/notify';
@@ -12,6 +12,7 @@ import { Container } from '../../../styling/layout';
 import AnimateRoute from '../../../common/AnimateRoute';
 import Loader from '../../../common/Loader';
 import { MdOutlineArrowBackIos } from 'react-icons/md';
+import { SecureFormikInput } from '../../../common/SecureFormikInput';
 
 function ChangePasswordMain () {
 
@@ -82,7 +83,7 @@ function ChangePasswordMain () {
                         <FormControl mb={4}>
                             <FormLabel fontWeight={700}>* Old Password</FormLabel>
                             <InputGroup>
-                                <Input 
+                                <SecureFormikInput 
                                     name="oldPassword" 
                                     value={values?.oldPassword}
                                     onChange={handleChange} 
@@ -107,7 +108,7 @@ function ChangePasswordMain () {
                         <FormControl>
                             <FormLabel fontWeight={700}>* Confirm Password</FormLabel>
                             <InputGroup>
-                                <Input 
+                                <SecureFormikInput 
                                     name="newPassword"  
                                     value={values?.newPassword}
                                     onChange={handleChange}

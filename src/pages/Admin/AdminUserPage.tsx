@@ -1,4 +1,4 @@
-import { Box, Button, Heading, HStack, Input, Select, SimpleGrid, Spinner, Stack, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, Heading, HStack, Select, SimpleGrid, Spinner, Stack, Text, useDisclosure } from "@chakra-ui/react";
 import AnimateRoute from "../../common/AnimateRoute";
 import PageMainContainer from "../../common/PageMain";
 import MainAppLayout from "../../layouts/MainAppLayout";
@@ -21,6 +21,7 @@ import DataInfo from "../../common/DataInfo";
 import { FaUsers } from "react-icons/fa";
 import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 import Loader from "../../common/Loader";
+import { SecureInput } from "../../common/SecureInput";
 
 const tableHeads = ["S/N", "Salutation", "First Name", "Last Name", "Email", "Phone Number", "Is Email Verified?", "Status", ""]
 function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters, isSuperAdmin }: any) {
@@ -218,7 +219,13 @@ function AdminUserMain ({ init = {}, users = [], isLoading, filters, setFilters,
                 body={
                     <Stack w='100%'>
                         <SimpleGrid columns={[1, 2]} spacing={4} py={4}>
-                            <Input border={'1px solid gray'} placeholder={"Search User"} onChange={ (e) => setSearch((prev: any) => ({...prev, search: e.target.value })) }/>
+                            <SecureInput 
+                                name="search" 
+                                value={search?.search} 
+                                border={'1px solid gray'} 
+                                placeholder={"Search User"} 
+                                onChange={ (e) => setSearch((prev: any) => ({...prev, search: e.target.value })) }
+                            />
                         </SimpleGrid>
                     </Stack>
 

@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { MdEmail, MdLocationOn, MdPhone } from "react-icons/md";
 
-import contactImg from "../../assets/images/contact.png"
+// import contactImg from "../../assets/images/contact.png"
 import vEditionImg from "../../assets/images/vEditionContact.png"
 import { Container } from "../../styling/layout";
 
@@ -44,29 +44,45 @@ function ContactMain () {
   
           {/* Contact Info */}
           <Stack spacing={6} flex={1} justify="center">
-            <Heading fontSize="2xl" letterSpacing="wider" mb={2}>
+            <Stack >
+              <Heading fontSize="2xl" letterSpacing="wider" mb={2}>
               GET IN TOUCH
             </Heading>
             <Flex align="center" gap={3}>
-              <MdEmail size={24}/>
-              <Text fontWeight={500} fontSize="lg">info@vedition.com</Text>
+              <MdEmail size={30}/>
+              <Box>
+                <Text fontWeight={500} fontSize="md">veditionlinegroup@gmail.com</Text>
+                <Text fontWeight={500} fontSize="md">vincentamaechi@gmail.com</Text>
+              </Box>
             </Flex>
             <Flex align="center" gap={3}>
               <MdPhone size={24}/>
-              <Text fontWeight={500} fontSize="lg">+1 234 567 890</Text>
+              <Text fontWeight={500} fontSize="lg">0619504722</Text>
             </Flex>
             <Flex align="center" gap={3}>
               <MdLocationOn size={24}/>
               <Text fontWeight={500} fontSize="lg">
-                1234 Fashion Ave, New York, NY 10018
+                Fellonoord 39, 5612 AA Eindhoven.
               </Text>
             </Flex>
+            </Stack>
+
+              <Box mt={4}>
+            {/* <Heading fontSize="2xl" fontWeight={700} letterSpacing="wide" mb={6}>
+              ABOUT V-EDITION
+            </Heading> */}
+            <Text color="gray.600" lineHeight="tall">
+              V-Edition is an innovative brand specializing in contemporary fashion and accessories.
+              We pride ourselves on the construction of high-quality, stylish designs that elevate everyday wear.
+              <br />
+              Our goal is simple: timeless fashion, curated experiences, and exceptional customer satisfaction — always.
+              Reach out for more information or assistance.
+            </Text>
+          </Box>
           </Stack>
         </Flex>
   
-        {/* ABOUT SECTION */}
-        <Flex direction={["column", "row-reverse"]} gap={[8, 12]} align="center">
-          {/* Building Image */}
+        {/* <Flex direction={["column", "row-reverse"]} gap={[8, 12]} align="center">
           <Box flex={1}>
             <Image 
               src={contactImg}
@@ -78,7 +94,6 @@ function ContactMain () {
             />
           </Box>
   
-          {/* About Text */}
           <Box flex={1}>
             <Heading fontSize="2xl" fontWeight={700} letterSpacing="wide" mb={6}>
               ABOUT V-EDITION
@@ -91,7 +106,7 @@ function ContactMain () {
               Reach out for more information or assistance.
             </Text>
           </Box>
-        </Flex>
+        </Flex> */}
       </Box>
     )
 }
