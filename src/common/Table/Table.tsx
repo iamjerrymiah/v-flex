@@ -80,7 +80,7 @@ export function TableRow({ data = [], onClickRow, rowData, options, noIndexPad }
                     ): allLower(datum) === 'pending' ? (
                         <Tag colorScheme='gray' size='sm'>{datum}</Tag>
                     ) : (
-                        <Text fontSize={['14px']}>{datum}</Text>
+                        <Box fontSize={['14px']}>{datum}</Box>
                     )}
                 </Td>
             ))}

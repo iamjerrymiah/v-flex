@@ -18,9 +18,8 @@ import { useGetAuthState } from "../../hooks/auth/AuthenticationHook";
 import { withImg } from "../Products/AdminProductPage";
 import { SecureInput } from "../../common/SecureInput";
 
-const statusHistory = [ "order placed", "pending payment", "payment successful", "waiting to be shipped" ];
-
-// const backendStatuses = [ "order placed", "payment successful" ];
+const statusHistory = [ "order placed", "pending payment", "payment successful", "waiting to be shipped", 'out for delivery', 'delivered',  ];
+// const backendStatuses = [ "order placed", "payment successful", 'shipped', 'failed', 'cancelled' ];
 
 export function TextDetails ({
     title,

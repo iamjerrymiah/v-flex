@@ -43,6 +43,9 @@ function WaitlistMain ({ wishLists = [], carts = {}, user = {}, isLoading, isAut
     const [selectedColor, setSelectedColor] = useState<string>("");
     const [selectedSize, setSelectedSize] = useState<string>("");
     const [quantity, setQuantity] = useState<any>(1);
+
+    const colors = selected?.variants?.map((v:any) => v.color) || [];
+    const sizes = selected?.variants?.find((v:any) => v.color === selectedColor)?.sizes.map((s:any) => s.size) || [];
     
     const {isOpen, onOpen, onClose } = useDisclosure()
 
@@ -53,6 +56,9 @@ function WaitlistMain ({ wishLists = [], carts = {}, user = {}, isLoading, isAut
 
     const closed = () => {
         setSelected({})
+        setQuantity(1)
+        setSelectedSize("")
+        setSelectedColor("")
         onClose()
     }
 
@@ -63,8 +69,8 @@ function WaitlistMain ({ wishLists = [], carts = {}, user = {}, isLoading, isAut
         try {
             const res:any =  await addCartAction({
                 product: data?._id,
-                size: selectedSize ?? data?.sizes[0],
-                color: selectedColor ?? data?.colors[0],
+                size: selectedSize,
+                color: selectedColor,
                 quantity: quantity ?? 1
             })
             Notify.success("Product added to cart successfully.")
@@ -117,16 +123,15 @@ function WaitlistMain ({ wishLists = [], carts = {}, user = {}, isLoading, isAut
                 </Button>
 
                 <Box flex={3} borderRadius="xl">
-                        {isLoading ? (
-                            <>
-                                <PageSk tiny/>
-                            </>
-                        ) :
+                        {isLoading ? ( <><PageSk tiny/> </>) :
                          wishLists?.length <= 0 ? (
                             <Center mt={[4, 10]}>
                                 <EmptyListHero
                                     w="400px"
-                                    text={isAuthenticated ? "You have no items on your wish list." : "You need to log in to access your wish list!" }
+                                    text={isAuthenticated ? 
+                                        "You have no items on your wish list." : 
+                                        "You need to log in to access your wish list!" 
+                                    }
                                 />
                             </Center>
                         ) :
@@ -218,23 +223,25 @@ function WaitlistMain ({ wishLists = [], carts = {}, user = {}, isLoading, isAut
                     <form onSubmit={(e) => { e?.preventDefault(); handleAddCart(selected); }}>
                         <Stack spacing={4}>
                             <HStack>
-                                <Text w={'13%'}>Size:</Text>
-                                <Select mb={4} value={selectedSize} onChange={(e) => setSelectedSize(e.target.value)} required>
-                                    <option value={""}>{"Select Size"}</option>
-                                    {selected?.sizes?.map((size:any, index:any) => (
-                                        <option key={index} value={size}>{size}</option>
-                                    ))}
-                                </Select>
-                            </HStack>
-                            <HStack>
                                 <Text w={'13%'}>Color:</Text>
                                 <Select mb={4} value={selectedColor} onChange={(e) => setSelectedColor(e.target.value)} required>
                                     <option value={""}>{"Select Color"}</option>
-                                    {selected?.colors?.map((size:any, index:any) => (
+                                    {colors?.map((size:any, index:any) => (
                                         <option key={index} value={size}>{size}</option>
                                     ))}
                                 </Select>
                             </HStack>
+                            {selectedColor && 
+                            <HStack>
+                                <Text w={'13%'}>Size:</Text>
+                                <Select mb={4} value={selectedSize} onChange={(e) => setSelectedSize(e.target.value)} required>
+                                    <option value={""}>{"Select Size"}</option>
+                                    {sizes?.map((size:any, index:any) => (
+                                        <option key={index} value={size}>{size}</option>
+                                    ))}
+                                </Select>
+                            </HStack>
+                            }
 
                             <HStack>
                                 <Text>Quantity:</Text>
@@ -264,7 +271,7 @@ function WaitlistMain ({ wishLists = [], carts = {}, user = {}, isLoading, isAut
                                     isDisabled={cartPend || selectedColor == "" || selectedSize == ""}
                                     isLoading={cartPend}
                                 >
-                                    Save
+                                    Add
                                 </Button>
                                 
                             </HStack>

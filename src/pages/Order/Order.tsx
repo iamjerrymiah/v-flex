@@ -5,7 +5,7 @@ import MainAppLayout from "../../layouts/MainAppLayout"
 import { Container } from "../../styling/layout"
 import { MdLockReset, MdOutlineArrowBackIos } from "react-icons/md"
 import { useNavigate } from "react-router"
-import { useGetAllOrders, useGetOrder } from "../../hooks/orders/orders"
+import { useGetAllOrders, useGetOrder, useUpdateOrderStatus } from "../../hooks/orders/orders"
 import { Table, TableRow } from "../../common/Table/Table"
 import { allCaps, capCase, isSuperUser, moneyFormat, prettyDateFormat } from "../../utils/utils"
 import { useEffect, useState } from "react"
@@ -20,6 +20,8 @@ import { useGetAuthState } from "../../hooks/auth/AuthenticationHook"
 import Loader from "../../common/Loader"
 import Notify from "../../utils/notify"
 import { SecureInput } from "../../common/SecureInput"
+import ConfirmModal from "../../common/ConfirmModal"
+import { useConfirmAction } from "../../utils/useActions"
 
 
 const tableHeads = ["S/N", "Date", "orderNumber", "Total Amount Paid", "Payment Method", "Payment Status", "Delivery Status", ""]
@@ -34,6 +36,9 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
 
     const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure()
     const { isOpen: isOpenFilter, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure()
+    // const { openConfirm: openCancel, closeConfirm: closeCancel, isOpenConfirm: isOpenCancel, current: currentCancel } = useConfirmAction()
+    const { openConfirm: openDelivered, closeConfirm: closeDelivered, isOpenConfirm: isOpenDelivered, current: currentDelivered } = useConfirmAction()
+    // const { openConfirm: openOutForDelivery, closeConfirm: closeOutForDelivery, isOpenConfirm: isOpenOutForDelivery, current: currentOutForDelivery } = useConfirmAction()
 
     const selectedInfo = (d: any) => {
         setSelected(d)
@@ -55,6 +60,20 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
 
     const changePage = ({ selected = 0 }) => {
         setFilters({ ...filters, page: selected + 1 });
+    }
+
+    // const getCancel = (data: any) => { openCancel(data) }
+    const getDelivered = (data: any) => { openDelivered(data) }
+    // const getOutForDelievery = (data: any) => { openOutForDelivery(data) }
+
+    const { mutateAsync: updateDeliveryStatus } = useUpdateOrderStatus()
+    const handleStatuses = async ({ status, current }: { status: string, current: any }) => {
+        try { 
+            const res:any = await updateDeliveryStatus({orderId: current?._id, status: status}) 
+            Notify.success('Success')
+            return res
+        }
+        catch(e:any){ Notify.error(e?.message ?? 'Failed'); return e; }
     }
 
     const dataInformationArray = [
@@ -141,6 +160,9 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
                         noIndexPad
                         options={[
                             {name: "View", onUse: () => { selectedInfo(item) }},
+                            // {name: "Out for delivery", color: 'blue', onUse: () => { getOutForDelievery(item) }},
+                            {name: "Deliver Order", color: 'green', onUse: () => { getDelivered(item) }},
+                            // {name: "Cancel Order", color: 'red', onUse: () => { getCancel(item) }},
                         ]}
                     />
                 )}
@@ -151,6 +173,25 @@ function OrdersMain ({ init = {}, orders = [], isLoading, filters, setFilters }:
                 currentPage={init?.currentPage}
                 pageCount={init?.totalPages}
             />
+
+            {/* <ConfirmModal
+                isOpen={isOpenCancel}
+                onConfirm={() => handleStatuses({ status: 'cancelled', current: currentCancel })}
+                onClose={closeCancel}
+                message={'Are you sure you want to cancel this order?'}
+            /> */}
+
+            <ConfirmModal
+                isOpen={isOpenDelivered}
+                onConfirm={() => handleStatuses({ status: 'delivered', current: currentDelivered })}
+                onClose={closeDelivered}
+            />
+
+            {/* <ConfirmModal
+                isOpen={isOpenOutForDelivery}
+                onConfirm={() => handleStatuses({ status: 'out for delivery', current: currentOutForDelivery })}
+                onClose={closeOutForDelivery}
+            /> */}
 
             <ModalCenter 
                 size={'3xl'}

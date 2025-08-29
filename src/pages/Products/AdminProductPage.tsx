@@ -29,7 +29,7 @@ export function withImg (datum:any, img?:any) {
     )
 }
 
-const tableHeads = ["S/N", "Product", "Price", "Quantity", "Is Available", "Is Disabled", ""]
+const tableHeads = ["S/N", "Product", "Price", "Is Available", "Is Disabled", ""]
 function AdminProductMain ({ products = [], isLoading = false, init, filters, setFilters }:any) {
 
     const navigate = useNavigate()
@@ -91,7 +91,7 @@ function AdminProductMain ({ products = [], isLoading = false, init, filters, se
                             (index + 1 ),
                             withImg(item?.name, item?.mainImage),
                             `€ ${moneyFormat(item?.price ?? 0)}`,
-                            item?.quantity ?? "-",
+                            // item?.quantity ?? "-",
                             item?.availability == true ? "Yes" : "No",
                             item?.disabled == true ? "Disabled" : "Enabled",
                         ]}

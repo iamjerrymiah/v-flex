@@ -38,6 +38,18 @@ export const useCreateOrder = () => {
     });
 };
 
+export const useUpdateOrderStatus = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data :any) => {
+            return customMutationRequest("SECURITY", `/order/delivery/status`, 'PATCH', data).then((res:any) => res)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [`${key}-admin`] });
+        },
+    });
+};
+
 export const useGetAllOrders = (params:any) => {
     let queries = !!params ? queryString.stringify(params) : '';
     return useQuery({

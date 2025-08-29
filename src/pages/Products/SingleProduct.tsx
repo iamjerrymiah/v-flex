@@ -37,7 +37,9 @@ const emptyProduct = {
     images: [],
     details: [],
     colors: [],
-    sizes: []
+    sizes: [],
+    categories: [],
+    variants: []
 };
 
 function SingleProductMain({ 
@@ -120,10 +122,16 @@ function SingleProductMain({
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, []);
 
-    useEffect(() => { 
-        setSelectedColor(product?.colors[0]) 
-        setSelectedSize(product?.sizes[0]) 
-    }, [product?.colors[0], product?.sizes[0]])
+    const colors = product?.variants?.map((v:any) => v.color) || [];
+    const sizes = product?.variants?.find((v:any) => v.color === selectedColor)?.sizes.map((s:any) => s.size) || [];
+
+    useEffect(() => { if (sizes.length > 0) {setSelectedSize(sizes[0]); }}, [sizes]);
+    useEffect(() => { if (colors.length > 0 && !selectedColor) {setSelectedColor(colors[0]); }}, [colors]);
+
+    // useEffect(() => { 
+    //     setSelectedColor(product?.colors[0]) 
+    //     setSelectedSize(product?.sizes[0]) 
+    // }, [product?.colors[0], product?.sizes[0]])
 
     const oldPrice = product?.price / (1 - product?.discount / 100);
 
@@ -140,10 +148,7 @@ function SingleProductMain({
                 </Button>
             </HStack>
 
-            {isLoading ? (
-                <>  
-                    <PageSk />
-                </>
+            {isLoading ? (<> <PageSk /> </>
             ) :
             <Grid 
                 templateColumns={["1fr","1fr","1fr","1.5fr 1fr"]} 
@@ -181,7 +186,7 @@ function SingleProductMain({
                         <Box position="relative">
                             <Image 
                                 src={productImages[selectedIndex] ?? noProductImg} 
-                                alt={product.name} 
+                                alt={product?.name} 
                                 borderRadius="md"
                                 objectFit={'contain'}
                                 w={["100%","100%","100%",'700px']}
@@ -230,7 +235,7 @@ function SingleProductMain({
 
                                 {product?.discount > 0 && <Badge px={2} py={1} bgColor={'#EA4B481A'} borderRadius={'30px'} color="#EA4B48">{product?.discount ?? "0"}% Off</Badge>}
                             </HStack>
-                            <Text fontSize={'sm'}>Availble Quantity: {moneyFormat(product?.quantity, true)}</Text>
+                            <Text fontSize={'sm'}>Availble Quantity: {moneyFormat(product?.totalQuantity, true)}</Text>
                             <Divider mt={3}/>
 
                         </Stack>
@@ -240,15 +245,19 @@ function SingleProductMain({
 
                         <Stack spacing={2}>
 
-                            <Text fontWeight="bold" mb={2}>COLOR: <Text as="span" fontWeight="normal">{capCase(selectedColor)}</Text></Text>
+                            {/* <Text fontWeight="bold" mb={2}>COLOR: <Text as="span" fontWeight="normal">{capCase(selectedColor)}</Text></Text> */}
+                            <Text fontWeight="bold" mb={2}> COLOR:{" "}
+                                <Text as="span" fontWeight="normal">{capCase(selectedColor) || "Select"}</Text>
+                            </Text>
                             <HStack spacing={2} mb={4}>
-                                {product?.colors?.map((color:any, index:any) => (
-                                <Box 
-                                    key={index} 
-                                    w="24px" h="24px" 
-                                    bg={color} 
+                                {colors?.map((color:any, index:any) => (
+                                <Box
+                                    key={index}
+                                    w="24px"
+                                    h="24px"
+                                    bg={color}
                                     border="2px solid"
-                                    borderColor={selectedColor === color ? "black" : "gray.300"} 
+                                    borderColor={selectedColor === color ? "black" : "gray.300"}
                                     borderRadius="full"
                                     cursor="pointer"
                                     onClick={() => setSelectedColor(color)}
@@ -257,11 +266,15 @@ function SingleProductMain({
                             </HStack>
 
                             <HStack>
-                                <Text w={'13%'}>Size:</Text>
-                                <Select mb={4} value={selectedSize} onChange={(e) => setSelectedSize(e.target.value)}>
-                                    {product?.sizes?.map((size:any, index:any) => (
-                                        <option key={index} value={size}>{size}</option>
-                                    ))}
+                                <Text w={"13%"}>Size:</Text>
+                                <Select
+                                mb={4}
+                                value={selectedSize}
+                                onChange={(e) => setSelectedSize(e.target.value)}
+                                >
+                                {sizes?.map((size:any, index:any) => (
+                                    <option key={index} value={size}> {size}</option>
+                                ))}
                                 </Select>
                             </HStack>
 
@@ -378,7 +391,7 @@ export default function SingleProduct () {
         sortBy: 'recent',
         order: 'shuffle',
         limit: 20,
-        categoryId: product?.categories[0]?._id
+        categoryId: product?.categoryId ?? ""
     })
 
     const { data: recommendData = {}, isLoading: recLoad } = useGetProducts(filter)
@@ -387,9 +400,9 @@ export default function SingleProduct () {
     useEffect(() => {
         setFilter((prev) => ({
             ...prev,
-            categoryId: product?.categories[0]?._id || "",
+            categoryId: product?.categoryId || "",
         }));
-    }, [product?.categories[0]?._id]);
+    }, [product?.categoryId]);
 
 
     return(

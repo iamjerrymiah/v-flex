@@ -1,23 +1,24 @@
-import { Box, Button, Checkbox, FormControl, FormLabel, Heading, HStack, Select, SimpleGrid, Stack, Text, Textarea } from '@chakra-ui/react'
+import { Box, Button, Checkbox, FormControl, FormLabel, Heading, HStack, NumberInput, NumberInputField, Select, SimpleGrid, Stack, Text, Textarea, VStack } from '@chakra-ui/react'
 import AnimateRoute from '../../common/AnimateRoute'
 import PageMainContainer from '../../common/PageMain'
 import MainAppLayout from '../../layouts/MainAppLayout'
 import { Container } from '../../styling/layout'
 import { useEffect, useState } from 'react'
-import { MdOutlineArrowBackIos } from 'react-icons/md'
+import { MdCancel, MdOutlineArrowBackIos } from 'react-icons/md'
 import { useNavigate } from 'react-router'
 import { productSchema } from '../../schema/auth'
 import { Field, Form, Formik } from 'formik'
 import Notify from '../../utils/notify'
 import { useAddProductImages, useCreateProduct } from '../../hooks/products/products'
 import { useGetProductCollections } from '../../hooks/products/collections'
-import CreatableSelect from 'react-select/creatable';
+// import CreatableSelect from 'react-select/creatable';
 import ReactSelect from 'react-select';
 import ImageUploader from '../../common/ImageUploader'
-import { capCase, isSuperUser } from '../../utils/utils'
+import { allLower, capCase, isSuperUser } from '../../utils/utils'
 import { useGetAuthState } from '../../hooks/auth/AuthenticationHook'
 import Loader from '../../common/Loader'
 import { SecureFormikInput } from '../../common/SecureFormikInput'
+import { SecureInput } from '../../common/SecureInput'
 
 export interface AdminCreateProductProps {
     steps: { component: React.ComponentType; label: string }[];
@@ -111,8 +112,13 @@ function CreateProduct ({
 
     const { mutateAsync, isPending } = useCreateProduct()
     const handleProduct = async (data: any) => {
+
         try {
-            const payload: any = await mutateAsync({ ...data, image: file })
+            const payload: any = await mutateAsync({ 
+                ...data, 
+                variants: JSON.stringify(variants), 
+                image: file 
+            })
             setRes(payload)
             Notify.success("Product Successfully Created!")
             goToNextStep()
@@ -148,6 +154,48 @@ function CreateProduct ({
     };
 
     const numberHundredArray = Array(100).fill(1).map((n, i) => n + i)
+
+    const [variants, setVariants] = useState<any[]>([]);
+    const [newColor, setNewColor] = useState("");
+
+    // Add new color
+    const handleAddColor = () => {
+        if (!newColor.trim()) return;
+        setVariants([...variants, { color: newColor, sizes: [] }]);
+        setNewColor("");
+    };
+
+    // Add size + qty for a given color index
+    const handleAddSize = (index: number) => {
+        const updated = [...variants];
+        updated[index].sizes.push({ size: "", quantity: 0 });
+        setVariants(updated);
+    };
+
+    // Update size/quantity values
+    const handleUpdateSize = (
+        colorIndex: number,
+        sizeIndex: number,
+        field: "size" | "quantity",
+        value: string | number
+    ) => {
+        const updated = [...variants];
+        if (field === "size") {updated[colorIndex].sizes[sizeIndex].size = value as string;
+        } else { updated[colorIndex].sizes[sizeIndex].quantity = Number(value); }
+        setVariants(updated);
+    };
+
+    const handleRemoveColor = (colorIndex: number) => {
+        setVariants((prev: any[]) => prev.filter((_, i) => i !== colorIndex));
+    };
+
+    const handleRemoveSize = (colorIndex: number, sizeIndex: number) => {
+        setVariants((prev: any[]) => {
+            const updated = [...prev];
+            updated[colorIndex].sizes = updated[colorIndex].sizes.filter((_: any, i: number) => i !== sizeIndex);
+            return updated;
+        });
+    };
     
     return (
         <Box w='full' py={6}>
@@ -169,9 +217,9 @@ function CreateProduct ({
                 initialValues={{
                     name: "",
                     price: "",
-                    quantity: "",
-                    sizes: "",
-                    colors: "",
+                    // quantity: "",
+                    // sizes: "",
+                    // colors: "",
                     freeShipping: false,
                     availability: true,
                     category: "",
@@ -201,7 +249,7 @@ function CreateProduct ({
                     return (
                     <Form onSubmit={handleSubmit}>
 
-                        <SimpleGrid columns={[ 1, 2, 2, 3 ]} spacing={6}>
+                        <SimpleGrid columns={[ 1, 2 ]} spacing={6}>
 
                             <FormControl>
                                 <FormLabel fontWeight={700}>* Product Name</FormLabel>
@@ -224,18 +272,6 @@ function CreateProduct ({
                                     required
                                 />
                                 {errors?.price && <Text fontSize={'12px'} color={'red.400'}>{`${errors?.price}`}</Text>}
-                            </FormControl>
-
-                            <FormControl>
-                                <FormLabel fontWeight={700}>* Quantity</FormLabel>
-                                <SecureFormikInput
-                                    name="quantity" 
-                                    value={values?.quantity}
-                                    onChange={handleChange}
-                                    type='number'
-                                    required
-                                />
-                                {errors?.quantity && <Text fontSize={'12px'} color={'red.400'}>{`${errors?.quantity}`}</Text>}
                             </FormControl>
 
                             <FormControl>
@@ -288,49 +324,6 @@ function CreateProduct ({
                             </FormControl>
 
                             <FormControl>
-                                <FormLabel fontWeight={700}>* Colors</FormLabel>
-
-                                <CreatableSelect
-                                    isMulti
-                                    required
-                                    placeholder="Type and press enter..."
-                                    value={(values?.colors || '').split(', ').filter(c => c).map(color => ({ label: color, value: color }))}
-                                    onChange={(selectedOptions:any) => {
-                                    const colorsString = selectedOptions.map((option:any) => option.value).join(', ');
-                                        setFieldValue('colors', colorsString);
-                                    }}
-                                    styles={{
-                                    control: (base:any) => ({
-                                        ...base,
-                                        borderColor: errors?.colors ? "red" : base.borderColor,
-                                    }),
-                                    }}
-                                />
-
-                                {errors?.colors && (<Text fontSize="12px" color="red.400"> {`${errors?.colors}`} </Text>)}
-                            </FormControl>
-
-                            <FormControl>
-                                <FormLabel fontWeight={700}>* Sizes</FormLabel>
-                                <CreatableSelect
-                                    isMulti
-                                    required
-                                    placeholder="Type and press enter..."
-                                    value={(values?.sizes || '').split(',').filter(c => c).map(size => ({ label: size, value: size }))}
-                                    onChange={(selectedOptions:any) => {
-                                    const sizeString = selectedOptions.map((option:any) => option.value).join(',');
-                                        setFieldValue('sizes', sizeString);
-                                    }}
-                                    styles={{
-                                    control: (base:any) => ({
-                                        ...base,
-                                        borderColor: errors?.colors ? "red" : base.borderColor,
-                                    }),
-                                    }}
-                                />
-                            </FormControl>
-
-                            <FormControl>
                                 <FormLabel fontWeight={700}>Discount</FormLabel>
                                 <Select name="discount" value={values?.discount} onChange={handleChange}>
                                     {numberHundredArray?.map((status:any, i) => ( <option key={i} value={status}>{capCase(status)} </option> ))}
@@ -352,6 +345,64 @@ function CreateProduct ({
 
 
                         </SimpleGrid>
+
+                        <Box w={['100%', '100%', '100%', '60%']} mt={4}>
+
+                            <FormControl mb={4}>
+                                <FormLabel fontWeight={700}>Color</FormLabel>
+                                <HStack>
+                                    <SecureInput
+                                        placeholder="Enter color (e.g. black)"
+                                        value={newColor}
+                                        onChange={(e:any) => setNewColor(allLower(e.target.value))}
+                                    />
+                                    <Button onClick={handleAddColor}>Add</Button>
+                                </HStack>
+                            </FormControl>
+
+                            <VStack align="stretch" spacing={6}>
+                                {variants?.map((variant, colorIndex) => (
+                                    <Box key={colorIndex} p={4} border="1px solid #ddd" borderRadius="md">
+                                        <Box mb={2}>
+                                            <Text fontWeight="bold" mb={2}> Color: {capCase(variant.color)}</Text>
+                                            <HStack>
+                                                <Button size="sm" onClick={() => handleAddSize(colorIndex)}>Add Variant </Button>
+                                                <Button size='sm' colorScheme="red" leftIcon={<MdCancel />} onClick={() => handleRemoveColor(colorIndex)} />
+                                            </HStack>
+                                        </Box>
+
+                                        {/* List sizes */}
+                                        {variant?.sizes.map((s:any, sizeIndex:any) => (
+                                            <HStack key={sizeIndex} mb={2}>
+                                                <SecureInput
+                                                    placeholder="Size"
+                                                    value={s.size}
+                                                    onChange={(e) =>
+                                                        handleUpdateSize(colorIndex, sizeIndex, "size", allLower(e.target.value))
+                                                    }
+                                                />
+                                                <NumberInput
+                                                    min={0}
+                                                    value={s.quantity}
+                                                    onChange={(_, valueAsNumber) =>
+                                                        handleUpdateSize(colorIndex, sizeIndex, "quantity", valueAsNumber)
+                                                    }
+                                                >
+                                                    <NumberInputField placeholder="Quantity" />
+                                                </NumberInput>
+
+                                                <Button
+                                                    size="xs"
+                                                    colorScheme="red"
+                                                    leftIcon={<MdCancel />}
+                                                    onClick={() => handleRemoveSize(colorIndex, sizeIndex)}
+                                                />
+                                            </HStack>
+                                        ))}
+                                    </Box>
+                                ))}
+                            </VStack>
+                        </Box>
 
                         <Stack w={'100%'} mt={10} spacing={6}>
                             <FormControl w={['100%', '100%', '100%', '60%']} mb={4}>
@@ -387,7 +438,7 @@ function CreateProduct ({
                                 color="white" 
                                 // _hover={{ bg: "gray" }}
                                 w={['100%', '20%']}
-                                isDisabled={ isSubmitting  || isPending || file === null}
+                                isDisabled={ isSubmitting  || isPending || variants?.length <=0 || file === null}
                                 isLoading={isSubmitting || isPending}
                             >
                                 Submit
@@ -492,7 +543,17 @@ export function ProductImages({
 
 
 
-
+{/* <FormControl>
+    <FormLabel fontWeight={700}>* Quantity</FormLabel>
+    <SecureFormikInput
+        name="quantity" 
+        value={values?.quantity}
+        onChange={handleChange}
+        type='number'
+        required
+    />
+    {errors?.quantity && <Text fontSize={'12px'} color={'red.400'}>{`${errors?.quantity}`}</Text>}
+</FormControl> */}
 
 {/* <ReactSelect
     isMulti
@@ -519,3 +580,46 @@ export function ProductImages({
 {errors?.sizes && (
     <Text fontSize="12px" color="red.400">{`${errors.sizes}`}</Text>
 )} */}
+
+// <FormControl>
+//     <FormLabel fontWeight={700}>* Colors</FormLabel>
+
+//     <CreatableSelect
+//         isMulti
+//         required
+//         placeholder="Type and press enter..."
+//         value={(values?.colors || '').split(', ').filter(c => c).map(color => ({ label: color, value: color }))}
+//         onChange={(selectedOptions:any) => {
+//         const colorsString = selectedOptions.map((option:any) => option.value).join(', ');
+//             setFieldValue('colors', colorsString);
+//         }}
+//         styles={{
+//         control: (base:any) => ({
+//             ...base,
+//             borderColor: errors?.colors ? "red" : base.borderColor,
+//         }),
+//         }}
+//     />
+
+//     {errors?.colors && (<Text fontSize="12px" color="red.400"> {`${errors?.colors}`} </Text>)}
+// </FormControl>
+
+// <FormControl>
+//     <FormLabel fontWeight={700}>* Sizes</FormLabel>
+//     <CreatableSelect
+//         isMulti
+//         required
+//         placeholder="Type and press enter..."
+//         value={(values?.sizes || '').split(',').filter(c => c).map(size => ({ label: size, value: size }))}
+//         onChange={(selectedOptions:any) => {
+//         const sizeString = selectedOptions.map((option:any) => option.value).join(',');
+//             setFieldValue('sizes', sizeString);
+//         }}
+//         styles={{
+//         control: (base:any) => ({
+//             ...base,
+//             borderColor: errors?.colors ? "red" : base.borderColor,
+//         }),
+//         }}
+//     />
+// </FormControl>
